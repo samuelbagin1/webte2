@@ -12,10 +12,10 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Databazove konkfiguracne premenne:
-$hostname = "localhost";  // adresa servera, kedze DB je na rovnakom zeleze ako Nginx, je tu localhost
-$database = "DB_NAME";  // nazov databazy - v nasom pripade to bolo ogames_app
-$username = "DB_USERNAME";  // nazov pouzivatela - ktoreho ste vytvarali cez MariaDB konzolu. Ak ste isli podla navodu, mal by to byt vas login.
-$password = "DB_PASSWORD";  // heslo, ktore ste zadavali v MariaDB konzole - mali ste si ho zapisat alebo zapamatat.
+$hostname = "db";  // adresa servera, kedze DB je na rovnakom zeleze ako Nginx, je tu localhost
+$database = "app_db";  // nazov databazy - v nasom pripade to bolo ogames_app
+$username = "app_user";  // nazov pouzivatela - ktoreho ste vytvarali cez MariaDB konzolu. Ak ste isli podla navodu, mal by to byt vas login.
+$password = "app_pass";  // heslo, ktore ste zadavali v MariaDB konzole - mali ste si ho zapisat alebo zapamatat.
 
 // Funkcia sluzi ako abstrakcia pripojenia k DB – po include ju mozeme zavolat.
 function connectDatabase($hostname, $database, $username, $password) {

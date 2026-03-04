@@ -1,0 +1,7 @@
+{
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.29",
+        "pragmarx/google2fa": "^8.0",
+        "bacon/bacon-qr-code": "^2.0"
+    }
+}
