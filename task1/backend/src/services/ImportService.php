@@ -2,11 +2,21 @@
 function parseCsvToAssocArray(string $filePath, string $delimiter = ";"): array
 {
     $result = [];
-    // TODO: kontrola, ci subor na danej ceste existuje.
+
+    if (!file_exists($filePath)) {
+        throw new Exception("File does not exist!");
+    }
+    
     $handle = fopen($filePath, 'r');
-    // TODO: kontrola, ci sa subor podarilo otvorit.
+    if ($handle === false) {
+        throw new Exception('Could not open file!');
+    }
+
     $headers = fgetcsv($handle, 0, $delimiter); // Nacitanie hlavicky - prveho riadku suboru. Nazvy v hlavicke sa pouziju ako kluce asoc. pola.
-    // TODO: kontrola, ak hlavicka neexistuje.
+    if ($headers === false || empty($headers)) {
+        fclose($handle);
+        throw new Exception('Missing or empty header!');
+    }
 
     // Parsovanie riadkov
     while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
