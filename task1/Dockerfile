@@ -3,7 +3,7 @@ FROM php:8.3-fpm
 # system dependencies
 RUN apt-get update && apt-get install -y \
     git unzip nano curl \
-    libzip-dev libpng-dev libfreetype6-dev libjpeg62-turbo-dev libxml2-dev
+    libzip-dev libpng-dev libfreetype6-dev libjpeg62-turbo-dev libxml2-dev libonig-dev
 
 # php extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \

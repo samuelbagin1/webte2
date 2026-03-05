@@ -36,10 +36,8 @@ Browser (React SPA)  ──HTTP/JSON──>  Nginx  ──FastCGI──>  PHP-FP
 | birth_place | VARCHAR(80) | Miesto narodenia |
 | birth_country_id | INT(11) | FK → country(id) |
 | death_date | DATE | Dátum úmrtia (NULL ak žije) |
-| death_place | DATE* | Miesto úmrtia |
+| death_place | VARCHAR(80) | Miesto úmrtia |
 | death_country_id | INT(11) | FK → country(id), NULL povolené |
-
-> *Poznámka: `death_place` má v schéme typ `DATE` – pravdepodobne by mal byť `VARCHAR(80)` ako `birth_place`. Skontroluj a oprav.
 
 #### `olympics`
 | Stĺpec | Typ | Popis |
