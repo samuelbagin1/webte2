@@ -4,7 +4,7 @@
 
 Webová stránka s prehľadom slovenských olympionikov. Verejná zóna (tabuľka s filtrovaním, sortovaním, stránkovaním, detail osoby) + privátna zóna (prihlásenie s 2FA + Google OAuth2, import dát, správa profilu, história prihlásení).
 
-**Stack:** PHP backend (REST API) + React frontend (SPA), MariaDB/MySQL (PhpMyAdmin), Nginx na VPS.
+**Stack:** PHP backend (REST API) + React frontend (SPA, Vite + shadcn/ui + Tailwind CSS), MariaDB/MySQL (PhpMyAdmin), Nginx na VPS.
 
 ---
 
@@ -71,20 +71,23 @@ Browser (React SPA)  ──HTTP/JSON──>  Nginx  ──FastCGI──>  PHP-FP
 | id | INT(11) PK AI | Identifikátor |
 | first_name | VARCHAR(255) NOT NULL | Meno |
 | last_name | VARCHAR(255) NOT NULL | Priezvisko |
-| email | VARCHAR(255) NOT NULL UNIQUE | E-mail (login) |
-| password_hash | VARCHAR(255) | Hash hesla (NULL pre Google-only) |
-| google_id | VARCHAR(255) UNIQUE | Google user ID (NULL pre lokálne) |
-| totp_secret | VARCHAR(255) | TOTP secret pre 2FA |
-| totp_enabled | TINYINT(1) DEFAULT 0 | 2FA zapnuté? |
-| created_at | TIMESTAMP DEFAULT CURRENT_TIMESTAMP | Vytvorené |
+| email | VARCHAR(255) NOT NULL UNIQUE | E-mail (jedinečný identifikátor pre login) |
+| password_hash | VARCHAR(255) | Hash hesla – `password_hash($pw, PASSWORD_ARGON2ID)`. NULL pre Google-only účty |
+| google_id | VARCHAR(255) UNIQUE | Google user ID (NULL pre lokálne účty) |
+| tfa_secret | VARCHAR(255) | TOTP secret pre 2FA (generovaný pri registrácii) |
+| created_at | TIMESTAMP DEFAULT CURRENT_TIMESTAMP | Automaticky vyplnený čas registrácie |
+
+> **Heslá sa do databázy ukladajú zásadne hashované, nikdy nie v plain-text podobe!** Používame `password_hash()` s algoritmom `PASSWORD_ARGON2ID`. Dĺžku `password_hash` stĺpca volíme podľa algoritmu (pozri [PHP docs](https://www.php.net/manual/en/function.password-hash.php)). E-mail slúži ako jedinečný identifikátor používateľa (UNIQUE constraint).
 
 #### `login_history`
 | Stĺpec | Typ | Popis |
 |---------|-----|-------|
 | id | INT(11) PK AI | Identifikátor |
 | user_id | INT(11) NOT NULL | FK → users(id) ON DELETE CASCADE |
-| login_at | TIMESTAMP DEFAULT CURRENT_TIMESTAMP | Kedy |
 | method | VARCHAR(50) NOT NULL | 'local' alebo 'google' |
+| created_at | TIMESTAMP DEFAULT CURRENT_TIMESTAMP | Automaticky vyplnený čas prihlásenia |
+
+> Pri vymazaní používateľa sa vymažú aj záznamy o jeho prihláseniach (ON DELETE CASCADE).
 
 ### ER vzťahy
 
@@ -97,7 +100,7 @@ athlete (1) ──< (N) athlete_record    (athlete_id)
 olympics (1) ──< (N) athlete_record   (olympics_id)
 discipline (1) ──< (N) athlete_record (discipline_id)
 
-users (1) ──< (N) login_history       (user_id)
+users (1) ──< (N) login_history          (user_id)
 ```
 
 `athlete_record` = many-to-many medzi `athlete` ↔ `olympics`, rozšírená o `discipline` a `placing`.
@@ -227,6 +230,19 @@ webte2-z1/
 │   │   │   └── ImportPage.jsx            # Upload + import + vymazanie
 │   │   │
 │   │   ├── components/
+│   │   │   ├── ui/                      # shadcn/ui komponenty (auto-generated)
+│   │   │   │   ├── button.tsx
+│   │   │   │   ├── card.tsx
+│   │   │   │   ├── dialog.tsx
+│   │   │   │   ├── form.tsx
+│   │   │   │   ├── input.tsx
+│   │   │   │   ├── label.tsx
+│   │   │   │   ├── table.tsx
+│   │   │   │   ├── tabs.tsx
+│   │   │   │   ├── toast.tsx
+│   │   │   │   ├── dropdown-menu.tsx
+│   │   │   │   ├── select.tsx
+│   │   │   │   └── sonner.tsx
 │   │   │   ├── layout/
 │   │   │   │   ├── Navbar.jsx            # Menu + info o userovi
 │   │   │   │   ├── Footer.jsx
@@ -251,12 +267,17 @@ webte2-z1/
 │   │   │       ├── FormError.jsx         # Inline chyby (nie alert!)
 │   │   │       └── LoadingSpinner.jsx
 │   │   │
+│   │   ├── lib/
+│   │   │   └── utils.ts                # shadcn/ui cn() helper
+│   │   │
 │   │   └── styles/
-│   │       └── globals.css
+│   │       └── globals.css             # Tailwind + shadcn/ui CSS variables (light/dark)
 │   │
+│   ├── components.json                  # shadcn/ui config
 │   ├── package.json
 │   ├── vite.config.js
-│   └── tailwind.config.js
+│   ├── tailwind.config.js
+│   └── tsconfig.json
 │
 ├── database/
 │   ├── schema.sql                        # CREATE TABLE pre všetkých 7 tabuliek
@@ -382,21 +403,26 @@ Pre každý riadok z XLSX/CSV:
 | Knižnica | Účel |
 |----------|------|
 | **phpoffice/phpspreadsheet** | Čítanie XLSX (alebo CSV cez `fgetcsv()`) |
-| **pragmarx/google2fa** | TOTP 2FA |
-| **bacon/bacon-qr-code** | QR kódy pre 2FA |
+| **robthree/twofactorauth** | TOTP 2FA (`createSecret()`, `verifyCode()`, `getQRCodeImageAsDataUri()`) |
+| **bacon/bacon-qr-code** ^2 | QR kódy pre 2FA (provider pre robthree) |
+| **google/apiclient** | Google OAuth2 (`Google\Client`, `Google\Service\Oauth2`) |
 
 ### Frontend (`package.json`)
 
+**UI Framework:** [shadcn/ui](https://ui.shadcn.com/) — open-source sada accessible komponentov (60+), ktoré sa kopírujú priamo do projektu (plná kontrola). Postaven na Radix UI + Tailwind CSS. Inštalácia cez CLI: `npx shadcn@latest init` (Vite) + `npx shadcn@latest add button card dialog form input table tabs toast` atď.
+
 | Knižnica | Účel |
 |----------|------|
+| **react** + **react-dom** | React SPA |
 | **react-router-dom** v6+ | Routing, protected routes |
-| **@tanstack/react-table** v8 | Tabuľka – sorting, pagination (server-side = BONUS) |
-| **react-hook-form** + **zod** + **@hookform/resolvers** | Formuláre + validácia |
+| **shadcn/ui** (Button, Card, Dialog, Form, Input, Table, Tabs, Toast...) | Predpripravené accessible UI komponenty |
+| **@tanstack/react-table** v8 | Tabuľka – sorting, pagination (shadcn/ui DataTable wrapper) |
+| **react-hook-form** + **zod** + **@hookform/resolvers** | Formuláre + validácia (shadcn/ui Form je wrapper nad react-hook-form) |
 | **axios** | HTTP klient |
-| **tailwindcss** | Responzívne CSS |
+| **tailwindcss** | Responzívne CSS (základ pre shadcn/ui) |
 | **@react-oauth/google** | Google OAuth2 button |
-| **sonner** | Toast notifikácie (nie alert!) |
-| **lucide-react** | Ikony |
+| **sonner** | Toast notifikácie (nie alert!) — shadcn/ui Sonner wrapper |
+| **lucide-react** | Ikony (default pre shadcn/ui) |
 | **js-cookie** | Cookie consent |
 
 ### Alternatívy pre tabuľku
@@ -419,9 +445,72 @@ Pre každý riadok z XLSX/CSV:
 - **BONUS:** SQL `LIMIT/OFFSET` + `ORDER BY`
 
 ### Autentifikácia
-- `password_hash($pw, PASSWORD_ARGON2ID)` + `password_verify()`
-- 2FA: TOTP cez Google Authenticator
-- Google OAuth2: redirect → callback → session
+
+#### Registrácia
+1. Formulár: meno, priezvisko, email, heslo, heslo znova
+2. Frontend validácia (okamžite po opustení políčka): formát emailu, dĺžka mena/priezviska, sila hesla, zhoda hesiel
+3. Backend validácia: `filter_var()`, kontrola UNIQUE emailu, `htmlspecialchars()`
+4. Heslo sa hashuje: `password_hash($pw, PASSWORD_ARGON2ID)` — **nikdy plain-text!**
+5. Po úspešnej registrácii: vygenerovať 2FA TOTP secret + QR kód, zobraziť používateľovi
+6. Používateľ naskenuje QR kód do Google Authenticator (alebo zadá secret manuálne)
+
+#### Prihlásenie (lokálne s 2FA)
+1. Formulár: email, heslo, TOTP kód (6-ciferný)
+2. Postup overovania (aplikácia je "skeptická" — nehovorí, čo konkrétne je zlé):
+   - Zisti, či používateľ s emailom existuje → ak nie: "Nesprávne prihlasovacie údaje"
+   - Over heslo cez `password_verify()` → ak nezodpovedá: "Nesprávne prihlasovacie údaje"
+   - Over TOTP kód cez `$tfa->verifyCode($secret, $code, 2)` (discrepancy=2 → 60s platnosť) → ak nezodpovedá: "Nesprávne prihlasovacie údaje"
+3. Po úspešnom overení: `session_start()`, uložiť do `$_SESSION`: `loggedin=true`, `full_name`, `email`, `created_at`
+4. Zaznamenať prihlásenie do `login_history` (login_type = 'LOCAL')
+5. Presmerovať na zabezpečenú stránku
+
+#### Google OAuth2
+1. Vytvoriť projekt v Google Cloud Console → OAuth consent screen (External) → OAuth Client (Web app)
+2. Nastaviť Redirect URI na `oauth2callback.php`
+3. Stiahnuť `client_secret.json` — uložiť MIMO document root (vedľa `config.php`)
+4. Data Access scopes: `email`, `profile`, `openid`
+5. Flow:
+   - Používateľ klikne "Prihlásiť sa cez Google" → redirect na Google auth URL
+   - Generovať `state` parameter (CSRF ochrana): `bin2hex(random_bytes(16))`, uložiť do session
+   - Google vráti auth code na callback URI → overiť `state` → exchange code za access token
+   - Načítať user info cez `Google\Service\Oauth2` → `$oauth->userinfo->get()`
+   - Uložiť do session: `loggedin=true`, `full_name`, `email`, `gid` (Google ID)
+   - Zaznamenať prihlásenie do `login_history` (login_type = 'OAUTH')
+6. Knižnica: `google/apiclient` — optimalizovať cez `composer.json` extra config (ponechať len `Oauth2`)
+
+#### Zabezpečené stránky
+- Každá chránená stránka: `session_start()` → kontrola `$_SESSION['loggedin'] === true` → ak nie, redirect na login
+- Rozlíšenie lokálneho a Google prihlásenia podľa prítomnosti `$_SESSION['gid']`
+
+#### Odhlásenie
+```php
+session_start();
+$_SESSION = array();
+session_unset();
+session_destroy();
+header("location: index.php");
+exit;
+```
+
+#### Composer závislosti (2FA + OAuth)
+```sh
+composer require robthree/twofactorauth
+composer require bacon/bacon-qr-code ^2
+composer require google/apiclient
+```
+Optimalizácia Google knižníc v `composer.json`:
+```json
+{
+    "scripts": {
+        "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
+    },
+    "extra": {
+        "google/apiclient-services": ["Oauth2"]
+    }
+}
+```
+Potom `composer update` na vymazanie nepotrebných Google API knižníc.
+
 - Každé prihlásenie → `login_history`
 
 ### Validácia
@@ -446,6 +535,12 @@ server {
         try_files $uri $uri/ /dist/index.html;
     }
 
+    # Blokovať prístup k vendor/
+    location ~* /vendor/ {
+        deny all;
+        return 403;
+    }
+
     # PHP API
     location /api/ {
         try_files $uri /api/index.php$is_args$args;
@@ -464,11 +559,13 @@ server {
 
 1. SSH → nainštalovať php-fpm, php-mysql, php-xml, php-zip, php-gd, php-mbstring, nginx, mariadb, composer, node/npm
 2. DB cez PhpMyAdmin (`utf8mb4_general_ci`) + `schema.sql`
-3. `composer install` (backend)
+3. `composer install` (backend) — inštalácia v adresári projektu, potom `composer update` pre cleanup Google API
 4. `npm install && npm run build` (frontend) → `dist/`
-5. `config.php` mimo document root
-6. Google OAuth credentials
-7. Nginx restart + test
+5. `config.php` + `client_secret.json` mimo document root (napr. `/var/www/`)
+6. Google Cloud Console: vytvoriť projekt → OAuth consent screen (External) → OAuth Client → Redirect URI → scopes (email, profile, openid) → stiahnuť `client_secret.json`
+7. Nginx: pridať blokovanie `/vendor/`, restart + test
+8. **Produkčne vymazať `composer.json` zo servera** (stačí `vendor/` a zdrojáky)
+9. Všetky zmeny na serveri zdokumentovať v README
 
 ---
 
