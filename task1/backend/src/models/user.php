@@ -6,7 +6,7 @@ function getOrCreateUser(PDO $pdo, string $firstName, string $lastName, string $
 
     if ($id) return (int) $id;
 
-    $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, password_hash, totp_secret) VALUES (:first_name, :last_name, :email, :password_hash. :totp_secret)");
+    $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, password_hash, totp_secret) VALUES (:first_name, :last_name, :email, :password_hash, :totp_secret)");
     $stmt->execute([
         ':first_name' => $firstName,
         ':last_name' => $lastName,

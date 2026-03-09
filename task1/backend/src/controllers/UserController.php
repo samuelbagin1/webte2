@@ -19,7 +19,7 @@ class UserController {
     // get current user profile from session
     public function profile(): void {
         session_start();
-        if (!isset($_SESSION['loggediin']) || $_SESSION['loggedin'] !== true) {
+        if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             Response::json(['error' => 'Unauthorized'], 401);
             return;
         }

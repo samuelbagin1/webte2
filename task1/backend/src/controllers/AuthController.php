@@ -63,7 +63,7 @@ class AuthController {
         }
 
         // check if user already exists
-        if (findUserByEmail($this->pdo, $email) === null) {
+        if (findUserByEmail($this->pdo, $email) !== null) {
             Response::json(['error' => 'User with this email already exists.'], 409);
             return;
         }

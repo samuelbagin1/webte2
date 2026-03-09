@@ -44,7 +44,7 @@ function getOrCreateOlympics(PDO $pdo, int $year, string $type, string $city, in
         return (int) $id;
     }
 
-    if (!$type === 'LOH' && !$type === 'ZOH') throw new Exception('type is not from ENUM: LOH or ZOH');
+    if ($type !== 'LOH' && $type !== 'ZOH') throw new Exception('type is not from ENUM: LOH or ZOH');
 
     // Ak neexistuje, vytvor novy zaznam.
     $stmt = $pdo->prepare("INSERT INTO olympics (year, type, city, country_id) VALUES (:year, :type, :city, :country_id)");
