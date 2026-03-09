@@ -10,10 +10,9 @@ use RobThree\Auth\Providers\Qr\BaconQrCodeProvider;
 use Robthree\Auth\TwoFactorAuth;
 
 function authenticate(PDO $pdo, string $email, string $password, string $totp = ''): array {
-    $user = new User($pdo);
-    $userData = $user->findByEmail($email);
+    $userData = findUserByEmail($pdo, $email);
 
-    if (!$userData) 
+    if (!$userData) {
         return ['success' => false, 'message' => 'invalid credentials'];
     }   
 
@@ -32,4 +31,9 @@ function authenticate(PDO $pdo, string $email, string $password, string $totp = 
 
     // all clear
     return ['success' => true, 'user' => $userData];
+}
+
+function hashPassword(string $password): string {
+    return password_hash($password, PASSWORD_ARGON2ID);
+}
 ?>

@@ -1,4 +1,6 @@
 <?php 
+// input sanitization to prevent XSS (Cross-Site Scripting) and injection attacks
+
 class Sanitizer {
     public static function sanitizeString(string $input): string {
         return htmlspecialchars(strip_tags(trim($input)), ENT_QUOTES, 'UTF-8');

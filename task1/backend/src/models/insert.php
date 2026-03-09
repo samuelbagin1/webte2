@@ -30,27 +30,6 @@ function getOrCreateDiscipline(PDO $pdo, string $name): int {
 }
 
 
-function getAthlete(PDO $pdo, string $name, string $surname): ?int {
-    $stmt = $pdo->prepare("SELECT id FROM athlete WHERE name = :name AND surname = :surname LIMIT 1");
-    $stmt->execute([":name" => $name, ':surname' => $surname]);
-    $id = $stmt->fetchColumn();
-
-    if ($id) return (int) $id;
-    else return null;
-}
-
-
-function getOrCreateAthlete(PDO $pdo, string $name, string $surname, DateTime $birthDate, string $birthPlace, string $birthCountry, ?DateTime $deathDate = null, ?string $deathPlace = null, ?string $deathCountry = null): int {
-
-    $birthCountryId = getOrCreateCountry($pdo, $birthCountry);
-    $deathCountryId = getOrCreateCountry($pdo, $deathCountry);
-
-    $stmt = $pdo->prepare("INSERT INTO athlete (name, surname, birth_date, birth_place, birth_country_id, death_date, death_place, death_country_id) VALUES (:name, :surname, :birth_date, :birth_place, :birth_country_id, :death_date, :death_place, :death_country_id)");
-    $stmt->execute([':name' => $name, ':surname' => $surname, ':birth_date' => $birthDate, ':birth_place' => $birthPlace, ':birth_country_id' => $birthCountryId, ':death_date' => $deathDate, ':death_place' => $deathPlace, ':death_country_id' => $deathCountryId]);
-    return (int) $pdo->lastInsertId();
-}
-
-
 function getOrCreateOlympics(PDO $pdo, int $year, string $type, string $city, int $countryId): int {
     // Najdi OH, podla roku konania a typu - kedze sme ich definovali ako UNIQUE
     $stmt = $pdo->prepare("SELECT id FROM olympics WHERE year = :year AND type = :type LIMIT 1");
@@ -65,8 +44,7 @@ function getOrCreateOlympics(PDO $pdo, int $year, string $type, string $city, in
         return (int) $id;
     }
 
-    // TODO: kontrola, ci argument type splna podmienky ENUM typu (LOH,ZOH)
-    if (!$type === 'LOH' && !$type === 'ZOH') throw new BadFunctionCallException('type is not from ENUM: LOH or ZOH');
+    if (!$type === 'LOH' && !$type === 'ZOH') throw new Exception('type is not from ENUM: LOH or ZOH');
 
     // Ak neexistuje, vytvor novy zaznam.
     $stmt = $pdo->prepare("INSERT INTO olympics (year, type, city, country_id) VALUES (:year, :type, :city, :country_id)");
