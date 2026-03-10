@@ -10,20 +10,21 @@ class AthleteController {
     }
 
     public function index(): void {
-        $page = (int) $_GET['page'] ?? 1;
-        $limit = (int) $_GET['limit'] ?? 10;
-        $search = Sanitizer::sanitizeString($_GET['search'] ?? '');
-        $sort = $_GET['sort'] ?? 'name';
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
+        $sort = $_GET['sort'] ?? 'surname';
         $order = $_GET['order'] ?? 'ASC';
+        $year = isset($_GET['year']) ? (int) $_GET['year'] : null;
+        $discipline = isset($_GET['discipline']) ? (int) $_GET['discipline'] : null;
 
-        $data = getAllAthletes($this->pdo, $page, $limit, $search, $sort, $order);
-        Response::json($data, 200);
+        $result = getAllAthletes($this->pdo, $page, $limit, $sort, $order, $year, $discipline);
+        Response::json($result, 200);
     }
 
     public function show(int $id): void {
         $data = getAthleteById($this->pdo, $id);
         if (!$data) {
-            Response::json(['error' => 'Athlete not found.'], 401);
+            Response::json(['error' => 'Athlete not found.'], 404);
             return;
         }
 
@@ -50,6 +51,28 @@ class AthleteController {
 
         $imported = importAthletes($this->pdo, $data);
         Response::json(['message' => "Imported $imported records"], 200);
+    }
+
+    public function importOlympicsFile(): void {
+        if (!isset($_FILES['file'])) {
+            Response::json(['error' => 'No file uploaded.'], 400);
+            return;
+        }
+
+        $file = $_FILES['file'];
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+
+        if ($extension === 'csv') {
+            $data = parseCsvToAssocArray($file['tmp_name']);
+        } elseif (in_array($extension, ['xlsx', 'xls'])) {
+            $data = parseExcelToAssocArray($file['tmp_name']);
+        } else {
+            Response::json(['error' => 'Unsupported file type.'], 400);
+            return;
+        }
+
+        $imported = importOlympics($this->pdo, $data);
+        Response::json(['message' => "Imported $imported olympics records"], 200);
     }
 
     public function delete(): void {

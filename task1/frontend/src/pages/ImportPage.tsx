@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { FileUpload } from "@/components/import/FileUpload";
+import { OlympicsFileUpload } from "@/components/import/OlympicsFileUpload";
 import { DeleteDataButton } from "@/components/import/DeleteDataButton";
 
 // private zone - file upload input for xlsx/csv
@@ -26,6 +27,21 @@ export function ImportPage() {
 
                 <CardContent>
                     <FileUpload />
+                </CardContent>
+            </Card>
+
+            {/* Olympics file upload section */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Import olympiád</CardTitle>
+
+                    <CardDescription>
+                        Nahrajte súbor vo formáte XLSX alebo CSV s dátami olympijských hier.
+                    </CardDescription>
+                </CardHeader>
+
+                <CardContent>
+                    <OlympicsFileUpload />
                 </CardContent>
             </Card>
 

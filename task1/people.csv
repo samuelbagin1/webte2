@@ -1,0 +1,113 @@
+﻿placing,discipline,name,surname,birth_day,birth_place,birth_country,death_day,death_place,death_country,oh_type,oh_year,oh_city,oh_country
+3,atletika - beh na 100 m,Alojz,Szokol,7/3/1922,Hronec,Slovensko,27/10/1932,Bernecebaráti,Maďarsko,LOH,1896,Atény,Grécko
+1,plávanie - 50 yd v.sp.,Zoltán,Halmaj,7/3/1922,Vysoká pri Morave,Slovensko,20/5/1956,Budapešť,Maďarsko,LOH,1904,St. Louis,Spojené Štáty Americké
+1,športová streľba - vojenská puška,Alexander,Prokopp,7/3/1922,Košice,Slovensko,4/11/1950,Budapešť,Maďarsko,LOH,1912,Štokholm,Švédsko
+1,box do 67 kg,Július,Torma,7/3/1922,Budapešť,Maďarsko,23/10/1991,Praha,Česko,LOH,1948,Londýn,Spojené Kráľovstvo
+1,box do 57 kg,Ján,Zachara,27/8/1928,Kubrá pri Trenčíne,Slovensko,2/1/2025,Nová Dubnica,Slovensko,LOH,1952,Helsinki,Fínsko
+2,futbal,Anton,Švajlen,3/12/1937,Solčany,Slovensko,,,,LOH,1964,Tokio,Japonsko
+2,futbal,Anton,Urban,16/1/1934,Kysucké Nové Mesto,Slovensko,5/3/2021,Bratislava,Slovensko,LOH,1964,Tokio,Japonsko
+3,ľadový hokej,Vladimír,Dzurilla,22/2/1942,Bratislava,Slovensko,27/7/1995,Düsseldorf,Nemecko,ZOH,1964,Innsbruck,Rakúsko
+3,ľadový hokej,Jozef,Golonka,6/1/1938,Bratislava,Slovensko,,,,ZOH,1964,Innsbruck,Rakúsko
+22,krasokorčuľovanie,Ondrej,Nepela,22/1/1951,Bratislava,Slovensko,2/2/1989,Mannheim,Nemecko,ZOH,1964,Innsbruck,Rakúsko
+8,krasokorčuľovanie,Ondrej,Nepela,22/1/1951,Bratislava,Slovensko,2/2/1989,Mannheim,Nemecko,ZOH,1968,Grenoble,Francúzsko
+1,krasokorčuľovanie,Ondrej,Nepela,22/1/1951,Bratislava,Slovensko,2/2/1989,Mannheim,Nemecko,ZOH,1972,Sapporo,Japonsko
+3,atletika - skok do diaľky,Eva,Šuranová,16/12/1946,Ózd,Maďarsko,31/12/2016,Bratislava,Slovensko,LOH,1972,Mníchov,Nemecko
+1,dráhová cyklistika - šprint,Anton,Tkáč,30/3/1951,Lozorno,Slovensko,22/12/2022,Bratislava,Slovensko,LOH,1976,Montreal,Kanada
+1,futbal,František,Kunzo,17/9/1954,Spišský Hrušov,Slovensko,,,,LOH,1980,Moskva,Sovietsky zväz
+1,futbal,Stanislav,Seman,6/8/1952,Košice,Slovensko,,,,LOH,1980,Moskva,Sovietsky zväz
+2,atletika - hod diskom,Imrich,Bugár,14/4/1955,Ohrady,Slovensko,,,,LOH,1980,Moskva,Sovietsky zväz
+2,ľadový hokej,Igor,Liba,4/11/1960,Prešov,Slovensko,,,,ZOH,1984,Sarajevo,Juhoslávia
+2,ľadový hokej,Vincent,Lukáč,14/2/1954,Košice,Slovensko,,,,ZOH,1984,Sarajevo,Juhoslávia
+2,ľadový hokej,Dušan,Pašek,7/9/1960,Bratislava,Slovensko,14/3/1998,Bratislava,Slovensko,ZOH,1984,Sarajevo,Juhoslávia
+2,ľadový hokej,Dárius,Rusnák,2/12/1959,Ružomberok,Slovensko,,,,ZOH,1984,Sarajevo,Juhoslávia
+1,tenis - dvojhra,Miloslav,Mečíř,19/5/1964,Bojnice,Slovensko,,,,LOH,1988,Soul,Južná Kórea
+1,atletika - chôdza na 20 km,Jozef,Pribilinec,6/7/1960,Kopernica,Slovensko,,,,LOH,1988,Soul,Južná Kórea
+3,tenis - štvorhra,Miloš,Mečíř,19/5/1964,Bojnice,Slovensko,,,,LOH,1988,Soul,Južná Kórea
+1,vodný slalom - C1,Michal,Martikán,18/5/1979,Liptovský Mikuláš,Slovensko,,,,LOH,1996,Atlanta,Spojené Štáty Americké
+2,rýchlostná kanoistika - C1 500m,Slavomír,Kňazovický,3/5/1967,Piešťany,Slovensko,,,,LOH,1996,Atlanta,Spojené Štáty Americké
+3,športová streľba - ľubovoľná malokalibrovka 60,Jozef,Gönci,18/3/1974,Košice,Slovensko,,,,LOH,1996,Atlanta,Spojené Štáty Americké
+19,vodný slalom - K1,Elena,Kaliská,19/1/1972,Zvolen,Slovensko,,,,LOH,1996,Atlanta,Spojené Štáty Americké
+1,vodný slalom - C2,Peter,Hochschorner,7/9/1979,Bratislava,Slovensko,,,,LOH,2000,Sydney,Austrália
+1,vodný slalom - C2,Pavol,Hochschorner,7/9/1979,Bratislava,Slovensko,,,,LOH,2000,Sydney,Austrália
+2,vodný slalom - C1,Michal,Martikán,18/5/1979,Liptovský Mikuláš,Slovensko,,,,LOH,2000,Sydney,Austrália
+2,plávanie - 100 m motýlik,Martina,Moravcová,16/1/1976,Piešťany,Slovensko,,,,LOH,2000,Sydney,Austrália
+2,plávanie - 200 m v.sp.,Martina,Moravcová,16/1/1976,Piešťany,Slovensko,,,,LOH,2000,Sydney,Austrália
+3,vodný slalom - C1,Juraj,Minčík,27/3/1977,Spišská Nová Ves,Slovensko,,,,LOH,2000,Sydney,Austrália
+4,vodný slalom - K1,Elena,Kaliská,19/1/1972,Zvolen,Slovensko,,,,LOH,2000,Sydney,Austrália
+1,vodný slalom - C2,Peter,Hochschorner,7/9/1979,Bratislava,Slovensko,,,,LOH,2004,Atény,Grécko
+1,vodný slalom - C2,Pavol,Hochschorner,7/9/1979,Bratislava,Slovensko,,,,LOH,2004,Atény,Grécko
+1,vodný slalom - K1,Elena,Kaliská,19/1/1972,Zvolen,Slovensko,,,,LOH,2004,Atény,Grécko
+2,judo - do 66 kg,Jozef,Krnáč,30/12/1977,Bratislava,Slovensko,,,,LOH,2004,Atény,Grécko
+2,vodný slalom - C1,Michal,Martikán,18/5/1979,Liptovský Mikuláš,Slovensko,,,,LOH,2004,Atény,Grécko
+3,rýchlostná kanoistika - K4,Juraj,Bača,17/3/1977,Komárno,Slovensko,,,,LOH,2004,Atény,Grécko
+3,športová streľba - vzduchová puška 10,Jozef,Gönci,18/3/1974,Košice,Slovensko,,,,LOH,2004,Atény,Grécko
+3,rýchlostná kanoistika - K4,Michal,Riszdorfer,1/7/1977,Bratislava,Slovensko,,,,LOH,2004,Atény,Grécko
+3,rýchlostná kanoistika - K4,Richard,Riszdorfer,17/3/1981,Komárno,Slovensko,,,,LOH,2004,Atény,Grécko
+3,rýchlostná kanoistika - K4,Erik,Vlček,29/12/1981,Komárno,Slovensko,,,,LOH,2004,Atény,Grécko
+2,snowboarding - snowboardcross,Radoslav,Židek,15/10/1981,Žilina,Slovensko,,,,ZOH,2006,Turín,Taliansko
+1,vodný slalom - C2,Peter,Hochschorner,7/9/1979,Bratislava,Slovensko,,,,LOH,2008,Peking/Hongkong,Čína
+1,vodný slalom - C2,Pavol,Hochschorner,7/9/1979,Bratislava,Slovensko,,,,LOH,2008,Peking/Hongkong,Čína
+1,vodný slalom - K1,Elena,Kaliská,19/1/1972,Zvolen,Slovensko,,,,LOH,2008,Peking/Hongkong,Čína
+1,vodný slalom - C1,Michal,Martikán,18/5/1979,Liptovský Mikuláš,Slovensko,,,,LOH,2008,Peking/Hongkong,Čína
+2,rýchlostná kanoistika - K4,Richard,Riszdorfer,17/3/1981,Komárno,Slovensko,,,,LOH,2008,Peking,Čína
+2,rýchlostná kanoistika - K4,Michal,Riszdorfer,1/7/1977,Bratislava,Slovensko,,,,LOH,2008,Peking,Čína
+2,športová streľba - trap,Zuzana,Štefečeková,15/1/1984,Nitra,Slovensko,,,,LOH,2008,Peking,Čína
+2,rýchlostná kanoistika - K4,Juraj,Tarr,18/2/1979,Komárno,Slovensko,,,,LOH,2008,Peking,Čína
+2,rýchlostná kanoistika - K4,Erik,Vlček,29/12/1981,Komárno,Slovensko,,,,LOH,2008,Peking,Čína
+3,zápasenie - voľný štýl do 120 kg,David,Musuľbes,2/7/1972,Vladi-kaukaz,Rusko,,,,LOH,2008,Peking,Čína
+1,biatlon - šprint na 7.5 km,Anastasiya,Kuzmina,28/8/1984,Ťumeň,Sovietsky zväz,,,,ZOH,2010,Vancouver,Kanada
+2,biatlon - šprint,Pavol,Hurajt,4/2/1978,Poprad,Slovensko,,,,ZOH,2010,Vancouver,Kanada
+2,biatlon - stíhacie preteky na 10 km,Anastasiya,Kuzmina,28/8/1984,Ťumeň,Sovietsky zväz,,,,ZOH,2010,Vancouver,Kanada
+3,biatlon - hromadný štart,Pavol,Hurajt,4/2/1978,Poprad,Slovensko,,,,ZOH,2010,Vancouver,Kanada
+2,športová streľba - trap,Zuzana,Štefečeková,15/1/1984,Nitra,Slovensko,,,,LOH,2012,Londýn,Spojené Kráľovstvo
+3,športová streľba - skeet,Danka,Barteková,19/10/1984,Trenčín,Slovensko,,,,LOH,2012,Londýn,Spojené Kráľovstvo
+3,vodný slalom - C2,Peter,Hochschorner,7/9/1979,Bratislava,Slovensko,,,,LOH,2012,Londýn,Spojené Kráľovstvo
+3,vodný slalom - C2,Pavol,Hochschorner,7/9/1979,Bratislava,Slovensko,,,,LOH,2012,Londýn,Spojené Kráľovstvo
+3,vodný slalom - C1,Michal,Martikán,18/5/1979,Liptovský Mikuláš,Slovensko,,,,LOH,2012,Londýn,Spojené Kráľovstvo
+1,biatlon - šprint na 7.5 km,Anastasiya,Kuzmina,28/8/1984,Ťumeň,Sovietsky zväz,,,,ZOH,2014,Soči,Rusko
+1,vodný slalom - C2,Ladislav,Škantár,11/2/1983,Kežmarok,Slovensko,,,,LOH,2016,Rio de Janeiro,Brazília
+1,vodný slalom - C2,Peter,Škantár,20/7/1982,Kežmarok,Slovensko,,,,LOH,2016,Rio de Janeiro,Brazília
+1,atletika - chôdza na 50 km,Matej,Tóth,10/2/1983,Nitra,Slovensko,,,,LOH,2016,Rio de Janeiro,Brazília
+2,vodný slalom - C1,Matej,Beňuš,2/11/1987,Bratislava,Slovensko,,,,LOH,2016,Rio de Janeiro,Brazília
+2,kanoistika - K4 na 1000m,Tibor,Linka,13/2/1995,Šamorín,Slovensko,,,,LOH,2016,Rio de Janeiro,Brazília
+2,kanoistika - K4 na 1000m,Denis,Myšák,30/11/1995,Bojnice,Slovensko,,,,LOH,2016,Rio de Janeiro,Brazília
+2,kanoistika - K4 na 1000m,Juraj,Tarr,18/2/1979,Komárno,Slovensko,,,,LOH,2016,Rio de Janeiro,Brazília
+2,kanoistika - K4 na 1000m,Erik,Vlček,29/12/1981,Komárno,Slovensko,,,,LOH,2016,Rio de Janeiro,Brazília
+1,biatlon - hromadný štart,Anastasiya,Kuzmina,28/8/1984,Ťumeň,Sovietsky zväz,,,,ZOH,2018,Pjongčang,Kórea
+2,biatlon - stíhacie preteky na 10 km,Anastasiya,Kuzmina,28/8/1984,Ťumeň,Sovietsky zväz,,,,ZOH,2018,Pjongčang,Kórea
+2,biatlon - vytrvalostné preteky na 15 km,Anastasiya,Kuzmina,28/8/1984,Ťumeň,Sovietsky zväz,,,,ZOH,2018,Pjongčang,Kórea
+1,športová streľba - trap,Zuzana,Rehák-Štefečeková,15/1/1984,Nitra,Slovensko,,,,LOH,2020,Tokio,Japonsko
+2,vodný slalom - K1,Jakub,Grigar,27/4/1997,Liptovský Mikuláš,Slovensko,,,,LOH,2020,Tokio,Japonsko
+2,golf,Rory,Sabbatini,2/4/1976,Durban,Južná Afrika,,,,LOH,2020,Tokio,Japonsko
+3,rýchlostná kanoistika - K4,Samuel,Baláž,25/8/1998,Bratislava,Slovensko,,,,LOH,2020,Tokio,Japonsko
+3,rýchlostná kanoistika - K4,Adam,Botek,5/3/1997,Komárno,Slovensko,,,,LOH,2020,Tokio,Japonsko
+3,rýchlostná kanoistika - K4,Denis,Myšák,30/11/1995,Bojnice,Slovensko,,,,LOH,2020,Tokio,Japonsko
+3,rýchlostná kanoistika - K4,Erik,Vlček,29/12/1981,Komárno,Slovensko,,,,LOH,2020,Tokio,Japonsko
+1,zjazdové lyžovanie - slalom,Petra,Vlhová,13/6/1995,Liptovský Mikuláš,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Peter,Cehlárik,2/8/1995,Žilina,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Michal,Čajkovský,6/5/1992,Bratislava,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Peter,Čerešňák,26/1/1993,Trenčín,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Marek,Ďaloga,4/4/1989,Zvolen,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Marko,Daňo,30/11/1994,Eisenstadt,Rakúsko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Martin,Gernát,11/4/1993,Košice,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Adrián,Holešinský,11/2/1996,Čadca,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Marek,Hrivík,28/8/1991,Čadca,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Marek,Hrivík,28/8/1991,Čadca,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Libor,Hudáček,7/9/1990,Levoča,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Tomáš,Jurčo,28/12/1992,Košice,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Miloš,Kelemen,6/7/1999,Lučenec,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Samuel,Kňažko,7/8/2002,Trenčín,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Branislav,Konrád,10/10/1987,Nitra,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Michal,Krištof,11/10/1993,Nitra,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Martin,Marinčin,18/2/1992,Košice,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Šimon,Nemec,15/2/2004,Liptovský Mikuláš,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Kristián,Pospíšil,22/4/1996,Zvolen,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Pavol,Regenda,7/12/1999,Michalovce,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Miloš,Roman,13/10/1999,Kysucké Nové Mesto,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Mislav,Rosandič,26/1/1995,Záhreb,Chorvátsko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Patrik,Rybár,9/11/1993,Skalica,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Juraj,Slafkovský,30/3/2004,Košice,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Samuel,Takáč,3/12/1991,Prievidza,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Matej,Tomek,24/5/1997,Bratislava,Slovensko,,,,ZOH,2022,Peking,Čína
+3,ľadový hokej,Peter,Zuzin,4/9/1990,Zvolen,Slovensko,,,,ZOH,2022,Peking,Čína
+3,vodný slalom - C1,Matej,Beňuš,2/11/1987,Bratislava,Slovensko,,,,LOH,2024,Paríž,Francúzsko

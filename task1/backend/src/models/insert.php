@@ -30,7 +30,7 @@ function getOrCreateDiscipline(PDO $pdo, string $name): int {
 }
 
 
-function getOrCreateOlympics(PDO $pdo, int $year, string $type, string $city, int $countryId): int {
+function getOrCreateOlympics(PDO $pdo, int $year, string $type, string $city, int $countryId, ?string $code = null): int {
     // Najdi OH, podla roku konania a typu - kedze sme ich definovali ako UNIQUE
     $stmt = $pdo->prepare("SELECT id FROM olympics WHERE year = :year AND type = :type LIMIT 1");
     $stmt->execute([
@@ -39,20 +39,25 @@ function getOrCreateOlympics(PDO $pdo, int $year, string $type, string $city, in
     ]);
     $id = $stmt->fetchColumn();
 
-    // Ak existuje, vrat ID.
+    // Ak existuje, aktualizuj code ak bol zadany a vrat ID.
     if ($id) {
+        if ($code !== null) {
+            $stmt = $pdo->prepare("UPDATE olympics SET code = :code WHERE id = :id");
+            $stmt->execute([':code' => $code, ':id' => $id]);
+        }
         return (int) $id;
     }
 
     if ($type !== 'LOH' && $type !== 'ZOH') throw new Exception('type is not from ENUM: LOH or ZOH');
 
     // Ak neexistuje, vytvor novy zaznam.
-    $stmt = $pdo->prepare("INSERT INTO olympics (year, type, city, country_id) VALUES (:year, :type, :city, :country_id)");
+    $stmt = $pdo->prepare("INSERT INTO olympics (year, type, city, country_id, code) VALUES (:year, :type, :city, :country_id, :code)");
     $stmt->execute([
         ':year' => $year,
         ':type' => $type,
         ':city' => $city,
-        ':country_id' => $countryId
+        ':country_id' => $countryId,
+        ':code' => $code
     ]);
 
     // Vrat ID novovytvoreneho zaznamu.

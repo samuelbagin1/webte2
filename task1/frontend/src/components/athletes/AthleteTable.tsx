@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { Badge } from "../ui/badge";
@@ -31,6 +31,8 @@ interface AthleteTableProps {
 
 
 export function AthleteTable({ data, loading, sort, order, onSort, hideYear, hideDiscipline }: AthleteTableProps) {
+    const navigate = useNavigate();
+
     // sort indicator icon
     const SortIcon = ({column }: {column: string}) => {
         if (sort!== column) return <ArrowUpDown className="ml-1 h-4 w-4 inline" />;
@@ -52,6 +54,10 @@ export function AthleteTable({ data, loading, sort, order, onSort, hideYear, hid
             case 3: return "Bronz";
             default: return `${placing}. miesto`;
         };
+    }
+
+    const handleClickRow = (id: number) => {
+        navigate(`/athlete/${id}`);
     }
 
 
@@ -92,8 +98,8 @@ export function AthleteTable({ data, loading, sort, order, onSort, hideYear, hid
 
                         {/* Country */}
                         <TableHead>Krajina</TableHead>
+                        
                         {/* "Kategória" — sortable, hidden when discipline filter active */}
-
                         {!hideDiscipline && <SortableHead column="discipline" label="Kategória" />}
                         
                         {/* Placing */}
@@ -103,7 +109,7 @@ export function AthleteTable({ data, loading, sort, order, onSort, hideYear, hid
 
                 <TableBody>
                     {data.map((athlete, index) => (
-                        <TableRow key={`${athlete.id}-${index}`}>
+                        <TableRow key={`${athlete.id}-${index}`} onClick={() => handleClickRow(athlete.id)} className="hover:cursor-pointer">
 
                             {/* Clickable name → detail page */}
                             <TableCell>

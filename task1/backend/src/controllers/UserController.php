@@ -1,4 +1,4 @@
-<?php 
+<?php
 // user profile management for logged-in users
 
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -18,12 +18,6 @@ class UserController {
     // {} -> {full_name, email, created_at, login_type}
     // get current user profile from session
     public function profile(): void {
-        session_start();
-        if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-            Response::json(['error' => 'Unauthorized'], 401);
-            return;
-        }
-
         $data = findUserById($this->pdo, $_SESSION['user_id']);
         unset($data['password_hash']); // do not return password hash
         unset($data['tfa_secret']); // do not return 2fa secret
@@ -36,12 +30,6 @@ class UserController {
 
     // update user info
     public function updateProfile(): void {
-        session_start();
-        if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-            Response::json(['error' => 'Unauthorized'], 401);
-            return;
-        }
-
         $input = json_decode(file_get_contents('php://input'), true);
         $firstName = Sanitizer::sanitizeString($input['first_name'] ?? '');
         $lastName = Sanitizer::sanitizeString($input['last_name'] ?? '');
@@ -57,12 +45,6 @@ class UserController {
     }
 
     public function updatePassword(): void {
-        session_start();
-        if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-            Response::json(['error' => 'Unauthorized'], 401);
-            return;
-        }
-
         $input = json_decode(file_get_contents('php://input'), true);
         $currentPassword = $input['current_password'];
         $newPassword = $input['new_password'];
@@ -84,16 +66,10 @@ class UserController {
         Response::json(['message' => 'Uspesne aktualizovane'], 200);
     }
 
-    // POST /api/user/profile
+    // POST /api/user/2fa
     // {} -> {secret, qr_code}
-    // generate 2fa secrete and QR code
+    // generate 2fa secret and QR code
     public function setup2FA(): void {
-        session_start();
-        if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-            Response::json(['error' => 'Unauthorized'], 401);
-            return;
-        }
-
         $tfa = new TwoFactorAuth(new BaconQrCodeProvider(4, '#ffffff', '#000000', 'svg'));
         $secret = $tfa->createSecret();
         $qrCode = $tfa->getQRCodeImageAsDataUri('Olympic Games APP', $secret);
@@ -108,12 +84,6 @@ class UserController {
     }
 
     public function loginHistory(): void {
-        session_start();
-        if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-            Response::json(['error' => 'Unauthorized'], 401);
-            return;
-        }
-
         $data = getHistoryByUserId($this->pdo, $_SESSION['user_id']);
         Response::json($data, 200);
     }

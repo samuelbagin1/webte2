@@ -29,7 +29,7 @@ require_once __DIR__ . '/../src/controllers/AuthController.php';
 require_once __DIR__ . '/../src/controllers/AthleteController.php';
 require_once __DIR__ . '/../src/controllers/UserController.php';
 require_once __DIR__ . '/../src/controllers/OAuthController.php';
-require_once __DIR__ . '/../src/controllers/ImportController.php';
+
 
 
 
@@ -81,14 +81,12 @@ if ($uri === '/api/auth/google/callback' && $method === 'GET') {
 
 // ATHLETE routes
 if ($uri === '/api/athletes' && $method === 'GET') {
-    AuthMiddleware::verify();
     $controller = new AthleteController($pdo);
     $controller->index();
     exit;
 }
 
 if (preg_match('#^/api/athletes/(\d+)$#', $uri, $matches) && $method === 'GET') {
-    AuthMiddleware::verify();
     $controller = new AthleteController($pdo);
     $controller->show((int) $matches[1]);
     exit;
@@ -105,6 +103,13 @@ if ($uri === '/api/athletes' && $method === 'POST') {
     AuthMiddleware::verify();
     $controller = new AthleteController($pdo);
     $controller->importFile();
+    exit;
+}
+
+if ($uri === '/api/olympics' && $method === 'POST') {
+    AuthMiddleware::verify();
+    $controller = new AthleteController($pdo);
+    $controller->importOlympicsFile();
     exit;
 }
 

@@ -47,7 +47,7 @@ export function useAthletes(params: UseAthletesParams): UseAthletesResult {
 
         try {
             const queryParams: Record<string, string | number> = {
-                page: params.page,
+                page: params.page,  // offset
                 limit: params.limit
             };
 
@@ -70,10 +70,12 @@ export function useAthletes(params: UseAthletesParams): UseAthletesResult {
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : "Nepodarilo sa načítať dáta";
             setError(message);
+
         } finally {
             setLoading(false);
         }
     }, [params.page, params.limit, params.sort, params.order, params.year, params.discipline]);
+    
 
     useEffect(() => {
         fetchAthletes();

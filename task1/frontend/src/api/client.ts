@@ -15,8 +15,8 @@ const api = axios.create({
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        // if expired session redirect to login
-        if (error.response?.status === 401) {
+        // if expired session redirect to login, but skip for profile check (initial auth)
+        if (error.response?.status === 401 && !error.config?.url?.includes("/user/profile")) {
             window.location.href = "/login";
         }
 

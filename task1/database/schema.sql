@@ -7,7 +7,7 @@ USE app_db;
 -- 1. country
 CREATE TABLE country (
     id INT(11) NOT NULL AUTO_INCREMENT,
-    name VARCHAR(10) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -34,6 +34,7 @@ CREATE TABLE olympics (
     year INT(11) NOT NULL,
     city VARCHAR(80) NOT NULL,
     country_id INT(11) NOT NULL,
+    code VARCHAR(10) DEFAULT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (country_id) REFERENCES country(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

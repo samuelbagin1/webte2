@@ -26,10 +26,11 @@ class AuthController {
 
         // if successful, store user and start session, and record login
         if ($result['success']) {
-            session_start();
+            if (session_status() === PHP_SESSION_NONE) { session_start(); }
             $_SESSION['loggedin'] = true;
             $_SESSION['user_id'] = $result['user']['id'];
             $_SESSION['full_name'] = $result['user']['first_name'] . ' ' . $result['user']['last_name'];
+            $_SESSION['email'] = $result['user']['email'];
 
             recordLogin($this->pdo, $result['user']['id'], 'LOCAL');
 

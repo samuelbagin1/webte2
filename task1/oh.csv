@@ -1,0 +1,41 @@
+﻿type,year,order,city,country,code
+LOH,1896,1,Atény,Grécko,GRC
+LOH,1904,3,St. Louis,Spojené Štáty Americké,USA
+LOH,1912,5,Štokholm,Švédsko,SWE
+LOH,1948,14,Londýn,Spojené Kráľovstvo,GBR
+LOH,1952,15,Helsinki,Fínsko,FIN
+LOH,1956,16,Melbourne,Austrália,AUS
+LOH,1960,17,Rím,Taliansko,ITA
+LOH,1964,18,Tokio,Japonsko,JPN
+LOH,1968,19,Mexiko,Mexiko,MEX
+LOH,1972,20,Mníchov,Nemecko,DEU
+LOH,1976,21,Montreal,Kanada,CAN
+LOH,1980,22,Moskva,Sovietsky zväz,SUN
+LOH,1984,23,Los Angeles,Spojené Štáty Americké,USA
+LOH,1988,24,Soul,Južná Kórea,KOR
+LOH,1992,25,Barcelona,Španielsko,ESP
+LOH,1996,26,Atlanta,Spojené Štáty Americké,USA
+LOH,2000,27,Sydney,Austrália,AUS
+LOH,2004,28,Atény,Grécko,GRC
+LOH,2008,29,Peking/Hongkong,Čína,CHN
+LOH,2012,30,Londýn,Spojené Kráľovstvo,GBR
+LOH,2016,31,Rio de Janeiro,Brazília,BRA
+LOH,2020,32,Tokio,Japonsko,JPN
+LOH,2024,33,Paríž,Francúzsko,FRA
+ZOH,1964,9,Innsbruck,Rakúsko,AUT
+ZOH,1968,10,Grenoble,Francúzsko,FRA
+ZOH,1972,11,Sapporo,Japonsko,JPN
+ZOH,1976,12,Innsbruck,Rakúsko,AUT
+ZOH,1980,13,Lake Placid,Spojené Štáty Americké,USA
+ZOH,1984,14,Sarajevo,Juhoslávia,YUG
+ZOH,1988,15,Calgary,Kanada,CAN
+ZOH,1992,16,Albertville,Francúzsko,FRA
+ZOH,1994,17,Lillehammer,Nórsko,NOR
+ZOH,1998,18,Nagano,Japonsko,JPN
+ZOH,2002,19,Salt Lake City,Spojené Štáty Americké,USA
+ZOH,2006,20,Turín,Taliansko,ITA
+ZOH,2010,21,Vancouver,Kanada,CAN
+ZOH,2014,22,Soči,Rusko,RUS
+ZOH,2018,23,Pjongčang,Kórea,PRK
+ZOH,2022,24,Peking,Čína,CHN
+ZOH,2026,25,Milano/Cortina,Taliansko,ITA
