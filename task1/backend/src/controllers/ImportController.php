@@ -33,7 +33,7 @@ class ImportController {
 
 
     public function delete(): void {
-        
+        // TODO: delete all data
     }
 }
 ?>

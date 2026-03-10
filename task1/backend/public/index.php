@@ -41,6 +41,7 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
 
+
 // AUH routes
 if ($uri === '/api/auth/login' && $method === 'POST') {
     $controller = new AuthController($pdo);
@@ -61,6 +62,11 @@ if ($uri === '/api/auth/logout' && $method === 'POST'){
     exit;
 }
 
+if ($uri === '/api/auth/me' && $method==='GET') {
+    // TODO
+}
+
+
 
 // OAUTH routes
 if ($uri === '/api/auth/google' && $method === 'GET') {
@@ -74,6 +80,7 @@ if ($uri === '/api/auth/google/callback' && $method === 'GET') {
     $controller->handleCallback();
     exit;
 }
+
 
 
 // ATHLETE routes
@@ -99,11 +106,27 @@ if ($uri === '/api/athletes' && $method === 'POST') {
 }
 
 
+
 // USER routes
 if ($uri === '/api/user/profile' && $method === 'GET') {
     AuthMiddleware::verify();
     $controller = new UserController($pdo);
     $controller->profile();
+    exit;
+}
+
+if ($uri === '/api/user/profile' && $method === 'PUT') {
+    // TODO: update name
+    exit;
+}
+
+if ($uri === '/api/user/password' && $method === 'PUT') {
+    // TODO: change password
+    exit;
+}
+
+if ($uri === '/api/user/login-history' && $method === 'GET') {
+    // TODO: fetch login history
     exit;
 }
 
@@ -115,20 +138,36 @@ if ($uri === '/api/user/2fa' && $method === 'POST') {
 }
 
 
+
 // IMPORT routes
-if ($uri === '/api/import' && $method === 'POST') {
+if ($uri === '/api/import/athletes' && $method === 'POST') {
     AuthMiddleware::verify();
     $controller = new ImportController($pdo);
     $controller->import();
     exit;
 }
 
-if ($uri === '/api/import' && $method === 'DELETE') {
+if ($uri === '/api/import/athletes' && $method === 'DELETE') {
     AuthMiddleware::verify();
     $controller = new ImportController($pdo);
     $controller->delete();
     exit;
 }
+
+
+
+// FILTER routes
+if ($uri === '/api/filters/years' && $method === 'GET') {
+    // TODO: available olympic years
+    exit;
+}
+
+if ($uri === '/api/filters/disciplines' && $method === 'GET') {
+    // TODO: available olympic disciplines
+    exit;
+}
+
+
 
 // 404 fallback
 http_response_code(404);

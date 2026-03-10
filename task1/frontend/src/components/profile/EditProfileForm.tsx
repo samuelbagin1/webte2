@@ -43,7 +43,8 @@ export function EditProfileForm() {
                 toast.error("Nepodarilo sa načítať profil");
             }
         };
-        
+
+        fetchProfile();
     }, [reset]);
 
 

@@ -25,19 +25,23 @@ export function CookieConsent() {
 
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4">
-            <Card className="mx-auto max-w-2xl">
+        <>
+            {visible && (
+                <div className="fixed bottom-0 left-0 right-0 z-50 p-4">
+                    <Card className="mx-auto max-w-2xl">
 
-                <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-sm text-muted-foreground">
-                        Táto stránka používa cookies na ukladanie informácií o prihlásení
-                        a zabezpečenie správneho fungovania aplikácie.
-                    </p>
+                        <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+                            <p className="text-sm text-muted-foreground">
+                                Táto stránka používa cookies na ukladanie informácií o prihlásení
+                                a zabezpečenie správneho fungovania aplikácie.
+                            </p>
 
-                    <Button onClick={handleAccept} size="sm" className="shrink-0">Súhlasím</Button>
-                </CardContent>
+                            <Button onClick={handleAccept} size="sm" className="shrink-0">Súhlasím</Button>
+                        </CardContent>
 
-            </Card>
-        </div>
+                    </Card>
+                </div>
+            )}
+        </>
     );
 }
