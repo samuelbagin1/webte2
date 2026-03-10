@@ -30,5 +30,10 @@ class ImportController {
         $imported = importAthletes($this->pdo, $data);
         Response::json(['message' => "Imported $imported records"], 200);
     }
+
+
+    public function delete(): void {
+        
+    }
 }
 ?>

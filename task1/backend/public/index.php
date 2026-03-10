@@ -123,6 +123,13 @@ if ($uri === '/api/import' && $method === 'POST') {
     exit;
 }
 
+if ($uri === '/api/import' && $method === 'DELETE') {
+    AuthMiddleware::verify();
+    $controller = new ImportController($pdo);
+    $controller->delete();
+    exit;
+}
+
 // 404 fallback
 http_response_code(404);
 echo json_encode(['error' => 'Not Found']);
