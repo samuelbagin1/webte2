@@ -13,7 +13,7 @@ function recordLogin(PDO $pdo, int $userId, string $loginType): void {
     ]);
 }
 
-function getByUserId(PDO $pdo, int $userId): array {
+function getHistoryByUserId(PDO $pdo, int $userId): array {
     $stmt = $pdo->prepare("SELECT id, login_type, created_at FROM login_history WHERE user_id = :uid ORDER BY created_at DESC");
     $stmt->execute(['uid' => $userId]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);

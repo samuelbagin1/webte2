@@ -62,10 +62,6 @@ if ($uri === '/api/auth/logout' && $method === 'POST'){
     exit;
 }
 
-if ($uri === '/api/auth/me' && $method==='GET') {
-    // TODO
-}
-
 
 
 // OAUTH routes
@@ -98,10 +94,17 @@ if (preg_match('#^/api/athletes/(\d+)$#', $uri, $matches) && $method === 'GET') 
     exit;
 }
 
+if ($uri === '/api/athletes' && $method === 'DELETE') {
+    AuthMiddleware::verify();
+    $controller = new AthleteController($pdo);
+    $controller->delete();
+    exit;
+}
+
 if ($uri === '/api/athletes' && $method === 'POST') {
     AuthMiddleware::verify();
     $controller = new AthleteController($pdo);
-    $controller->store();
+    $controller->importFile();
     exit;
 }
 
@@ -116,17 +119,23 @@ if ($uri === '/api/user/profile' && $method === 'GET') {
 }
 
 if ($uri === '/api/user/profile' && $method === 'PUT') {
-    // TODO: update name
+    AuthMiddleware::verify();
+    $controller = new UserController($pdo);
+    $controller->updateProfile();
     exit;
 }
 
 if ($uri === '/api/user/password' && $method === 'PUT') {
-    // TODO: change password
+    AuthMiddleware::verify();
+    $controller = new UserController($pdo);
+    $controller->updatePassword();
     exit;
 }
 
 if ($uri === '/api/user/login-history' && $method === 'GET') {
-    // TODO: fetch login history
+    AuthMiddleware::verify();
+    $controller = new UserController($pdo);
+    $controller->loginHistory();
     exit;
 }
 
@@ -139,31 +148,16 @@ if ($uri === '/api/user/2fa' && $method === 'POST') {
 
 
 
-// IMPORT routes
-if ($uri === '/api/import/athletes' && $method === 'POST') {
-    AuthMiddleware::verify();
-    $controller = new ImportController($pdo);
-    $controller->import();
-    exit;
-}
-
-if ($uri === '/api/import/athletes' && $method === 'DELETE') {
-    AuthMiddleware::verify();
-    $controller = new ImportController($pdo);
-    $controller->delete();
-    exit;
-}
-
-
-
 // FILTER routes
 if ($uri === '/api/filters/years' && $method === 'GET') {
-    // TODO: available olympic years
+    $data = getYearsOfOlympics($pdo);
+    Response::json($data, 200);
     exit;
 }
 
 if ($uri === '/api/filters/disciplines' && $method === 'GET') {
-    // TODO: available olympic disciplines
+    $data = getDisciplines($pdo);
+    Response::json($data, 200);
     exit;
 }
 

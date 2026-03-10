@@ -12,6 +12,11 @@ function getAllAthletes(PDO $pdo, int $page, int $limit, string $search, string 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function deleteAllAthletes(PDO $pdo): void {
+    $stmt = $pdo->prepare("DELETE FROM athlete");
+    $stmt->execute();
+}
+
 function getAthleteById(PDO $pdo, int $id): array {
     $stmt = $pdo->prepare("SELECT * FROM athlete WHERE id = :id");
     $stmt->execute([":id" => $id]);

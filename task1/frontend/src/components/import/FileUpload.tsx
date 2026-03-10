@@ -8,7 +8,7 @@ import { Upload } from "lucide-react";
 
 // file input for xlsx/csv
 
-// POST /api/import/athletes
+// POST /api/athletes
 
 
 export function FileUpload() {
@@ -44,7 +44,7 @@ export function FileUpload() {
             const formData = new FormData();
             formData.append("file", file);
 
-            const {data} = await api.post("/import/athletes", formData, {
+            const {data} = await api.post("/athletes", formData, {
                 headers: {"Content-Type": "multipart/form-data"}
             });
 

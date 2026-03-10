@@ -35,4 +35,14 @@ function set2FASecretUser(PDO $pdo, int $userId, string $secret): void {
     $stmt = $pdo->prepare("UPDATE users SET totp_secret = :secret WHERE id = :id");
     $stmt->execute([':secret' => $secret, ':id' => $userId]);
 }
+
+function updateUserProfile(PDO $pdo, int $id, string $firstName, string $lastName): void {
+    $stmt = $pdo->prepare("UPDATE users SET first_name = :first_name, last_name = :last_name WHERE id = :id");
+    $stmt->execute([':first_name' => $firstName, ':last_name' => $lastName, ':id' => $id]);
+}
+
+function updateUserPassword(PDO $pdo, int $id, string $passwordHash): void {
+    $stmt = $pdo->prepare("UPDATE users SET password_hash = :password_hash WHERE id = :id");
+    $stmt->execute([':password_hash' => $passwordHash, ':id' => $id]);
+}
 ?>

@@ -30,36 +30,31 @@ class AthleteController {
         Response::json($data, 200);
     }
 
-    public function store(): void {
-        $data = json_decode(file_get_contents('php://input'), true);
-
-        $name = Sanitizer::sanitizeString($data['name'] ?? '');
-        $surname = Sanitizer::sanitizeString($data['surname'] ?? '');
-        $birthDate = $data['birth_date'] ?? '';
-        $birthPlace = Sanitizer::sanitizeString($data['birth_place'] ?? '');
-        $birthCountry = Sanitizer::sanitizeString($data['birth_country'] ?? '');
-        $deathDate = !empty($data['death_date']) ? $data['death_date'] : null;
-        $deathPlace = !empty($data['death_place']) ? Sanitizer::sanitizeString($data['death_place']) : null;
-        $deathCountry = !empty($data['death_country']) ? Sanitizer::sanitizeString($data['death_country']) : null;
-
-        if (empty($name) || empty($surname) || empty($birthDate) || empty($birthPlace) || empty($birthCountry)) {
-            Response::json(['error' => 'Missing required fields: name, surname, birth_date, birth_place, birth_country'], 400);
+    public function importFile(): void {
+        if (!isset($_FILES['file'])) {
+            Response::json(['error' => 'No file uploaded.'], 400);
             return;
         }
 
-        $id = getOrCreateAthlete(
-            $this->pdo,
-            $name,
-            $surname,
-            new DateTime($birthDate),
-            $birthPlace,
-            $birthCountry,
-            $deathDate ? new DateTime($deathDate) : null,
-            $deathPlace,
-            $deathCountry
-        );
+        $file = $_FILES['file'];
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
 
-        Response::json(['message' => 'Athlete created', 'id' => $id], 201);
+        if ($extension === 'csv') {
+            $data = parseCsvToAssocArray($file['tmp_name']);
+        } elseif (in_array($extension, ['xlsx', 'xls'])) {
+            $data = parseExcelToAssocArray($file['tmp_name']);
+        } else {
+            Response::json(['error' => 'Unsupported file type.'], 400);
+            return;
+        }
+
+        $imported = importAthletes($this->pdo, $data);
+        Response::json(['message' => "Imported $imported records"], 200);
+    }
+
+    public function delete(): void {
+        deleteAllAthletes($this->pdo);
+        Response::json(['message' => "Deleted all data"], 200);
     }
 
     // public function update(): void {

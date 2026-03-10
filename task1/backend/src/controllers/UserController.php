@@ -36,7 +36,52 @@ class UserController {
 
     // update user info
     public function updateProfile(): void {
+        session_start();
+        if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
 
+        $input = json_decode(file_get_contents('php://input'), true);
+        $firstName = Sanitizer::sanitizeString($input['first_name'] ?? '');
+        $lastName = Sanitizer::sanitizeString($input['last_name'] ?? '');
+
+        if (empty($firstName) || empty($lastName)) {
+            Response::json(['error' => 'Meno a priezvisko sú povinné'], 400);
+            return;
+        }
+
+        updateUserProfile($this->pdo, $_SESSION['user_id'], $firstName, $lastName);
+
+        Response::json(['message' => 'Uspesne aktualizovane'], 200);
+    }
+
+    public function updatePassword(): void {
+        session_start();
+        if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $currentPassword = $input['current_password'];
+        $newPassword = $input['new_password'];
+        $newPasswordRepeat = $input['new_password_repeat'];
+
+        if ($newPassword !== $newPasswordRepeat) {
+            Response::json(['error' => 'Not matching passwords'], 401);
+            return;
+        }
+
+        $user = findUserById($this->pdo, $_SESSION['user_id']);
+        if (!password_verify($currentPassword, $user['password_hash'])) {
+            Response::json(['error' => 'Nesprávne aktuálne heslo'], 401);
+            return;
+        }
+
+        $passwordHash = hashPassword($newPassword);
+        updateUserPassword($this->pdo, $_SESSION['user_id'], $passwordHash);
+        Response::json(['message' => 'Uspesne aktualizovane'], 200);
     }
 
     // POST /api/user/profile
@@ -60,6 +105,17 @@ class UserController {
     // verify and enable 2fa
     public function verify2FA(): void {
 
+    }
+
+    public function loginHistory(): void {
+        session_start();
+        if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
+
+        $data = getHistoryByUserId($this->pdo, $_SESSION['user_id']);
+        Response::json($data, 200);
     }
 }
 ?>

@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 
 // delete all olympic data from database
 
-// DELETE /import/athletes
+// DELETE /athletes
 
 export function DeleteDataButton() {
     const [deleting, setDeleting] = useState(false);
@@ -18,7 +18,7 @@ export function DeleteDataButton() {
         setDeleting(true);
 
         try {
-            await api.delete("/import/athletes");
+            await api.delete("/athletes");
             toast.success("Dáta boli úspešne vymazané");
             setOpen(false);
 
