@@ -7,15 +7,14 @@
 // E_ALL znamena, ze sa zobrazia vsetky typy chyb.
 
 // POZOR: Pouzivajte VYHRADNE vo vyvojovom prostredi prostredí (localhost, test server). Pri nasadeni musia byt tieto nastavenia vypnute - zakomentovane.
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+
 
 // Databazove konkfiguracne premenne:
-$hostname = "db";  // adresa servera, kedze DB je na rovnakom zeleze ako Nginx, je tu localhost
+$hostname = "localhost";  // adresa servera, kedze DB je na rovnakom zeleze ako Nginx, je tu localhost
 $database = "app_db";  // nazov databazy - v nasom pripade to bolo ogames_app
-$username = "app_user";  // nazov pouzivatela - ktoreho ste vytvarali cez MariaDB konzolu. Ak ste isli podla navodu, mal by to byt vas login.
-$password = "app_pass";  // heslo, ktore ste zadavali v MariaDB konzole - mali ste si ho zapisat alebo zapamatat.
+$username = "xbagins";  // nazov pouzivatela - ktoreho ste vytvarali cez MariaDB konzolu. Ak ste isli podla navodu, mal by to byt vas login.
+$password = "pass";  // heslo, ktore ste zadavali v MariaDB konzole - mali ste si ho zapisat alebo zapamatat.
+// 
 
 // Funkcia sluzi ako abstrakcia pripojenia k DB – po include ju mozeme zavolat.
 function connectDatabase($hostname, $database, $username, $password) {
