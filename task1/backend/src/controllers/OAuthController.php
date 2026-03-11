@@ -22,7 +22,7 @@ class OAuthController {
 
         $client = new Client();
         $client->setAuthConfig(__DIR__ . '/../../client_secret.json');
-        $client->setRedirectUri('CALLBACK_URI');
+        $client->setRedirectUri('http://localhost:8080/api/auth/google/callback');
         $client->addScope(['email', 'profile']);
         $client->setIncludeGrantedScopes(true);
         $client->setAccessType('offline');
@@ -56,7 +56,7 @@ class OAuthController {
 
         $client = new Client();
         $client->setAuthConfig(__DIR__ . '/../../client_secret.json');
-        $client->setRedirectUri('CALLBACK_URI');
+        $client->setRedirectUri('http://localhost:8080/api/auth/google/callback');
 
         // exchange auth code for access
         $token = $client->fetchAccessTokenWithAuthCode($code);
@@ -86,7 +86,7 @@ class OAuthController {
         recordLogin($this->pdo, $existingUser['id'], 'OAUTH');
 
         // readirect
-        header('Location: ' . filter_var('FRONTEND_URL/dashboard', FILTER_SANITIZE_URL));
+        header('Location: ' . filter_var('http://localhost:5173/dashboard', FILTER_SANITIZE_URL));
         exit;
     }
 }
