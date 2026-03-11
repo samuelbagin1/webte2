@@ -21,7 +21,6 @@ require_once __DIR__ . '/../src/models/loginHistory.php';
 require_once __DIR__ . '/../src/services/authenticate.php';
 require_once __DIR__ . '/../src/services/validate.php';
 require_once __DIR__ . '/../src/services/importService.php';
-require_once __DIR__ . '/../src/services/GoogleOAuthService.php';
 require_once __DIR__ . '/../src/services/TwoFactorService.php';
 
 // Controllers

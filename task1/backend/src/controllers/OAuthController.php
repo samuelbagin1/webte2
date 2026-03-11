@@ -18,8 +18,6 @@ class OAuthController {
     // -> {url}
     // in frontend: window.location.href = url
     public function redirectToGoogle(): void {
-        session_start();
-
         $client = new Client();
         $client->setAuthConfig(__DIR__ . '/../../client_secret.json');
         $client->setRedirectUri('http://localhost:8080/api/auth/google/callback');
@@ -39,8 +37,6 @@ class OAuthController {
     // process Google's callback (code + state), exchange for tokens, create/find user, start session, redirect to React app
     // Google redirects to /api/auth/google/callback?code=...&state=... → backend processes, starts session, redirects to React app (e.g., /dashboard)
     public function handleCallback(): void {
-        session_start();
-
         // verify state
         if (!isset($_GET['state']) || $_GET['state'] !== ($_SESSION['oauth_state'] ?? '')) {
             Response::json(['error' => 'State mismatch.'], 400);
