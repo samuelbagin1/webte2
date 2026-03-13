@@ -22,6 +22,7 @@ class UserController {
         unset($data['password_hash']); // do not return password hash
         unset($data['tfa_secret']); // do not return 2fa secret
 
+        $data['full_name'] = $data['first_name'] . ' ' . $data['last_name'];
         $data['login_type'] = isset($_SESSION['gid']) ? 'OAUTH' : 'LOCAL';
         $data['google_id'] = $_SESSION['gid'] ?? null;
 
