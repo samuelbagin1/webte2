@@ -9,9 +9,24 @@ use RobThree\Auth\TwoFactorAuth;
 class AuthController {
     private PDO $pdo;
 
-    public function __construct(PDO $pdo)
+    public function __construct()
     {
+        global $hostname, $database, $username, $password;
+        $pdo = connectDatabase($hostname, $database, $username, $password);
         $this->pdo = $pdo;
+    }
+
+    public function profile() {
+        AuthMiddleware::verify();
+        $data = findUserById($this->pdo, $_SESSION['user_id']);
+        unset($data['password_hash']); // do not return password hash
+        unset($data['tfa_secret']); // do not return 2fa secret
+
+        $data['full_name'] = $data['first_name'] . ' ' . $data['last_name'];
+        $data['login_type'] = isset($_SESSION['gid']) ? 'OAUTH' : 'LOCAL';
+        $data['google_id'] = $_SESSION['gid'] ?? null;
+
+        Response::json($data, 200);
     }
 
     // POST /api/auth/login
@@ -46,44 +61,11 @@ class AuthController {
     }
 
 
-    // POST /api/auth/register
-    // {first_name, last_name, email, password, password_repeat} -> {message, tfa_secret, qr_code}
-    public function register(): void {
-        $data = json_decode(file_get_contents('php://input'), true);
-        $firstName = Sanitizer::sanitizeString($data['first_name'] ?? '');
-        $lastName = Sanitizer::sanitizeString($data['last_name'] ?? '');
-        $email = Sanitizer::sanitizeEmail($data['email'] ?? '');
-        $password = $data['password'] ?? '';
-        $passwordRepeat = $data['password_repeat'] ?? '';
-
-        // validation of inputs
-        $validation = validateRegistration($email, $password, $passwordRepeat, $firstName, $lastName);
-        if (!$validation['valid']) {
-            Response::json(['error' => $validation['message']], 400);
-            return;
-        }
-
-        // check if user already exists
-        if (findUserByEmail($this->pdo, $email) !== null) {
-            Response::json(['error' => 'User with this email already exists.'], 409);
-            return;
-        }
-
-        $passwordHash = hashPassword($password);
-        $tfa = new TwoFactorAuth(new BaconQrCodeProvider(4, '#ffffff', '#000000', 'svg'));
-        $tfaSecret = $tfa->createSecret();
-        $qrCode = $tfa->getQRCodeImageAsDataUri('Olympic Games APP', $tfaSecret);
-
-        $userId = getOrCreateUser($this->pdo, $firstName, $lastName, $email, $passwordHash, $tfaSecret);
-
-        Response::json(['message' => 'User created.', 'id' => $userId,
-            'tfa_secret' => $tfaSecret, 'qr_code' => $qrCode], 201);
-    }
-
 
     // POST /api/auth/logout
     // {} -> {message}
     function logout(): void {
+        AuthMiddleware::verify();
         session_start();
         $_SESSION = array();
         session_destroy();

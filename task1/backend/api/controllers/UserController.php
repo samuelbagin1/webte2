@@ -2,35 +2,86 @@
 // user profile management for logged-in users
 
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__.'/../../../config.php';
+require_once __DIR__.'/../models/User.php';
+require_once __DIR__.'/../helper/Response.php';
 
 use RobThree\Auth\Providers\Qr\BaconQrCodeProvider;
 use RobThree\Auth\TwoFactorAuth;
 
 class UserController {
     private PDO $pdo;
+    private User $userModel;
 
-    public function __construct(PDO $pdo)
+    public function __construct()
     {
+        global $hostname, $database, $username, $password;
+        $pdo = connectDatabase($hostname, $database, $username, $password);
         $this->pdo = $pdo;
     }
 
-    // GET /api/user/profile
-    // {} -> {full_name, email, created_at, login_type}
-    // get current user profile from session
+    // return all users
+    public function index() {
+
+    }
+
+    // return user by id
+    public function show(int $id) {
+        
+    }
+
+    // POST /api/users
+    // {first_name, last_name, email, password, password_repeat} -> {message, tfa_secret, qr_code}
+    public function create() {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $firstName = Sanitizer::sanitizeString($data['first_name'] ?? '');
+        $lastName = Sanitizer::sanitizeString($data['last_name'] ?? '');
+        $email = Sanitizer::sanitizeEmail($data['email'] ?? '');
+        $password = $data['password'] ?? '';
+        $passwordRepeat = $data['password_repeat'] ?? '';
+
+        // validation of inputs
+        $validation = validateRegistration($email, $password, $passwordRepeat, $firstName, $lastName);
+        if (!$validation['valid']) {
+            Response::json(['error' => $validation['message']], 400);
+            return;
+        }
+
+        // check if user already exists
+        if (findUserByEmail($this->pdo, $email) !== null) {
+            Response::json(['error' => 'User with this email already exists.'], 409);
+            return;
+        }
+
+        $passwordHash = hashPassword($password);
+        $tfa = new TwoFactorAuth(new BaconQrCodeProvider(4, '#ffffff', '#000000', 'svg'));
+        $tfaSecret = $tfa->createSecret();
+        $qrCode = $tfa->getQRCodeImageAsDataUri('Olympic Games APP', $tfaSecret);
+
+        $userId = getOrCreateUser($this->pdo, $firstName, $lastName, $email, $passwordHash, $tfaSecret);
+
+        Response::json(['message' => 'User created.', 'id' => $userId,
+            'tfa_secret' => $tfaSecret, 'qr_code' => $qrCode], 201);
+    }
+
+    // update users profile
+    public function update() {
+        
+    }
+
+    // delete user
+    public function delete() {
+        
+    }
+
+    
     public function profile(): void {
-        $data = findUserById($this->pdo, $_SESSION['user_id']);
-        unset($data['password_hash']); // do not return password hash
-        unset($data['tfa_secret']); // do not return 2fa secret
-
-        $data['full_name'] = $data['first_name'] . ' ' . $data['last_name'];
-        $data['login_type'] = isset($_SESSION['gid']) ? 'OAUTH' : 'LOCAL';
-        $data['google_id'] = $_SESSION['gid'] ?? null;
-
-        Response::json($data, 200);
+        
     }
 
     // update user info
     public function updateProfile(): void {
+        AuthMiddleware::verify();
         $input = json_decode(file_get_contents('php://input'), true);
         $firstName = Sanitizer::sanitizeString($input['first_name'] ?? '');
         $lastName = Sanitizer::sanitizeString($input['last_name'] ?? '');
@@ -46,6 +97,7 @@ class UserController {
     }
 
     public function updatePassword(): void {
+        AuthMiddleware::verify();
         $input = json_decode(file_get_contents('php://input'), true);
         $currentPassword = $input['current_password'];
         $newPassword = $input['new_password'];
@@ -71,6 +123,7 @@ class UserController {
     // {} -> {secret, qr_code}
     // generate 2fa secret and QR code
     public function setup2FA(): void {
+        AuthMiddleware::verify();
         $tfa = new TwoFactorAuth(new BaconQrCodeProvider(4, '#ffffff', '#000000', 'svg'));
         $secret = $tfa->createSecret();
         $qrCode = $tfa->getQRCodeImageAsDataUri('Olympic Games APP', $secret);
@@ -85,6 +138,7 @@ class UserController {
     }
 
     public function loginHistory(): void {
+        AuthMiddleware::verify();
         $data = getHistoryByUserId($this->pdo, $_SESSION['user_id']);
         Response::json($data, 200);
     }

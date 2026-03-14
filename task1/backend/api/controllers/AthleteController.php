@@ -32,6 +32,8 @@ class AthleteController {
     }
 
     public function importFile(): void {
+        AuthMiddleware::verify();
+        
         if (!isset($_FILES['file'])) {
             Response::json(['error' => 'No file uploaded.'], 400);
             return;
@@ -54,6 +56,8 @@ class AthleteController {
     }
 
     public function importOlympicsFile(): void {
+        AuthMiddleware::verify();
+
         if (!isset($_FILES['file'])) {
             Response::json(['error' => 'No file uploaded.'], 400);
             return;
@@ -76,6 +80,7 @@ class AthleteController {
     }
 
     public function delete(): void {
+        AuthMiddleware::verify();
         deleteAllAthletes($this->pdo);
         Response::json(['message' => "Deleted all data"], 200);
     }
