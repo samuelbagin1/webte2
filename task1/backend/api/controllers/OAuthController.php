@@ -14,7 +14,7 @@ class OAuthController {
     }
 
     // generate Google OAuth consent URL with CSRF state, return URL as JSON for React to redirect
-    // GET /api/auth/google
+    // GET /auth/google
     // -> {url}
     // in frontend: window.location.href = url
     public function redirectToGoogle(): void {
@@ -36,6 +36,8 @@ class OAuthController {
 
     // process Google's callback (code + state), exchange for tokens, create/find user, start session, redirect to React app
     // Google redirects to /api/auth/google/callback?code=...&state=... → backend processes, starts session, redirects to React app (e.g., /dashboard)
+    // GET /google/callback
+    // {} -> {}
     public function handleCallback(): void {
         // verify state
         if (!isset($_GET['state']) || $_GET['state'] !== ($_SESSION['oauth_state'] ?? '')) {

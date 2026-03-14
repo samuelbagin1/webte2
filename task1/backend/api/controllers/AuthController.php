@@ -16,6 +16,11 @@ class AuthController {
         $this->pdo = $pdo;
     }
 
+
+    // get current user profile
+    // authenticate
+    // GET /auth/profile
+    // {} -> {full_name. login_tupe. google_id}
     public function profile() {
         AuthMiddleware::verify();
         $data = findUserById($this->pdo, $_SESSION['user_id']);
@@ -29,7 +34,7 @@ class AuthController {
         Response::json($data, 200);
     }
 
-    // POST /api/auth/login
+    // POST /auth/login
     // {email, password, totp} -> {message, user}
     public function login(): void {
         $data = json_decode(file_get_contents('php://input'), true);
@@ -61,8 +66,8 @@ class AuthController {
     }
 
 
-
-    // POST /api/auth/logout
+    // authenticate
+    // POST /auth/logout
     // {} -> {message}
     function logout(): void {
         AuthMiddleware::verify();

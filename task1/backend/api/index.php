@@ -21,36 +21,41 @@ $router->get("/auth/google/callback", [OAuthController::class, "handleCallback"]
 // ATHLETE routes
 $router->get("/athletes", [AthleteController::class, "index"]);
 $router->get("/athletes/{id}", [AthleteController::class, "show"]);
+$router->post("/athletes", [AthleteController::class, "create"]);
+$router->post("/athletes/batch", [AthleteController::class, "createBatch"]);
+$router->post("/athletes/import", [AthleteController::class, "import"]); 
+$router->put("/athletes/{id}", [AthleteController::class, "update"]);  
 $router->delete("/athletes/{id}", [AthleteController::class, "delete"]);
-$router->delete("/athletes", [AthleteController::class, "delete"]);
-$router->post("/athletes", [AthleteController::class, "importFile"]);
-$router->post("/athletes/{id}", [AthleteController::class, "importFile"]);   // TODO
-$router->post("/olympics", [AthleteController::class, "importOlympicsFile"]); 
-$router->post("/olympics/{id}", [AthleteController::class, "importOlympicsFile"]);   // TODO
+$router->delete("/athletes", [AthleteController::class, "deleteAll"]);
+
+
+// OLYMPICS routes
+$router->get("/olympics", [OlympicsController::class, "index"]);
+$router->get("/olympics/{id}", [OlympicsController::class, "show"]);
+$router->post("/olympics", [OlympicsController::class, "create"]);
+$router->post("/olympics/import", [OlympicsController::class, "import"]);
+$router->delete("/olympics/{id}", [OlympicsController::class, "delete"]);
 
 
 // USER routes
 $router->post("/users", [UserController::class, "create"]);
 $router->get("/users", [UserController::class, "index"]);
-$router->put("/users/{id}/profile", [UserController::class, "updateProfile"]);  // old: /api/user/profile
+$router->get("/users/{id}", [UserController::class, "show"]);
+$router->put("/users/{id}", [UserController::class, "update"]);  // old: /api/user/profile
 $router->put("/users/{id}/password", [UserController::class, "updatePassword"]); 
+$router->delete("/users/{id}", [UserController::class, "delete"]); 
 $router->get("/users/{id}/login-history", [UserController::class, "loginHistory"]); 
 $router->post("/users/{id}/2fa", [UserController::class, "setup2FA"]); 
 
 
 
 // FILTER routes
-if ($uri === '/api/filters/years' && $method === 'GET') {
-    $data = getYearsOfOlympics($pdo);
-    Response::json($data, 200);
-    exit;
-}
+$router->get("/filters/years", [FilterController::class, "years"]); // getYearsOfOlympics($pdo)
+$router->get("/filters/years", [FilterController::class, "disciplines"]);   // getDisciplines($pdo)
 
-if ($uri === '/api/filters/disciplines' && $method === 'GET') {
-    $data = getDisciplines($pdo);
-    Response::json($data, 200);
-    exit;
-}
+
+// API docs
+$router->get("/docs", docs);
 
 $router->run();
 
