@@ -48,7 +48,7 @@ class Discipline {
 
 
     public function getAll(): array {
-        $stmt = $this->pdo->query("SELECT * FROM discipline ORDER BY name");
+        $stmt = $this->pdo->query("SELECT name FROM discipline ORDER BY name");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

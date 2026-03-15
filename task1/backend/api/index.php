@@ -56,11 +56,15 @@ $router->post("/users/{id}/2fa", [UserController::class, "setup2FA"]);
 
 // FILTER routes
 $router->get("/filters/years", [FilterController::class, "years"]); // getYearsOfOlympics($pdo)
-$router->get("/filters/years", [FilterController::class, "disciplines"]);   // getDisciplines($pdo)
+$router->get("/filters/disciplines", [FilterController::class, "disciplines"]);   // getDisciplines($pdo)
 
 
 // API docs
-// $router->get("/docs", docs);
+$router->get("/docs", function () {
+    header('Content-Type: text/html');
+    readfile(__DIR__ . '/docs.html');
+    exit;
+});
 
 $router->run();
 

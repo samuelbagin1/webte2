@@ -22,7 +22,7 @@ class FilterController {
 
     // get all disciplines
     // GET /filters/disciplines
-    // {} -> {[{id, name}]}
+    // {} -> {[name]}
     public function disciplines() {
         $data = $this->disciplineModel->getAll();
         if (!$data) Response::json(['error' => 'Could not fetch disciplines from database'], 500);

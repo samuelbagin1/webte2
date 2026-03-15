@@ -66,9 +66,14 @@ class Router {
 
             if (preg_match($pattern, $uri, $matches)) {
                 array_shift($matches);
-                [$class, $function] = $route["handler"];
-                $controller = new $class;
+                $handler = $route["handler"];
 
+                if (is_callable($handler) && !is_array($handler)) {
+                    return call_user_func_array($handler, $matches);
+                }
+
+                [$class, $function] = $handler;
+                $controller = new $class;
                 return call_user_func_array([$controller, $function], $matches);
             }
         }
