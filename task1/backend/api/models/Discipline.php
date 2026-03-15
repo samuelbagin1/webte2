@@ -40,6 +40,13 @@ class Discipline {
     }
 
 
+    public function getByName(string $name): int {
+        $stmt = $this->pdo->prepare("SELECT id FROM discipline WHERE name = :name");
+        $stmt->execute([':name' => $name]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+
     public function getAll(): array {
         $stmt = $this->pdo->query("SELECT * FROM discipline ORDER BY name");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

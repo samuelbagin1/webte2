@@ -17,7 +17,7 @@ class OAuthController {
         $this->loginHistoryModel = new LoginHistory($pdo);
     }
 
-    
+
     // generate Google OAuth consent URL with CSRF state, return URL as JSON for React to redirect
     // GET /auth/google
     // -> {url}
@@ -42,7 +42,7 @@ class OAuthController {
 
     // process Google's callback (code + state), exchange for tokens, create/find user, start session, redirect to React app
     // Google redirects to /api/auth/google/callback?code=...&state=... → backend processes, starts session, redirects to React app (e.g., /dashboard)
-    // GET /google/callback
+    // GET /auth/google/callback
     // {} -> {}
     public function handleCallback(): void {
         // verify state
@@ -74,7 +74,7 @@ class OAuthController {
         $existingUser = $this->userModel->getByEmail($accountInfo->email);
         if (!$existingUser) {
             $names = explode(' ', $accountInfo->name, 2);
-            $this->userModel->getById($names[0] ?? '', $names[1] ?? '', $accountInfo->email, null, null);
+            $this->userModel->getOrCreate($names[0] ?? '', $names[1] ?? '', $accountInfo->email, null, null);
             $existingUser = $this->userModel->getByEmail($accountInfo->email);
         }
 

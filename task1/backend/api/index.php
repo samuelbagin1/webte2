@@ -19,12 +19,17 @@ $router->get("/auth/google/callback", [OAuthController::class, "handleCallback"]
 
 
 // ATHLETE routes
+$router->get("/athletes/records", [AthleteController::class, "indexRecord"]);
+$router->get("/athletes/records/{id}", [AthleteController::class, "showRecord"]);
 $router->get("/athletes", [AthleteController::class, "index"]);
 $router->get("/athletes/{id}", [AthleteController::class, "show"]);
 $router->post("/athletes", [AthleteController::class, "create"]);
 $router->post("/athletes/batch", [AthleteController::class, "createBatch"]);
+$router->post("/athletes/{id}/record", [AthleteController::class, "createRecord"]);
+$router->post("/athletes/batch/record", [AthleteController::class, "createBatchRecord"]);
 $router->post("/athletes/import", [AthleteController::class, "import"]); 
 $router->put("/athletes/{id}", [AthleteController::class, "update"]);  
+$router->put("/athletes/{id}/record", [AthleteController::class, "updateRecord"]);  
 $router->delete("/athletes/{id}", [AthleteController::class, "delete"]);
 $router->delete("/athletes", [AthleteController::class, "deleteAll"]);
 

@@ -22,6 +22,38 @@ class AthleteController {
     }
 
 
+    // return all athlete records by (paginated, fiilterable, sortable)
+    // GET /athletes/records
+    // {} -> {}
+    public function indexRecord(): void {
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
+        $sort = $_GET['sort'] ?? 'surname';
+        $order = $_GET['order'] ?? 'ASC';
+        $type = isset($_GET['type']) ? $_GET['type'] : null;
+        $year = isset($_GET['year']) ? (int) $_GET['year'] : null;
+        $placing = isset($_GET['placing']) ? (int) $_GET['placing'] : null;
+        $disciplineId = isset($_GET['discipline']) ? (int) $this->disciplineModel->getByName($_GET['discipline']) : null;
+
+        $result = $this->athleteRecordModel->getAll($page, $limit, $sort, $order, $type, $year, $placing, $disciplineId);
+        Response::json($result, 200);
+    }
+
+
+    // get single athlete record with all records by id
+    // GET /athletes/records/{id}
+    // {} -> {}
+    public function showRecord(int $id): void {
+        $data = $this->athleteRecordModel->getById($id);
+        if (!$data) {
+            Response::json(['error' => 'Athlete not found.'], 404);
+            return;
+        }
+
+        Response::json($data, 200);
+    }
+
+
     // return all athletes by (paginated, fiilterable, sortable)
     // GET /athletes
     // {} -> {}
@@ -208,8 +240,6 @@ class AthleteController {
         AuthMiddleware::verify();
 
         $data = json_decode(file_get_contents('php://input'), true);
-        // $this->olympicsModel->update();
-        // $this->disciplineModel->update();
         $this->athleteRecordModel->update($id, $data['olympics_id'], $data['discipline_id'], $data['placing']);
 
         Response::json(['message' => 'Successfullu updated athlete info'], 200);

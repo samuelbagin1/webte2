@@ -31,9 +31,63 @@ class AthleteRecord {
     }
 
 
-    public function getAll(): array {
-        $stmt = $this->pdo->query("SELECT * FROM athlete_record ORDER BY athlete_id");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getAll(int $page, int $limit, string $sort = 'a.surname', string $order = 'ASC', ?string $type = null, ?int $year = null, ?int $placing = null, ?string $disciplineId = null): array {
+        $allowedSorts = ['name' => 'a.name', 'surname' => 'a.surname', 'year' => 'o.year', 'discipline' => 'd.name', 'placing' => 'ar.placing', 'city' => 'o.city', 'type' => 'o.type'];
+        $sortCol = $allowedSorts[$sort] ?? 'a.surname';
+        $order = $order === 'DESC' ? 'DESC' : 'ASC';
+
+        $where = "";
+        $params = [];
+
+        // filter by year, discipline, type LOH/ZOH, placing
+        if ($year !== null) {
+            $where .= !empty($where) ? ' AND o.year = :year' : 'o.year = :year';
+            $params[':year'] = $year;
+        }
+
+        if ($disciplineId !== null) {
+            $where .= !empty($where) ? ' AND d.id = :discipline' : 'd.id = :discipline';
+            $params[':discipline'] = $disciplineId;
+        }
+
+        if ($type !== null) {
+            $where .= !empty($where) ? ' AND o.type = :type' : 'o.type = :type';
+            $params[':type'] = $type;
+        }
+
+        if ($placing !== null) {
+            $where .= !empty($where) ? ' AND ar.placing = :placing' : 'ar.placing = :placing';
+            $params[':placing'] = $placing;
+        }
+
+        $whereSQL = !empty($where) ? ' WHERE ' . $where : '';
+
+        $baseQuery = "FROM athlete_record ar
+            JOIN athlete a ON ar.athlete_id = a.id
+            JOIN olympics o ON ar.olympics_id = o.id
+            JOIN discipline d ON ar.discipline_id = d.id
+            LEFT JOIN country c ON o.country_id = c.id
+            $whereSQL";
+
+        // count total
+        $countStmt = $this->pdo->prepare("SELECT COUNT(*) $baseQuery");
+        $countStmt->execute($params);
+        $total = (int) $countStmt->fetchColumn();
+
+        // fetch data
+        $dataSQL = "SELECT a.id, a.name, a.surname, o.year, o.type, o.city, c.name AS country, d.name AS discipline, ar.placing $baseQuery ORDER BY $sortCol $order";
+
+        // set limit and offset
+        if ($limit > 0) {
+            $offset = ($page - 1) * $limit;
+            $dataSQL .= " LIMIT $limit OFFSET $offset";
+        }
+
+        $stmt = $this->pdo->prepare($dataSQL);
+        $stmt->execute($params);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return ['data' => $data, 'total' => $total];
     }
 
 

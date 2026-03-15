@@ -98,7 +98,7 @@ class UserController {
             return;
         }
 
-        $this->userModel->update($_SESSION['user_id'], $firstName, $lastName);
+        $this->userModel->update($id, $firstName, $lastName);
 
         Response::json(['message' => 'Uspesne aktualizovane'], 200);
     }
@@ -108,7 +108,7 @@ class UserController {
     // authenticate
     // PUT /users/{id}/password
     // {} -> {}
-    public function updatePassword(): void {
+    public function updatePassword($id): void {
         AuthMiddleware::verify();
         $input = json_decode(file_get_contents('php://input'), true);
         $currentPassword = $input['current_password'];
@@ -120,7 +120,7 @@ class UserController {
             return;
         }
 
-        $user = $this->userModel->getById($_SESSION['user_id']);
+        $user = $this->userModel->getById($id);
         if (!password_verify($currentPassword, $user['password_hash'])) {
             Response::json(['error' => 'Nesprávne aktuálne heslo'], 401);
             return;
@@ -128,7 +128,7 @@ class UserController {
 
         $auth = new Authentication();
         $passwordHash = $auth->hashPassword($newPassword);
-        $this->userModel->updatePassword($_SESSION['user_id'], $passwordHash);
+        $this->userModel->updatePassword($id, $passwordHash);
         Response::json(['message' => 'Uspesne aktualizovane'], 200);
     }
 

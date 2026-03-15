@@ -16,6 +16,10 @@ $username = "xbagins";  // nazov pouzivatela - ktoreho ste vytvarali cez MariaDB
 $password = "pass";  // heslo, ktore ste zadavali v MariaDB konzole - mali ste si ho zapisat alebo zapamatat.
 // 
 
+$callbackRedirectUri = "https://node22.webte.fei.stuba.sk/api/auth/google/callback";
+$redirectToDashboard = "https://node22.webte.fei.stuba.sk/dashboard";
+
+
 // Funkcia sluzi ako abstrakcia pripojenia k DB – po include ju mozeme zavolat.
 function connectDatabase($hostname, $database, $username, $password) {
     try {
