@@ -20,6 +20,7 @@ function detectCsvDelimiter(string $filePath): string
     return array_key_first($delimiters);
 }
 
+
 function parseCsvToAssocArray(string $filePath, ?string $delimiter = null): array
 {
     if (!file_exists($filePath)) {
@@ -62,6 +63,7 @@ function parseCsvToAssocArray(string $filePath, ?string $delimiter = null): arra
     return $data;
 }
 
+
 function parseExcelToAssocArray(string $filePath): array {
     if (!file_exists($filePath)) {
         throw new Exception("File does not exist: $filePath");
@@ -91,6 +93,14 @@ function parseExcelToAssocArray(string $filePath): array {
     return $data;
 }
 
+
+function parseJsonToAssocArray(string $filePath): array {
+    $array = [];
+
+    return $array;
+}
+
+
 function parseDate(string $dateStr): ?DateTime {
     $dateStr = trim($dateStr);
     if (empty($dateStr)) return null;
@@ -111,81 +121,7 @@ function parseDate(string $dateStr): ?DateTime {
     }
 }
 
-function importAthletes(PDO $pdo, array $data): int {
-    $imported = 0;
 
-    foreach ($data as $row) {
-        // Povinne udaje sportovca (podporuje alt nazvy stlpcov z people.csv)
-        $name = trim($row['name'] ?? '');
-        $surname = trim($row['surname'] ?? '');
-        $birthDate = trim($row['birth_date'] ?? $row['birth_day'] ?? '');
-        $birthPlace = trim($row['birth_place'] ?? '');
-        $birthCountry = trim($row['birth_country'] ?? '');
 
-        $parsedBirthDate = parseDate($birthDate);
-        if (empty($name) || empty($surname) || $parsedBirthDate === null || empty($birthCountry)) continue;
 
-        // Volitelne udaje o umrti (podporuje alt nazvy stlpcov)
-        $deathDateStr = trim($row['death_date'] ?? $row['death_day'] ?? '');
-        $deathPlace = !empty($row['death_place']) ? trim($row['death_place']) : null;
-        $deathCountry = !empty($row['death_country']) ? trim($row['death_country']) : null;
-
-        // Vytvorenie alebo ziskanie sportovca
-        $athleteId = getOrCreateAthlete(
-            $pdo,
-            $name,
-            $surname,
-            $parsedBirthDate,
-            $birthPlace,
-            $birthCountry,
-            !empty($deathDateStr) ? parseDate($deathDateStr) : null,
-            $deathPlace,
-            $deathCountry
-        );
-
-        // Udaje o olympiade (ak su v riadku pritomne)
-        $year = $row['year'] ?? $row['olympics_year'] ?? $row['oh_year'] ?? null;
-        $type = $row['type'] ?? $row['olympics_type'] ?? $row['oh_type'] ?? null;
-        $city = $row['city'] ?? $row['olympics_city'] ?? $row['oh_city'] ?? null;
-        $olympicsCountry = $row['olympics_country'] ?? $row['country'] ?? $row['oh_country'] ?? null;
-
-        if (!empty($year) && !empty($type) && !empty($city) && !empty($olympicsCountry)) {
-            $olympicsCountryId = getOrCreateCountry($pdo, trim($olympicsCountry));
-            $olympicsId = getOrCreateOlympics($pdo, (int)$year, trim($type), trim($city), $olympicsCountryId);
-
-            // Disciplina a umiestnenie
-            $discipline = $row['discipline'] ?? null;
-            $placing = $row['placing'] ?? null;
-
-            if (!empty($discipline) && !empty($placing)) {
-                $disciplineId = getOrCreateDiscipline($pdo, trim($discipline));
-                getOrCreateAthleteRecord($pdo, $athleteId, $olympicsId, $disciplineId, (int)$placing);
-            }
-        }
-
-        $imported++;
-    }
-
-    return $imported;
-}
-function importOlympics(PDO $pdo, array $data): int {
-    $imported = 0;
-
-    foreach ($data as $row) {
-        $type = trim($row['type'] ?? '');
-        $year = trim($row['year'] ?? '');
-        $city = trim($row['city'] ?? '');
-        $country = trim($row['country'] ?? '');
-        $code = trim($row['code'] ?? '');
-
-        if (empty($type) || empty($year) || empty($city) || empty($country)) continue;
-
-        $countryId = getOrCreateCountry($pdo, $country);
-        getOrCreateOlympics($pdo, (int)$year, $type, $city, $countryId, $code ?: null);
-
-        $imported++;
-    }
-
-    return $imported;
-}
 ?>

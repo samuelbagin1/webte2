@@ -70,7 +70,8 @@ class UserController {
             return;
         }
 
-        $passwordHash = hashPassword($password);
+        $auth = new Authentication();
+        $passwordHash = $auth->hashPassword($password);
         $tfa = new TwoFactorAuth(new BaconQrCodeProvider(4, '#ffffff', '#000000', 'svg'));
         $tfaSecret = $tfa->createSecret();
         $qrCode = $tfa->getQRCodeImageAsDataUri('Olympic Games APP', $tfaSecret);
@@ -125,7 +126,8 @@ class UserController {
             return;
         }
 
-        $passwordHash = hashPassword($newPassword);
+        $auth = new Authentication();
+        $passwordHash = $auth->hashPassword($newPassword);
         $this->userModel->updatePassword($_SESSION['user_id'], $passwordHash);
         Response::json(['message' => 'Uspesne aktualizovane'], 200);
     }
@@ -136,7 +138,9 @@ class UserController {
     // DELETE /users/{id}
     // {} -> {}
     public function delete($id) {
-        
+        AuthMiddleware::verify();
+        $this->userModel->delete($id);
+        Response::json(['message' => 'Successfully deleted user!'], 200);
     }
 
     
@@ -161,7 +165,7 @@ class UserController {
     // {} -> {}
     public function loginHistory(): void {
         AuthMiddleware::verify();
-        $data = $this->loginHistoryModel->getByUserId($_SESSION['user_id']);
+        $data = $this->loginHistoryModel->getById($_SESSION['user_id']);
         Response::json($data, 200);
     }
 }

@@ -6,13 +6,18 @@ use Google\Client;
 use Google\Service\Oauth2;
 
 class OAuthController {
-    private PDO $pdo;
+    private User $userModel;
+    private LoginHistory $loginHistoryModel;
 
     public function __construct(PDO $pdo)
     {
-        $this->pdo = $pdo;
+        global $hostname, $database, $username, $password;
+        $pdo = connectDatabase($hostname, $database, $username, $password);
+        $this->userModel = new User($pdo);
+        $this->loginHistoryModel = new LoginHistory($pdo);
     }
 
+    
     // generate Google OAuth consent URL with CSRF state, return URL as JSON for React to redirect
     // GET /auth/google
     // -> {url}
@@ -33,6 +38,7 @@ class OAuthController {
         $authUrl = $client->createAuthUrl();
         Response::json(['url' => $authUrl], 200);
     }
+
 
     // process Google's callback (code + state), exchange for tokens, create/find user, start session, redirect to React app
     // Google redirects to /api/auth/google/callback?code=...&state=... → backend processes, starts session, redirects to React app (e.g., /dashboard)
@@ -65,11 +71,11 @@ class OAuthController {
         $accountInfo = $oauth->userinfo->get();
 
         // find or create user in database
-        $existingUser = findUserByEmail($this->pdo, $accountInfo->email);
+        $existingUser = $this->userModel->getByEmail($accountInfo->email);
         if (!$existingUser) {
             $names = explode(' ', $accountInfo->name, 2);
-            getOrCreateUser($this->pdo, $names[0] ?? '', $names[1] ?? '', $accountInfo->email, null, null);
-            $existingUser = findUserByEmail($this->pdo, $accountInfo->email);
+            $this->userModel->getById($names[0] ?? '', $names[1] ?? '', $accountInfo->email, null, null);
+            $existingUser = $this->userModel->getByEmail($accountInfo->email);
         }
 
         // start session
@@ -81,7 +87,7 @@ class OAuthController {
         $_SESSION['gid'] = $accountInfo->id;
 
         // record login
-        recordLogin($this->pdo, $existingUser['id'], 'OAUTH');
+        $this->loginHistoryModel->record($existingUser['id'], 'OAUTH');
 
         // readirect
         header('Location: ' . filter_var('https://node22.webte.fei.stuba.sk/dashboard', FILTER_SANITIZE_URL));

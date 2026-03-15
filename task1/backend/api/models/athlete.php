@@ -9,7 +9,7 @@ class Athlete {
     }
 
 
-    public function getAll(int $page, int $limit, string $sort = 'a.surname', string $order = 'ASC', ?int $year = null, ?int $discipline = null, ?string $type, ?string $placing): array {
+    public function getAll(int $page, int $limit, string $sort = 'a.surname', string $order = 'ASC', ?int $year = null, ?int $discipline = null, ?string $type = null, ?string $placing = null): array {
         // sorting helper
         $allowedSorts = ['name' => 'a.name', 'surname' => 'a.surname', 'year' => 'o.year', 'discipline' => 'd.name', 'placing' => 'ar.placing', 'city' => 'o.city', 'type' => 'o.type'];
         $sortCol = $allowedSorts[$sort] ?? 'a.surname';

@@ -1,20 +1,35 @@
 <?php 
 
 class OlympicsController {
+    private Olympics $olympicsModel;
+    private Country $countryModel;
+    public function __construct()
+    {
+        global $hostname, $database, $username, $password;
+        $pdo = connectDatabase($hostname, $database, $username, $password);
+        $this->olympicsModel = new Olympics($pdo);
+        $this->countryModel = new Country($pdo);
+    }
 
     // list all olympics events
     // GET /olympics
     // {} -> {}
     public function index() {
-
+        $data = $this->olympicsModel->getAll();
+        
+        if (!$data) Response::json(['error' => 'Could not fetch data from database!'], 400);
+        Response::json($data, 200);
     }
 
 
     // get single olympics event
     // GET /olympics/{id}
     // {} -> {}
-    public function show() {
-
+    public function show($id) {
+        $data = $this->olympicsModel->getById($id);
+        
+        if (!$data) Response::json(['error' => 'Could not fetch data from database!'], 400);
+        Response::json($data, 200);
     }
 
 
@@ -23,6 +38,25 @@ class OlympicsController {
     // POST /olympics
     // {} -> {}
     public function create() {
+        AuthMiddleware::verify();
+
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        $name = trim($data['host_country']);
+        $type = $data['type'];
+        $year = (int) $data['year'];
+        $city = trim($data['city']);
+        $code = trim($data['code']);
+
+        try {
+            $countryId = $this->countryModel->getOrCreate($name);
+            $olympicsId = $this->olympicsModel->getOrCreate($type, $year, $city, $countryId, $code);
+
+        } catch (Exception $e) {
+            Response::json(['error' => $e], 400);
+        }
+
+        Response::json(['message' => 'Successfully created olympics.'], 200);
 
     }
 
@@ -50,7 +84,7 @@ class OlympicsController {
             return;
         }
 
-        $imported = importOlympics($this->pdo, $data);
+        $imported = $this->importData($data);
         Response::json(['message' => "Imported $imported olympics records"], 200);
     }
 
@@ -58,10 +92,34 @@ class OlympicsController {
     // authenticate
     // DELETE /olympics/{id}
     // {} -> {}
-    public function delete() {
+    public function delete($id) {
+        AuthMiddleware::verify();
+        $this->olympicsModel->delete($id);
+        Response::json(['message' => 'Successfully deleted olympics!'], 200);
 
     }
 
+
+    private function importData(array $data): int {
+        $imported = 0;
+
+        foreach ($data as $row) {
+            $type = trim($row['type'] ?? '');
+            $year = trim($row['year'] ?? '');
+            $city = trim($row['city'] ?? '');
+            $country = trim($row['country'] ?? '');
+            $code = trim($row['code'] ?? '');
+
+            if (empty($type) || empty($year) || empty($city) || empty($country)) continue;
+
+            $countryId = $this->countryModel->getOrCreate($country);
+            $this->olympicsModel->getOrCreate((int)$year, $type, $city, $countryId, $code ?: null);
+
+            $imported++;
+        }
+
+        return $imported;
+    }
 }
 
 ?>

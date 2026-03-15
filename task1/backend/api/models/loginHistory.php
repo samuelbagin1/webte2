@@ -22,7 +22,7 @@ class LoginHistory {
     }
 
 
-    public function getByUserId(int $userId): array {
+    public function getById(int $userId): array {
         $stmt = $this->pdo->prepare("SELECT id, method AS login_type, login_at AS created_at FROM login_history WHERE user_id = :uid ORDER BY login_at DESC");
         $stmt->execute(['uid' => $userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -7,13 +7,15 @@ use RobThree\Auth\Providers\Qr\BaconQrCodeProvider;
 use RobThree\Auth\TwoFactorAuth;
 
 class AuthController {
-    private PDO $pdo;
+    private User $userModel;
+    private LoginHistory $loginHistoryModel;
 
     public function __construct()
     {
         global $hostname, $database, $username, $password;
         $pdo = connectDatabase($hostname, $database, $username, $password);
-        $this->pdo = $pdo;
+        $this->userModel = new User($pdo);
+        $this->loginHistoryModel = new LoginHistory($pdo);
     }
 
 
@@ -23,7 +25,7 @@ class AuthController {
     // {} -> {full_name. login_tupe. google_id}
     public function profile() {
         AuthMiddleware::verify();
-        $data = findUserById($this->pdo, $_SESSION['user_id']);
+        $data = $this->userModel->getById($_SESSION['user_id']);
         unset($data['password_hash']); // do not return password hash
         unset($data['tfa_secret']); // do not return 2fa secret
 
@@ -42,7 +44,8 @@ class AuthController {
         $password = $data['password'] ?? '';
         $totp = $data['totp'] ?? '';
 
-        $result = authenticate($this->pdo, $email, $password, $totp);
+        $auth = new Authentication();
+        $result = $auth->authenticate($this->userModel, $email, $password, $totp);
 
         // if successful, store user and start session, and record login
         if ($result['success']) {
@@ -52,7 +55,7 @@ class AuthController {
             $_SESSION['full_name'] = $result['user']['first_name'] . ' ' . $result['user']['last_name'];
             $_SESSION['email'] = $result['user']['email'];
 
-            recordLogin($this->pdo, $result['user']['id'], 'LOCAL');
+            $this->loginHistoryModel->record($result['user']['id'], 'LOCAL');
 
             Response::json(['message' => 'Login successful', 'user' => [
                 'full_name' => $_SESSION['full_name'],
