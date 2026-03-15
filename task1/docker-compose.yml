@@ -14,10 +14,22 @@ services:
   php:
     build: .
     container_name: dev_php
+    command: >
+      sh -c "composer install --working-dir=/var/www/html && php-fpm"
     volumes:
       - ./backend:/var/www/html
     depends_on:
       - db
+
+  frontend:
+    image: node:22-alpine
+    container_name: dev_frontend
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
 
   db:
     image: mariadb:11
@@ -41,8 +53,8 @@ services:
       - "8081:80"
     environment:
       PMA_HOST: db
-      PMA_USER: app_user
-      PMA_PASSWORD: app_pass
+      PMA_USER: xbagins
+      PMA_PASSWORD: pass
     depends_on:
       - db
 
