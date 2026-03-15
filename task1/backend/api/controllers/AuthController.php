@@ -24,8 +24,8 @@ class AuthController {
     // GET /auth/profile
     // {} -> {id, first_name, last_name, email, full_name, login_type, google_id}
     public function profile() {
-        AuthMiddleware::verify();
-        $data = $this->userModel->getById($_SESSION['user_id']);
+        $userId = AuthMiddleware::verify();
+        $data = $this->userModel->getById($userId);
         unset($data['password_hash']); // do not return password hash
         unset($data['tfa_secret']); // do not return 2fa secret
 
@@ -47,7 +47,7 @@ class AuthController {
         $auth = new Authentication();
         $result = $auth->authenticate($this->userModel, $email, $password, $totp);
 
-        // if successful, store user and start session, and record login
+        // if successful, store user and start session, generate JWT, and record login
         if ($result['success']) {
             if (session_status() === PHP_SESSION_NONE) { session_start(); }
             $_SESSION['loggedin'] = true;
@@ -55,9 +55,16 @@ class AuthController {
             $_SESSION['full_name'] = $result['user']['first_name'] . ' ' . $result['user']['last_name'];
             $_SESSION['email'] = $result['user']['email'];
 
+            $jwt = new JwtService();
+            $accessToken = $jwt->generateAccessToken($result['user']);
+            $refreshToken = $jwt->generateRefreshToken($result['user']);
+
             $this->loginHistoryModel->record($result['user']['id'], 'LOCAL');
 
-            Response::json(['message' => 'Login successful', 'user' => [
+            Response::json(['message' => 'Login successful',
+                'access_token' => $accessToken,
+                'refresh_token' => $refreshToken,
+                'user' => [
                 'full_name' => $_SESSION['full_name'],
                 'email' => $_SESSION['email']
             ]], 200);
@@ -74,7 +81,6 @@ class AuthController {
     // {} -> {message}
     function logout(): void {
         AuthMiddleware::verify();
-        session_start();
         $_SESSION = array();
         session_destroy();
         Response::json(['message' => 'Logged out.'], 200);

@@ -9,7 +9,7 @@ class OAuthController {
     private User $userModel;
     private LoginHistory $loginHistoryModel;
 
-    public function __construct(PDO $pdo)
+    public function __construct()
     {
         global $hostname, $database, $username, $password;
         $pdo = connectDatabase($hostname, $database, $username, $password);
@@ -91,9 +91,14 @@ class OAuthController {
         // record login
         $this->loginHistoryModel->record($existingUser['id'], 'OAUTH');
 
-        // readirect
+        // generate JWT tokens
+        $jwt = new JwtService();
+        $accessToken = $jwt->generateAccessToken($existingUser);
+
+        // redirect with token
         global $redirectToDashboard;
-        header('Location: ' . filter_var($redirectToDashboard, FILTER_SANITIZE_URL));
+        $redirectUrl = $redirectToDashboard . '?token=' . urlencode($accessToken);
+        header('Location: ' . filter_var($redirectUrl, FILTER_SANITIZE_URL));
         exit;
     }
 }

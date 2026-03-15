@@ -15,8 +15,5 @@ class AuthMiddleware {
         return $claims['sub']; // returns user_id
     }
 
-    public static function getUserId(): int {
-        return $_SESSION['user_id'];
-    }
 }
 ?>

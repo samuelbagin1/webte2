@@ -11,22 +11,27 @@ require_once __DIR__ . '/helpers/Response.php';
 require_once __DIR__ . '/helpers/Sanitizer.php';
 
 // Models
-require_once __DIR__ . '/models/user.php';
-require_once __DIR__ . '/models/athlete.php';
-require_once __DIR__ . '/models/insert.php';
-require_once __DIR__ . '/models/loginHistory.php';
+require_once __DIR__ . '/models/User.php';
+require_once __DIR__ . '/models/Athlete.php';
+require_once __DIR__ . '/models/AthleteRecord.php';
+require_once __DIR__ . '/models/LoginHistory.php';
+require_once __DIR__ . '/models/Olympics.php';
+require_once __DIR__ . '/models/Country.php';
+require_once __DIR__ . '/models/Discipline.php';
+require_once __DIR__ . '/models/Authentication.php';
 
 // Services
-require_once __DIR__ . '/services/authenticate.php';
+require_once __DIR__ . '/services/JwtService.php';
 require_once __DIR__ . '/services/validate.php';
-require_once __DIR__ . '/services/importService.php';
-require_once __DIR__ . '/services/TwoFactorService.php';
+require_once __DIR__ . '/services/parse.php';
 
 // Controllers
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/controllers/AthleteController.php';
 require_once __DIR__ . '/controllers/UserController.php';
 require_once __DIR__ . '/controllers/OAuthController.php';
+require_once __DIR__ . '/controllers/OlympicsController.php';
+require_once __DIR__ . '/controllers/FilterController.php';
 
 
 
@@ -79,7 +84,7 @@ class Router {
         }
 
 
-        Response::json(["error" => "Not Found"], 401);
+        Response::json(["error" => "Not Found"], 404);
     }
 }
 ?>

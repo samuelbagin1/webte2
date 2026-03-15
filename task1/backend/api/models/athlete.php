@@ -135,13 +135,13 @@ class Athlete {
         $stmt->execute([
             ":name" => $name,
             ":surname" => $surname,
-            ":birth_date" => $birthDate,
+            ":birth_date" => $birthDate->format('Y-m-d'),
             ":birth_place" => $birthPlace,
             ":birth_country_id" => $birthCountryId,
-            ":death_date" => $deathDate,
+            ":death_date" => $deathDate ? $deathDate->format('Y-m-d') : null,
             ":death_place" => $deathPlace,
             ":death_country_id" => $deathCountryId,
-            "id" => $id
+            ":id" => $id
             ]);
     }
 

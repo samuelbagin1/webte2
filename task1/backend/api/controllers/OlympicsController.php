@@ -17,7 +17,7 @@ class OlympicsController {
     public function index() {
         $data = $this->olympicsModel->getAll();
         
-        if (!$data) Response::json(['error' => 'Could not fetch data from database!'], 400);
+        if (!$data) { Response::json(['error' => 'Could not fetch data from database!'], 400); return; }
         Response::json($data, 200);
     }
 
@@ -27,8 +27,8 @@ class OlympicsController {
     // {id} -> {id, type, year, city, country_id, code}
     public function show($id) {
         $data = $this->olympicsModel->getById($id);
-        
-        if (!$data) Response::json(['error' => 'Could not fetch data from database!'], 400);
+
+        if (!$data) { Response::json(['error' => 'Could not fetch data from database!'], 400); return; }
         Response::json($data, 200);
     }
 
@@ -53,7 +53,7 @@ class OlympicsController {
             $olympicsId = $this->olympicsModel->getOrCreate($type, $year, $city, $countryId, $code);
 
         } catch (Exception $e) {
-            Response::json(['error' => $e], 400);
+            Response::json(['error' => $e->getMessage()], 400);
         }
 
         Response::json(['message' => 'Successfully created olympics.'], 200);
@@ -113,7 +113,7 @@ class OlympicsController {
             if (empty($type) || empty($year) || empty($city) || empty($country)) continue;
 
             $countryId = $this->countryModel->getOrCreate($country);
-            $this->olympicsModel->getOrCreate((int)$year, $type, $city, $countryId, $code ?: null);
+            $this->olympicsModel->getOrCreate($type, (int)$year, $city, $countryId, $code ?: null);
 
             $imported++;
         }

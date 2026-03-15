@@ -7,7 +7,7 @@
 require_once __DIR__ .  '/../../vendor/autoload.php';
 
 use RobThree\Auth\Providers\Qr\BaconQrCodeProvider;
-use Robthree\Auth\TwoFactorAuth;
+use RobThree\Auth\TwoFactorAuth;
 
 class Authentication {
     public function authenticate(User $user, string $email, string $password, string $totp = ''): array {

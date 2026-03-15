@@ -1,8 +1,6 @@
 <?php 
 // CRUD operations for athletes and their records
 
-use PhpOffice\PhpSpreadsheet\Calculation\LookupRef\ExcelMatch;
-
 class AthleteController {
     private Athlete $athleteModel;
     private Olympics $olympicsModel;
@@ -10,7 +8,7 @@ class AthleteController {
     private Discipline $disciplineModel;
     private AthleteRecord $athleteRecordModel;
 
-    public function __construct(PDO $pdo)
+    public function __construct()
     {
         global $hostname, $database, $username, $password;
         $pdo = connectDatabase($hostname, $database, $username, $password);
@@ -95,7 +93,7 @@ class AthleteController {
         try {
             $this->importAthlete($data);
         } catch (Exception $e) {
-            Response::json(['error' => $e], 400);
+            Response::json(['error' => $e->getMessage()], 400);
         }
 
         Response::json(['message' => "Imported athlete."], 200);
@@ -151,7 +149,7 @@ class AthleteController {
         try {
             $this->importRecord($data, $id);
         } catch (Exception $e) {
-            Response::json(['error' => $e], 400);
+            Response::json(['error' => $e->getMessage()], 400);
         }
     }
 
@@ -356,7 +354,7 @@ class AthleteController {
             }
 
         } else {
-            throw new Exception("Year, type, city or country is empry!");
+            throw new Exception("Year, type, city or country is empty!");
         }
     }
 }

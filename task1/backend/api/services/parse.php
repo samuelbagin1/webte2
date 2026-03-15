@@ -95,9 +95,21 @@ function parseExcelToAssocArray(string $filePath): array {
 
 
 function parseJsonToAssocArray(string $filePath): array {
-    $array = [];
+    if (!file_exists($filePath)) {
+        throw new Exception("File does not exist: $filePath");
+    }
 
-    return $array;
+    $json = file_get_contents($filePath);
+    if ($json === false) {
+        throw new Exception("Could not read file: $filePath");
+    }
+
+    $data = json_decode($json, true);
+    if (!is_array($data)) {
+        throw new Exception("Invalid JSON in file: $filePath");
+    }
+
+    return $data;
 }
 
 

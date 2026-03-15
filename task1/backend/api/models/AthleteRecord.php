@@ -94,13 +94,13 @@ class AthleteRecord {
     public function getById(int $id): ?array {
         $stmt = $this->pdo->prepare("
             SELECT a.name, a.surname, ar.placing,
-                o.type, o.year, o.city, c.name AS host_country
+                o.type, o.year, o.city, c.name AS host_country,
                 d.name AS discipline
             FROM athlete_record ar
             JOIN athlete a ON ar.athlete_id = a.id
             JOIN olympics o ON ar.olympics_id = o.id
             JOIN country c ON o.country_id = c.id
-            JOIN discipline d ON ar.discipline = d.id
+            JOIN discipline d ON ar.discipline_id = d.id
             WHERE ar.id = :id
             ORDER BY o.year
         ");

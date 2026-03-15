@@ -40,10 +40,11 @@ class Discipline {
     }
 
 
-    public function getByName(string $name): int {
+    public function getByName(string $name): ?int {
         $stmt = $this->pdo->prepare("SELECT id FROM discipline WHERE name = :name");
         $stmt->execute([':name' => $name]);
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        $id = $stmt->fetchColumn();
+        return $id !== false ? (int) $id : null;
     }
 
 

@@ -4,7 +4,7 @@
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__.'/../../../config.php';
 require_once __DIR__.'/../models/User.php';
-require_once __DIR__.'/../helper/Response.php';
+require_once __DIR__.'/../helpers/Response.php';
 
 use RobThree\Auth\Providers\Qr\BaconQrCodeProvider;
 use RobThree\Auth\TwoFactorAuth;
@@ -28,7 +28,7 @@ class UserController {
     // {} -> {[{id, first_name, last_name, email, password_hash, totp_secret}]}
     public function index() {
         $data = $this->userModel->getAll();
-        if (!$data) Response::json(['error' => 'Error at the server'], 400);
+        if (!$data) { Response::json(['error' => 'Error at the server'], 400); return; }
 
         Response::json($data, 200);
     }
@@ -40,7 +40,7 @@ class UserController {
     // {id} -> {id, first_name, last_name, email, password_hash, totp_secret}
     public function show(int $id) {
         $data = $this->userModel->getById($id);
-        if (!$data) Response::json(['error' => 'Error at the server'], 400);
+        if (!$data) { Response::json(['error' => 'Error at the server'], 400); return; }
 
         Response::json($data, 200);
     }
@@ -149,11 +149,11 @@ class UserController {
     // POST /users/{id}/2fa
     // {} -> {secret, qr_code}
     public function setup2FA(): void {
-        AuthMiddleware::verify();
+        $userId = AuthMiddleware::verify();
         $tfa = new TwoFactorAuth(new BaconQrCodeProvider(4, '#ffffff', '#000000', 'svg'));
         $secret = $tfa->createSecret();
         $qrCode = $tfa->getQRCodeImageAsDataUri('Olympic Games APP', $secret);
-        $this->userModel->set2FASecret($_SESSION['user_id'], $secret);
+        $this->userModel->set2FASecret($userId, $secret);
 
         Response::json(['secret' => $secret, 'qr_code' => $qrCode], 200);
     }
@@ -164,8 +164,8 @@ class UserController {
     // GET /users/{id}/login-history
     // {id} -> {[{id, login_type, created_at}]}
     public function loginHistory(): void {
-        AuthMiddleware::verify();
-        $data = $this->loginHistoryModel->getById($_SESSION['user_id']);
+        $userId = AuthMiddleware::verify();
+        $data = $this->loginHistoryModel->getById($userId);
         Response::json($data, 200);
     }
 }
