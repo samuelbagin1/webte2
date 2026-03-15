@@ -25,7 +25,8 @@ class OAuthController {
     public function redirectToGoogle(): void {
         $client = new Client();
         $client->setAuthConfig(__DIR__ . '/../../client_secret.json');
-        $client->setRedirectUri('https://node22.webte.fei.stuba.sk/api/auth/google/callback');
+        global $callbackRedirectUri;
+        $client->setRedirectUri($callbackRedirectUri);
         $client->addScope(['email', 'profile']);
         $client->setIncludeGrantedScopes(true);
         $client->setAccessType('offline');
@@ -60,7 +61,8 @@ class OAuthController {
 
         $client = new Client();
         $client->setAuthConfig(__DIR__ . '/../../client_secret.json');
-        $client->setRedirectUri('https://node22.webte.fei.stuba.sk/api/auth/google/callback');
+        global $callbackRedirectUri;
+        $client->setRedirectUri($callbackRedirectUri);
 
         // exchange auth code for access
         $token = $client->fetchAccessTokenWithAuthCode($code);
@@ -90,7 +92,8 @@ class OAuthController {
         $this->loginHistoryModel->record($existingUser['id'], 'OAUTH');
 
         // readirect
-        header('Location: ' . filter_var('https://node22.webte.fei.stuba.sk/dashboard', FILTER_SANITIZE_URL));
+        global $redirectToDashboard;
+        header('Location: ' . filter_var($redirectToDashboard, FILTER_SANITIZE_URL));
         exit;
     }
 }
