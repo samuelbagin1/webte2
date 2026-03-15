@@ -13,7 +13,7 @@ class OlympicsController {
 
     // list all olympics events
     // GET /olympics
-    // {} -> {}
+    // {} -> {[{id, type, year, city, host_country, code}]}
     public function index() {
         $data = $this->olympicsModel->getAll();
         
@@ -24,7 +24,7 @@ class OlympicsController {
 
     // get single olympics event
     // GET /olympics/{id}
-    // {} -> {}
+    // {id} -> {id, type, year, city, country_id, code}
     public function show($id) {
         $data = $this->olympicsModel->getById($id);
         
@@ -36,7 +36,7 @@ class OlympicsController {
     // create olympics record
     // authenticate
     // POST /olympics
-    // {} -> {}
+    // {host_country, type, year, city, code} -> {message}
     public function create() {
         AuthMiddleware::verify();
 
@@ -63,7 +63,7 @@ class OlympicsController {
     // import olympics data from csv
     // authenticate
     // POST /olympics/import
-    // {} -> {}
+    // {file(.csv/.xlsx/.xls)} -> {message, imported}
     public function import() {
         AuthMiddleware::verify();
 
@@ -91,7 +91,7 @@ class OlympicsController {
     // delete olympics record
     // authenticate
     // DELETE /olympics/{id}
-    // {} -> {}
+    // {id} -> {message}
     public function delete($id) {
         AuthMiddleware::verify();
         $this->olympicsModel->delete($id);

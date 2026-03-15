@@ -54,13 +54,13 @@ class Discipline {
 
 
     public function delete(int $id): void {
-        $stmt = $this->pdo->prepare("DELETE FROM olympics WHERE id = :id");
+        $stmt = $this->pdo->prepare("DELETE FROM discipline WHERE id = :id");
         $stmt->execute([':id' => $id]);
     }
 
 
     public function deleteAll(): void {
-        $stmt = $this->pdo->prepare("DELETE FROM olympics");
+        $stmt = $this->pdo->prepare("DELETE FROM discipline");
         $stmt->execute();
     }
 }

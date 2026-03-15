@@ -13,7 +13,7 @@ class FilterController {
 
     // get distinct olympic years
     // GET /filters/years
-    // {} -> {}
+    // {} -> {[year]}
     public function years() {
         $data = $this->olympicsModel->getYears();
         if (!$data) Response::json(['error' => 'Could not fetch years from database'], 500);
@@ -22,7 +22,7 @@ class FilterController {
 
     // get all disciplines
     // GET /filters/disciplines
-    // {} -> {}
+    // {} -> {[{id, name}]}
     public function disciplines() {
         $data = $this->disciplineModel->getAll();
         if (!$data) Response::json(['error' => 'Could not fetch disciplines from database'], 500);

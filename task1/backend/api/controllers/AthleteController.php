@@ -22,9 +22,9 @@ class AthleteController {
     }
 
 
-    // return all athlete records by (paginated, fiilterable, sortable)
+    // return all athlete records by (paginated, filterable, sortable)
     // GET /athletes/records
-    // {} -> {}
+    // {?page, ?limit, ?sort, ?order, ?type, ?year, ?placing, ?discipline} -> {data[{id, name, surname, year, type, city, country, discipline, placing}], total}
     public function indexRecord(): void {
         $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
         $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
@@ -42,7 +42,7 @@ class AthleteController {
 
     // get single athlete record with all records by id
     // GET /athletes/records/{id}
-    // {} -> {}
+    // {id} -> {name, surname, placing, type, year, city, host_country, discipline}
     public function showRecord(int $id): void {
         $data = $this->athleteRecordModel->getById($id);
         if (!$data) {
@@ -54,9 +54,9 @@ class AthleteController {
     }
 
 
-    // return all athletes by (paginated, fiilterable, sortable)
+    // return all athletes by (paginated, filterable, sortable)
     // GET /athletes
-    // {} -> {}
+    // {?page, ?limit, ?sort, ?order, ?year, ?discipline} -> {data[{id, name, surname, year, type, city, country, discipline, placing}], total}
     public function index(): void {
         $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
         $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
@@ -72,7 +72,7 @@ class AthleteController {
 
     // get single athlete with all records by id
     // GET /athletes/{id}
-    // {} -> {}
+    // {id} -> {id, name, surname, birth_date, birth_place, birth_country, death_date, death_place, death_country, records[{year, type, city, host_country, discipline, placing}]}
     public function show(int $id): void {
         $data = $this->athleteModel->getById($id);
         if (!$data) {
@@ -87,7 +87,7 @@ class AthleteController {
     // add single athlete with all info and records
     // authenticate
     // POST /athletes
-    // {name, surname, birth, records} -> {}
+    // {name, surname, birth_date, birth_place, birth_country, ?death_date, ?death_place, ?death_country} -> {message}
     public function create(): void {
         AuthMiddleware::verify();
 
@@ -97,13 +97,15 @@ class AthleteController {
         } catch (Exception $e) {
             Response::json(['error' => $e], 400);
         }
+
+        Response::json(['message' => "Imported athlete."], 200);
     }
 
 
     // add multiple athletes from JSON
     // authenticate
     // POST /athletes/batch
-    // {} -> {}
+    // {file(.json)} -> {message, imported}
     public function createBatch(): void {
         AuthMiddleware::verify();
 
@@ -123,8 +125,14 @@ class AthleteController {
 
         $imported = 0;
         foreach ($data as $row) {
-            $this->importData($data);
-            $imported++;
+            try {
+                $athleteId = $this->importAthlete($row);
+                $this->importRecord($row, $athleteId);
+                $imported++;
+
+            } catch (Exception $e) {
+                continue;
+            }
         }
 
         Response::json(['message' => "Imported $imported records"], 200);
@@ -134,7 +142,7 @@ class AthleteController {
     // add single athlete record
     // authenticate
     // POST /athletes/{id}/record
-    // {records} -> {}
+    // {id, year, type, city, olympics_country, discipline, placing} -> {message}
     public function createRecord($id): void {
         AuthMiddleware::verify();
 
@@ -151,7 +159,7 @@ class AthleteController {
     // add multiple records from JSON
     // authenticate
     // POST /athletes/batch/record
-    // {} -> {}
+    // {file(.json)[{id, year, type, city, olympics_country, discipline, placing}]} -> {message, imported}
     public function createBatchRecord(): void {
         AuthMiddleware::verify();
 
@@ -171,7 +179,7 @@ class AthleteController {
 
         $imported = 0;
         foreach ($data as $row) {
-            $this->importRecord($row, $row['id']);
+            $this->importRecord($row, (int) $row['athlete_id']);
             $imported++;
         }
 
@@ -182,7 +190,7 @@ class AthleteController {
     // import athletes from csv file upload
     // authenticate
     // POST /athletes/import
-    // {} -> {}
+    // {file(.csv/.xlsx/.xls)} -> {message, imported}
     public function import(): void {
         AuthMiddleware::verify();
         
@@ -211,7 +219,7 @@ class AthleteController {
     // modify any data about an athlete
     // authenticate
     // PUT /athletes/{id}
-    // {} -> {}
+    // {id, name, surname, birth_day, birth_place, birth_country, ?death_day, ?death_place, ?death_country} -> {message}
     public function update($id): void {
         AuthMiddleware::verify();
 
@@ -235,7 +243,7 @@ class AthleteController {
     // modify any record data about an athlete
     // authenticate
     // PUT /athletes/{id}/record
-    // {} -> {}
+    // {id, olympics_id, discipline_id, placing} -> {message}
     public function updateRecord($id): void {
         AuthMiddleware::verify();
 
@@ -249,7 +257,7 @@ class AthleteController {
     // delete single athlete + cascade all records
     // authenticate
     // DELETE /athletes/{id}
-    // {} -> {}
+    // {id} -> {message}
     public function delete(int $id): void {
         AuthMiddleware::verify();
         $this->athleteModel->delete($id);
@@ -260,7 +268,7 @@ class AthleteController {
     // delete all athletes + cascade all records
     // authenticate
     // DELETE /athletes
-    // {} -> {}
+    // {} -> {message}
     public function deleteAll(): void {
         AuthMiddleware::verify();
         $this->athleteModel->deleteAll();
@@ -327,7 +335,7 @@ class AthleteController {
         $year = $data['year'] ?? $data['olympics_year'] ?? $data['oh_year'] ?? null;
         $type = $data['type'] ?? $data['olympics_type'] ?? $data['oh_type'] ?? null;
         $city = $data['city'] ?? $data['olympics_city'] ?? $data['oh_city'] ?? null;
-        $country = $data['olympics_country'] ?? $data['country'] ?? $data['oh_country'] ?? null;
+        $country = $data['olympics_country'] ?? $data['country'] ?? $data['oh_country'] ?? $data['host_country'] ?? null;
 
         if (!empty($year) && !empty($type) && !empty($city) && !empty($country)) {
             $countryId = $this->countryModel->getOrCreate(trim($country));

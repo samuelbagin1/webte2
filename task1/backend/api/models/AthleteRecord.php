@@ -93,7 +93,7 @@ class AthleteRecord {
 
     public function getById(int $id): ?array {
         $stmt = $this->pdo->prepare("
-            SELECT a.name, a.surname, ar.placing
+            SELECT a.name, a.surname, ar.placing,
                 o.type, o.year, o.city, c.name AS host_country
                 d.name AS discipline
             FROM athlete_record ar

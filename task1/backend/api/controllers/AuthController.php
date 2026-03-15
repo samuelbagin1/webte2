@@ -22,7 +22,7 @@ class AuthController {
     // get current user profile
     // authenticate
     // GET /auth/profile
-    // {} -> {full_name. login_tupe. google_id}
+    // {} -> {id, first_name, last_name, email, full_name, login_type, google_id}
     public function profile() {
         AuthMiddleware::verify();
         $data = $this->userModel->getById($_SESSION['user_id']);

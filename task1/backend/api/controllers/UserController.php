@@ -25,7 +25,7 @@ class UserController {
     // return all users
     // authenticate
     // GET /users
-    // {} -> {}
+    // {} -> {[{id, first_name, last_name, email, password_hash, totp_secret}]}
     public function index() {
         $data = $this->userModel->getAll();
         if (!$data) Response::json(['error' => 'Error at the server'], 400);
@@ -37,7 +37,7 @@ class UserController {
     // return user by id
     // authenticate
     // GET /users/{id}
-    // {} -> {}
+    // {id} -> {id, first_name, last_name, email, password_hash, totp_secret}
     public function show(int $id) {
         $data = $this->userModel->getById($id);
         if (!$data) Response::json(['error' => 'Error at the server'], 400);
@@ -48,7 +48,7 @@ class UserController {
 
     // register user
     // POST /users
-    // {} -> {}
+    // {first_name, last_name, email, password, password_repeat} -> {message, id, tfa_secret, qr_code}
     public function create() {
         $data = json_decode(file_get_contents('php://input'), true);
         $firstName = Sanitizer::sanitizeString($data['first_name'] ?? '');
@@ -86,7 +86,7 @@ class UserController {
     // update name and surname
     // authenticate
     // PUT /users/{id}
-    // {} -> {}
+    // {id, first_name, last_name} -> {message}
     public function update(int $id) {
         AuthMiddleware::verify();
         $input = json_decode(file_get_contents('php://input'), true);
@@ -107,7 +107,7 @@ class UserController {
     // update users password
     // authenticate
     // PUT /users/{id}/password
-    // {} -> {}
+    // {id, current_password, new_password, new_password_repeat} -> {message}
     public function updatePassword($id): void {
         AuthMiddleware::verify();
         $input = json_decode(file_get_contents('php://input'), true);
@@ -136,7 +136,7 @@ class UserController {
     // delete user
     // authenticate
     // DELETE /users/{id}
-    // {} -> {}
+    // {id} -> {message}
     public function delete($id) {
         AuthMiddleware::verify();
         $this->userModel->delete($id);
@@ -147,7 +147,7 @@ class UserController {
     // generate 2fa secret and QR code
     // authenticate
     // POST /users/{id}/2fa
-    // {} -> {}
+    // {} -> {secret, qr_code}
     public function setup2FA(): void {
         AuthMiddleware::verify();
         $tfa = new TwoFactorAuth(new BaconQrCodeProvider(4, '#ffffff', '#000000', 'svg'));
@@ -162,7 +162,7 @@ class UserController {
     // get users login history
     // authenticate
     // GET /users/{id}/login-history
-    // {} -> {}
+    // {id} -> {[{id, login_type, created_at}]}
     public function loginHistory(): void {
         AuthMiddleware::verify();
         $data = $this->loginHistoryModel->getById($_SESSION['user_id']);

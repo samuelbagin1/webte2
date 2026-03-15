@@ -43,7 +43,7 @@ class User {
         $stmt = $this->pdo->prepare("SELECT * FROM users");
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function update(int $id, string $firstName, string $lastName): void {
