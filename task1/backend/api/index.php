@@ -55,7 +55,7 @@ $router->get("/filters/years", [FilterController::class, "disciplines"]);   // g
 
 
 // API docs
-$router->get("/docs", docs);
+// $router->get("/docs", docs);
 
 $router->run();
 
