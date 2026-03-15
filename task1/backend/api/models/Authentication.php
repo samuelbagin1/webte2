@@ -21,10 +21,10 @@ class Authentication {
             return ['success' => false, 'message' => 'invalid credentials'];
         }
 
-        if (!empty($userData['tfa_secret'])) {
+        if (!empty($userData['totp_secret'])) {
             $tfa = new TwoFactorAuth(new BaconQrCodeProvider());
 
-            if (!$tfa->verifyCode($userData['tfa_secret'], $totp, 2)) {
+            if (!$tfa->verifyCode($userData['totp_secret'], $totp, 2)) {
                 return ['success' => false, 'message' => 'invalid credentials'];
             }
         }
