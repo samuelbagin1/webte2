@@ -6,10 +6,10 @@ import { useAuth } from "@/hooks/useAuth"
 
 // edit user profile
 
-// PUT /api/user/profile
+// PUT /api/users/{id}
 // {first_name, last_name}
 
-// PUT /api/user/password
+// PUT /api/users/{id}/password
 // {current_password, new_password, new_password_repeat}
 
 export function ProfilePage() {

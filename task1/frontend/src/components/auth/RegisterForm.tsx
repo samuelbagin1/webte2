@@ -42,7 +42,7 @@ export function RegisterForm() {
         setSubmitting(true);
 
         try {
-            const {data} = await api.post("/auth/register", values);
+            const {data} = await api.post("/users", values);
             toast.success("Registrácia úspešná! Nastavte si 2FA.");
             
             navigate("/2fa-setup", {

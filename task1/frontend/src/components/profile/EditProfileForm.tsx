@@ -12,8 +12,8 @@ import { toast } from "sonner";
 // edit first name and last name
 // pre-filled with current values from db
 
-// PUT /api/user/profile
-// {first_name, last_name}
+// GET /api/auth/profile -> pre-fill
+// PUT /api/users/{id} -> save
 
 const profileSchema = z.object({
     first_name: z.string().min(1, "Meno je povinné").max(100, "Meno nesmie presiahnuť 100 znakov"),
@@ -24,7 +24,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 
 export function EditProfileForm() {
-    const {refreshUser} = useAuth();
+    const {user, refreshUser} = useAuth();
     const [submitting, setSubmitting] = useState(false);
 
     const {register, handleSubmit, reset, formState: {errors}} = useForm<ProfileFormValues>({
@@ -36,7 +36,7 @@ export function EditProfileForm() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const {data} = await api.get("/user/profile");
+                const {data} = await api.get("/auth/profile");
                 reset({first_name: data.first_name, last_name: data.last_name});
 
             } catch {
@@ -52,7 +52,7 @@ export function EditProfileForm() {
         setSubmitting(true);
 
         try {
-            await api.put("/user/profile", values);
+            await api.put(`/users/${user?.id}`, values);
             toast.success("Profil bol aktualizovaný");
             await refreshUser();    // update navbar user info
 

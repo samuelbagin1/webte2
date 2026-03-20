@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 // change password form
 // current password, new password, repeat
 // only shown to local accounts
 
-// PUT /api/user/password
+// PUT /api/users/{id}/password
 // {current_password, new_password, new_password_repeat}
 
 
@@ -42,6 +43,7 @@ type PasswordFormValues = z.infer<typeof passwordSchema>
 
 
 export function ChangePasswordForm() {
+    const { user } = useAuth();
     const [submitting, setSubmitting] = useState(false);
 
     const {register, handleSubmit, reset, formState: {errors}} = useForm<PasswordFormValues>({
@@ -54,7 +56,7 @@ export function ChangePasswordForm() {
         setSubmitting(true);
 
         try {
-            await api.put("/user/password", values);
+            await api.put(`/users/${user?.id}/password`, values);
             toast.success("Heslo bolo úspešne zmenené");
             reset();
 

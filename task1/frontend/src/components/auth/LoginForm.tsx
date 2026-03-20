@@ -39,7 +39,11 @@ export function LoginForm() {
 
         try {
             const {data} = await api.post("/auth/login", values);
-            login(data.user);
+            login(
+                { id: data.user.id, full_name: data.user.full_name, email: data.user.email, login_type: "LOCAL" },
+                data.access_token,
+                data.refresh_token
+            );
             toast.success("Úspešne prihlásený");
             navigate("/dashboard");
 

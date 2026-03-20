@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,18 @@ import { Settings, History, Upload } from "lucide-react";
 // private zone landing page
 
 export function DashboardPage() {
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // handle Google OAuth callback: token arrives as ?token= query param
+    useEffect(() => {
+        const token = searchParams.get("token");
+        if (token) {
+            localStorage.setItem("access_token", token);
+            setSearchParams({}, { replace: true });
+            refreshUser();
+        }
+    }, [searchParams, setSearchParams, refreshUser]);
 
 
     return (

@@ -44,7 +44,7 @@ export function FileUpload() {
             const formData = new FormData();
             formData.append("file", file);
 
-            const {data} = await api.post("/athletes", formData, {
+            const {data} = await api.post("/athletes/import", formData, {
                 headers: {"Content-Type": "multipart/form-data"}
             });
 

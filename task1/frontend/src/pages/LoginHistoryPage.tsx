@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "@/api/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 // display login history table for the current user
 
-// GET /api/user/login-history
+// GET /api/users/{id}/login-history
 // {} -> [{id, login_type, created_at}]
 
 interface LoginEntry {
@@ -18,6 +19,7 @@ interface LoginEntry {
 
 
 export function LoginHistoryPage() {
+    const { user } = useAuth();
     const [history, setHistory] = useState<LoginEntry[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -25,7 +27,7 @@ export function LoginHistoryPage() {
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const {data} = await api.get("/user/login-history");
+                const {data} = await api.get(`/users/${user?.id}/login-history`);
                 setHistory(data);
 
             } catch {
