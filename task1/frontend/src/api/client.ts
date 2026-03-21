@@ -24,7 +24,7 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         // if unauthorized redirect to login, but skip for profile check (initial auth)
-        if (error.response?.status === 401 && !error.config?.url?.includes("/auth/profile")) {
+        if (error.response?.status === 401 && !error.config?.url?.includes("/auth/")) {
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
             window.location.href = "/login";

@@ -10,14 +10,17 @@
 
 
 // Databazove konkfiguracne premenne:
-$hostname = "localhost";  // adresa servera, kedze DB je na rovnakom zeleze ako Nginx, je tu localhost
+$hostname = "db";  // Docker service name for the database container
 $database = "app_db";  // nazov databazy - v nasom pripade to bolo ogames_app
 $username = "xbagins";  // nazov pouzivatela - ktoreho ste vytvarali cez MariaDB konzolu. Ak ste isli podla navodu, mal by to byt vas login.
 $password = "pass";  // heslo, ktore ste zadavali v MariaDB konzole - mali ste si ho zapisat alebo zapamatat.
 // 
 
-$callbackRedirectUri = "https://node22.webte.fei.stuba.sk/api/auth/google/callback";
-$redirectToDashboard = "https://node22.webte.fei.stuba.sk/dashboard";
+$callbackRedirectUri = "http://localhost:8080/api/auth/google/callback";
+$redirectToDashboard = "http://localhost:5173/dashboard";
+
+# https://node22.webte.fei.stuba.sk/api/auth/google/callback
+# https://node22.webte.fei.stuba.sk/dashboard
 
 
 // Funkcia sluzi ako abstrakcia pripojenia k DB – po include ju mozeme zavolat.

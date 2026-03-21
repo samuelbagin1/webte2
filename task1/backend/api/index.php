@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/Router.php';
 session_start();
 CorsMiddleware::handle();
 

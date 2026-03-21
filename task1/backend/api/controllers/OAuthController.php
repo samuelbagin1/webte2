@@ -31,10 +31,11 @@ class OAuthController {
         $client->setIncludeGrantedScopes(true);
         $client->setAccessType('offline');
 
-        // CSRF (Cross-Site Request Forgery) protection via state
-        $state = bin2hex(random_bytes(16));
+        // CSRF protection via HMAC-signed state (stateless — no session needed)
+        $jwt = new JwtService();
+        $nonce = bin2hex(random_bytes(16));
+        $state = $nonce . '.' . hash_hmac('sha256', $nonce, $jwt->getSecretKey());
         $client->setState($state);
-        $_SESSION['oauth_state'] = $state;
 
         $authUrl = $client->createAuthUrl();
         Response::json(['url' => $authUrl], 200);
@@ -46,8 +47,16 @@ class OAuthController {
     // GET /auth/google/callback
     // {code, state} -> redirect to /dashboard
     public function handleCallback(): void {
-        // verify state
-        if (!isset($_GET['state']) || $_GET['state'] !== ($_SESSION['oauth_state'] ?? '')) {
+        // verify HMAC-signed state
+        $state = $_GET['state'] ?? '';
+        $parts = explode('.', $state, 2);
+        if (count($parts) !== 2) {
+            Response::json(['error' => 'State mismatch.'], 400);
+            return;
+        }
+        $jwt = new JwtService();
+        $expectedSig = hash_hmac('sha256', $parts[0], $jwt->getSecretKey());
+        if (!hash_equals($expectedSig, $parts[1])) {
             Response::json(['error' => 'State mismatch.'], 400);
             return;
         }
@@ -78,6 +87,11 @@ class OAuthController {
             $names = explode(' ', $accountInfo->name, 2);
             $this->userModel->getOrCreate($names[0] ?? '', $names[1] ?? '', $accountInfo->email, null, null);
             $existingUser = $this->userModel->getByEmail($accountInfo->email);
+        }
+
+        // ensure google_id is set
+        if (empty($existingUser['google_id'])) {
+            $this->userModel->setGoogleId($existingUser['id'], $accountInfo->id);
         }
 
         // start session

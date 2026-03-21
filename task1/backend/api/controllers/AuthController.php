@@ -64,6 +64,7 @@ class AuthController {
                 'access_token' => $accessToken,
                 'refresh_token' => $refreshToken,
                 'user' => [
+                'id' => $result['user']['id'],
                 'full_name' => $_SESSION['full_name'],
                 'email' => $_SESSION['email']
             ]], 200);

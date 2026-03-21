@@ -2,7 +2,7 @@
 // user profile management for logged-in users
 
 require_once __DIR__ . '/../../vendor/autoload.php';
-require_once __DIR__.'/../../../config.php';
+require_once __DIR__.'/../../config.php';
 require_once __DIR__.'/../models/User.php';
 require_once __DIR__.'/../helpers/Response.php';
 

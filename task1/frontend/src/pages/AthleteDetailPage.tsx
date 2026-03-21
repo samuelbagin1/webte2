@@ -114,6 +114,8 @@ export function AthleteDetailPage() {
             </Button>
         </Link>
 
+        <div className=""></div>
+
         {/* Personal info card */}
         <Card>
             <CardHeader>

@@ -20,6 +20,10 @@ class JwtService {
         }
     }
 
+    public function getSecretKey(): string {
+        return $this->secretKey;
+    }
+
     public function generateAccessToken(array $user): string {
         $now = time();
         $payload = [

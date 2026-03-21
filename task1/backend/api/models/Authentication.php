@@ -17,7 +17,7 @@ class Authentication {
             return ['success' => false, 'message' => 'invalid credentials'];
         }   
 
-        if (!password_verify($password, $userData['password_hash'])) {
+        if (empty($userData['password_hash']) || !password_verify($password, $userData['password_hash'])) {
             return ['success' => false, 'message' => 'invalid credentials'];
         }
 

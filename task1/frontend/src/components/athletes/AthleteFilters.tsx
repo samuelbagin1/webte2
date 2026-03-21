@@ -19,7 +19,7 @@ export function AthleteFilters({ years, disciplines, selectedYear, selectedDisci
     <div className="flex flex-wrap">
       
       {/* Year filter */}
-      <div className="w-48">
+      <div className="mr-4">
         <Select
           value={selectedYear?.toString() ?? "all"}
           onValueChange={(val) => onYearChange(val === "all" ? null : Number(val))}

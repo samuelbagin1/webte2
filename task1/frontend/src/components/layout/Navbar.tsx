@@ -46,6 +46,10 @@ export function Navbar() {
                 <Button variant="ghost">Dashboard</Button>
               </Link>
 
+              <Link to="/edit">
+                <Button variant="ghost">Edit</Button>
+              </Link>
+
               {/* User dropdown with info — always visible when logged in */}
               <DropdownMenu>
 

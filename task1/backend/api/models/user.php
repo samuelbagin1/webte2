@@ -61,6 +61,11 @@ class User {
         $stmt->execute([':secret' => $secret, ':id' => $userId]);
     }
 
+    public function setGoogleId(int $id, string $googleId): void {
+        $stmt = $this->pdo->prepare("UPDATE users SET google_id = :google_id WHERE id = :id");
+        $stmt->execute([':google_id' => $googleId, ':id' => $id]);
+    }
+
     public function delete(int $id): void {
         $stmt = $this->pdo->prepare("DELETE FROM users WHERE id = :id");
         $stmt->execute([':id' => $id]);
