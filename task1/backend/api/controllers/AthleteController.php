@@ -274,6 +274,17 @@ class AthleteController {
     }
 
 
+    // delete single athlete record
+    // authenticate
+    // DELETE /athletes/records/{id}
+    // {id} -> {message}
+    public function deleteRecord(int $id): void {
+        AuthMiddleware::verify();
+        $this->athleteRecordModel->delete($id);
+        Response::json(['message' => "Deleted all data"], 200);
+    }
+
+
 
 
     // ======== private function ========

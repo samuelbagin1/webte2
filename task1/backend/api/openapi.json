@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Slovak Olympians API",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "REST API for managing Slovak Olympic athletes and their records"
   },
   "servers": [
@@ -193,45 +193,6 @@
                     "total": { "type": "integer" }
                   }
                 }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/athletes/records/{id}": {
-      "get": {
-        "tags": ["Athletes"],
-        "summary": "Get single athlete record by ID",
-        "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
-        ],
-        "responses": {
-          "200": {
-            "description": "Athlete record",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "name": { "type": "string" },
-                    "surname": { "type": "string" },
-                    "placing": { "type": "integer" },
-                    "type": { "type": "string" },
-                    "year": { "type": "integer" },
-                    "city": { "type": "string" },
-                    "host_country": { "type": "string" },
-                    "discipline": { "type": "string" }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Athlete not found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
               }
             }
           }
@@ -460,7 +421,7 @@
         }
       }
     },
-    "/athletes/{id}/record": {
+    "/athletes/{id}/records": {
       "post": {
         "tags": ["Athletes"],
         "summary": "Add single record to athlete",
@@ -505,6 +466,45 @@
             }
           }
         }
+      }
+    },
+    "/athletes/records/{id}": {
+      "get": {
+        "tags": ["Athletes"],
+        "summary": "Get single athlete record by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Athlete record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "surname": { "type": "string" },
+                    "placing": { "type": "integer" },
+                    "type": { "type": "string" },
+                    "year": { "type": "integer" },
+                    "city": { "type": "string" },
+                    "host_country": { "type": "string" },
+                    "discipline": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Athlete not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
       },
       "put": {
         "tags": ["Athletes"],
@@ -539,9 +539,27 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": ["Athletes"],
+        "summary": "Delete single athlete record",
+        "security": [{ "sessionAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Record ID" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Record deleted",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Message" }
+              }
+            }
+          }
+        }
       }
     },
-    "/athletes/batch/record": {
+    "/athletes/batch/records": {
       "post": {
         "tags": ["Athletes"],
         "summary": "Add multiple records from JSON file",

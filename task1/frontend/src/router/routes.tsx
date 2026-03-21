@@ -11,6 +11,7 @@ import { DashboardPage } from "@/pages/DashboardPage";
 import { ProfilePage } from "@/pages/ProfilePage";
 import { LoginHistoryPage } from "@/pages/LoginHistoryPage";
 import { ImportPage } from "@/pages/ImportPage";
+import { EditPage } from "@/pages/EditPage";
 
 export function AppRoutes() {
   return (
@@ -31,6 +32,7 @@ export function AppRoutes() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/login-history" element={<LoginHistoryPage />} />
           <Route path="/import" element={<ImportPage />} />
+          <Route path="/edit" element={<EditPage />} />
         </Route>
       </Route>
     </Routes>

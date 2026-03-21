@@ -55,8 +55,8 @@ CREATE TABLE athlete_record (
     placing INT(11) DEFAULT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (athlete_id) REFERENCES athlete(id) ON DELETE CASCADE,
-    FOREIGN KEY (olympics_id) REFERENCES olympics(id) ON DELETE CASCADE,
-    FOREIGN KEY (discipline_id) REFERENCES discipline(id) ON DELETE CASCADE
+    FOREIGN KEY (olympics_id) REFERENCES olympics(id),
+    FOREIGN KEY (discipline_id) REFERENCES discipline(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- 6. users
