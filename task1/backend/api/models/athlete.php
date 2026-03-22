@@ -15,48 +15,17 @@ class Athlete {
         $sortCol = $allowedSorts[$sort] ?? 'a.surname';
         $order = $order === 'DESC' ? 'DESC' : 'ASC';
 
-        $where = "";
-        $params = [];
-
-        // filter by year, discipline, type LOH/ZOH, placing
-        if ($year !== null) {
-            $where .= !empty($where) ? ' AND o.year = :year' : 'o.year = :year';
-            $params[':year'] = $year;
-        }
-
-        if ($discipline !== null) {
-            $where .= !empty($where) ? ' AND d.id = :discipline' : 'd.id = :discipline';
-            $params[':discipline'] = $discipline;
-        }
-
-        if ($type !== null) {
-            $where .= !empty($where) ? ' AND o.type = :type' : 'o.type = :type';
-            $params[':type'] = $type;
-        }
-
-        if ($placing !== null) {
-            $where .= !empty($where) ? ' AND ar.placing = :placing' : 'ar.placing = :placing';
-            $params[':placing'] = $placing;
-        }
-
-        $whereSQL = !empty($where) ? ' WHERE ' . $where : '';
-
-        $baseQuery = "FROM athlete a
-            JOIN athlete_record ar ON ar.athlete_id = a.id
-            JOIN olympics o ON ar.olympics_id = o.id
-            JOIN discipline d ON ar.discipline_id = d.id
-            LEFT JOIN country c ON o.country_id = c.id
-            $whereSQL";
+        $baseQuery = "FROM athlete a";
 
         // count total
         $countStmt = $this->pdo->prepare("SELECT COUNT(*) $baseQuery");
-        $countStmt->execute($params);
+        $countStmt->execute();
         $total = (int) $countStmt->fetchColumn();
 
 
 
         // fetch data
-        $dataSQL = "SELECT a.id, a.name, a.surname, o.year, o.type, o.city, c.name AS country, d.name AS discipline, ar.placing $baseQuery ORDER BY $sortCol $order";
+        $dataSQL = "SELECT a.id, a.name, a.surname $baseQuery ORDER BY $sortCol $order";
 
         // set limit and offset
         if ($limit > 0) {
@@ -65,7 +34,7 @@ class Athlete {
         }
 
         $stmt = $this->pdo->prepare($dataSQL);
-        $stmt->execute($params);
+        $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return ['data' => $data, 'total' => $total];

@@ -5,6 +5,9 @@ import { useAthletes } from "@/hooks/useAthletes";
 import api from "@/api/client";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { RecordsTable } from "@/components/athletes/RecordsTable";
+import { Plus } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 
 // public page
@@ -23,9 +26,14 @@ interface Athlete {
 
 
 export function EditPage() {
+    const navigate = useNavigate();
+
     // filters state
     const [selectedYear, setSelectedYear] = useState<number | null>(null);
     const [selectedDiscipline, setSelectedDiscipline] = useState<number | null>(null);
+
+    // athletes/records select
+    const [view, setView] = useState("athletes");
 
     // sorting and ordering
     const [sort, setSort] = useState<string>("");
@@ -82,15 +90,13 @@ export function EditPage() {
 
     const totalPages = limit>0 ? Math.ceil(total / limit) : 1;
 
-    const 
-
 
 
     return (
         <div className="space-y-6">
 
             <div className="justify-center flex">
-                <ToggleGroup variant="outline" type="single" size="lg" defaultValue="athletes">
+                <ToggleGroup defaultValue="athletes" variant="outline" type="single" size="lg" onValueChange={(val) => {if (val) setView(val);}}>
                     <ToggleGroupItem value="athletes" aria-label="Toggle athletes">
                         Športovci
                     </ToggleGroupItem>
@@ -99,26 +105,52 @@ export function EditPage() {
                     </ToggleGroupItem>
                 </ToggleGroup>
             </div>
-            <h1 className="text-3xl font-bold">Prehľad slovenských olympionikov</h1>
+
+            
 
             {/* Filters */}
-            <AthleteFilters
-                years={years}
-                disciplines={disciplines}
-                selectedYear={selectedYear}
-                selectedDiscipline={selectedDiscipline}
-                onYearChange={handleYearChange}
-                onDisciplineChange={handleDisciplineChange}
-            />
+            {view === "records" ? (
+                <div>
+                    <h1 className="text-3xl font-bold">Prehľad záznamov olympionikov</h1>
+                    <div className="h-4"></div>
+                    <div className="flex">
+                        <AthleteFilters
+                            years={years}
+                            disciplines={disciplines}
+                            selectedYear={selectedYear}
+                            selectedDiscipline={selectedDiscipline}
+                            onYearChange={handleYearChange}
+                            onDisciplineChange={handleDisciplineChange}
+                        />
+
+                        <Button className="ml-auto" onClick={() => navigate("/athlete/record/new")}><Plus />Nový záznam</Button>
+                    </div>
+                </div>
+            ) : (
+                <div className="flex w-[85%]">
+                    <h1 className="text-3xl font-bold">Prehľad slovenských olympionikov</h1>
+                    <Button className="ml-auto" onClick={() => navigate("/athlete/new")}><Plus />Nový atlét</Button>
+                </div>
+            )}
+
+            {view === "records" && (<RecordsTable
+                data={data}
+                loading={loading}
+                sort={sort}
+                order={order}
+                onSort={handleSort}
+                hideYear={selectedYear !== null}
+                hideDiscipline={selectedDiscipline !== null}
+            />)}
 
             {/* Table */}
-            <AthletesTable
+            {view === "athletes" && (<AthletesTable
                 data={athletesData}
                 loading={loading}
                 sort={sort}
                 order={order}
                 onSort={handleSort}
-            />
+            />)}
 
             {/* Pagination */}
             <div className="flex items-center justify-between">

@@ -12,6 +12,8 @@ import { ProfilePage } from "@/pages/ProfilePage";
 import { LoginHistoryPage } from "@/pages/LoginHistoryPage";
 import { ImportPage } from "@/pages/ImportPage";
 import { EditPage } from "@/pages/EditPage";
+import { NewAthletePage } from "@/pages/NewAthletePage";
+import { NewRecordPage } from "@/pages/NewRecordPage";
 
 export function AppRoutes() {
   return (
@@ -33,6 +35,8 @@ export function AppRoutes() {
           <Route path="/login-history" element={<LoginHistoryPage />} />
           <Route path="/import" element={<ImportPage />} />
           <Route path="/edit" element={<EditPage />} />
+          <Route path="/athlete/new" element={<NewAthletePage />} />
+          <Route path="/athlete/record/new" element={<NewRecordPage />} />
         </Route>
       </Route>
     </Routes>

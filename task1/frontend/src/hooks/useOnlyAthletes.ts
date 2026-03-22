@@ -4,16 +4,10 @@ import api from "@/api/client";
 // fetch athletes from api with server-side filtering, sorting and pagination
 // API call: GET /api/athletes?page=1&limit=10&sort=surname&order=ASC&year=2024&discipline=3
 
-interface AthleteRecord {
+interface Athlete {
     id: number;
     name: string;
     surname: string;
-    year: number;
-    type: string;
-    city: string;
-    country: string;
-    discipline: string;
-    placing: number;
 }
 
 interface UseAthletesParams {
@@ -26,7 +20,7 @@ interface UseAthletesParams {
 }
 
 interface UseAthletesResult {
-    data: AthleteRecord[];
+    data: Athlete[];
     total: number;
     loading: boolean;
     error: string | null;
@@ -34,8 +28,8 @@ interface UseAthletesResult {
 }
 
 
-export function useAthletes(params: UseAthletesParams): UseAthletesResult {
-    const [data, setData] = useState<AthleteRecord[]>([]);
+export function useOnlyAthletes(params: UseAthletesParams): UseAthletesResult {
+    const [data, setData] = useState<Athlete[]>([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

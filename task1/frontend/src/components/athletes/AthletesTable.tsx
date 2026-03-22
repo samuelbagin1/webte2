@@ -1,8 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { Skeleton } from "../ui/skeleton";
-import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { ArrowUp, ArrowDown, ArrowUpDown, ArrowRight } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button"
 
 // main data table using shadcn + tanstack
 
@@ -24,6 +27,8 @@ interface AthleteTableProps {
 export function AthletesTable({ data, loading, sort, order, onSort }: AthleteTableProps) {
     const navigate = useNavigate();
 
+    const [selected, setSelected] = useState<number[]>([]);
+
     // sort indicator icon
     const SortIcon = ({column }: {column: string}) => {
         if (sort!== column) return <ArrowUpDown className="ml-1 h-4 w-4 inline" />;
@@ -41,6 +46,20 @@ export function AthletesTable({ data, loading, sort, order, onSort }: AthleteTab
 
     const handleClickRow = (id: number) => {
         navigate(`/athlete/${id}`);
+    }
+
+    const handleClickSelect = (id: number) => {
+        setSelected((prev) => prev.includes(id) ? prev.filter((i) => i!==id) : [...prev, id]);
+    }
+
+    const selectAll = data.length === selected.length;
+
+    const handleSelectAll = (checked: boolean) => {
+        if (checked) {
+            setSelected(data.map((athlete) => athlete.id))
+        } else {
+            setSelected([])
+        }
     }
 
 
@@ -64,14 +83,25 @@ export function AthletesTable({ data, loading, sort, order, onSort }: AthleteTab
     }
 
     return (
-        <div className="rounded-md border">
+        <div className="rounded-md border w-[70%] mx-auto">
             <Table>
                 <TableHeader>
                     <TableRow>
+                        
+                        <TableHead>
+                            <Checkbox
+                                id="select-all-checkbox"
+                                name="select-all-checkbox"
+                                checked={selectAll}
+                                onCheckedChange={handleSelectAll}
+                            />
+                        </TableHead>
+
                         <TableHead>Meno</TableHead>
 
                         {/* "Priezvisko" — sortable */}
                         <SortableHead column="surname" label="Priezvisko" />
+                        <TableHead></TableHead>
                     </TableRow>
                 </TableHeader>
 
@@ -79,7 +109,13 @@ export function AthletesTable({ data, loading, sort, order, onSort }: AthleteTab
                 <TableBody>
 
                     {data.map((athlete, index) => (
-                        <TableRow key={`${athlete.id}-${index}`} onClick={() => handleClickRow(athlete.id)} className="hover:cursor-pointer">
+                        <TableRow key={`${athlete.id}-${index}`} onClick={() => handleClickSelect(athlete.id)} className="hover:cursor-pointer">
+
+                            <TableCell><Checkbox checked={selected.includes(athlete.id)} onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleClickSelect(athlete.id);
+                                }} />
+                            </TableCell>
 
                             {/* Clickable name → detail page */}
                             <TableCell>
@@ -92,6 +128,7 @@ export function AthletesTable({ data, loading, sort, order, onSort }: AthleteTab
                             </TableCell>
 
                             <TableCell>{athlete.surname}</TableCell>
+                            <TableCell><Button onClick={() => handleClickRow(athlete.id)} size="xs" className="cursor-pointer" variant="outline"><ArrowRight /></Button></TableCell>
                         </TableRow>
                     ))}
 

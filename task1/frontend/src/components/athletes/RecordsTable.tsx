@@ -1,9 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { Badge } from "../ui/badge";
 import { Skeleton } from "../ui/skeleton";
-import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { ArrowUp, ArrowDown, ArrowUpDown, ArrowRight } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button"
 
 // main data table using shadcn + tanstack
 
@@ -33,6 +36,8 @@ interface AthleteTableProps {
 export function RecordsTable({ data, loading, sort, order, onSort, hideYear, hideDiscipline }: AthleteTableProps) {
     const navigate = useNavigate();
 
+    const [selected, setSelected] = useState<number[]>([]);
+
     // sort indicator icon
     const SortIcon = ({column }: {column: string}) => {
         if (sort!== column) return <ArrowUpDown className="ml-1 h-4 w-4 inline" />;
@@ -60,6 +65,19 @@ export function RecordsTable({ data, loading, sort, order, onSort, hideYear, hid
         navigate(`/athlete/${id}`);
     }
 
+    const handleClickSelect = (id: number) => {
+        setSelected((prev) => prev.includes(id) ? prev.filter((i) => i!==id) : [...prev, id]);
+    }
+
+    const selectAll = data.length === selected.length;
+
+    const handleSelectAll = (checked: boolean) => {
+        if (checked) {
+            setSelected(data.map((athlete) => athlete.id))
+        } else {
+            setSelected([])
+        }
+    }
 
 
     if (loading) {
@@ -85,6 +103,15 @@ export function RecordsTable({ data, loading, sort, order, onSort, hideYear, hid
             <Table>
                 <TableHeader>
                     <TableRow>
+
+                        <TableHead>
+                            <Checkbox
+                                id="select-all-checkbox"
+                                name="select-all-checkbox"
+                                checked={selectAll}
+                                onCheckedChange={handleSelectAll}
+                            />
+                        </TableHead>
                         <TableHead>Meno</TableHead>
 
                         {/* "Priezvisko" — sortable */}
@@ -104,12 +131,19 @@ export function RecordsTable({ data, loading, sort, order, onSort, hideYear, hid
                         
                         {/* Placing */}
                         <TableHead>Umiestnenie</TableHead>
+                        <TableHead></TableHead>
                     </TableRow>
                 </TableHeader>
 
                 <TableBody>
                     {data.map((athlete, index) => (
-                        <TableRow key={`${athlete.id}-${index}`} onClick={() => handleClickRow(athlete.id)} className="hover:cursor-pointer">
+                        <TableRow key={`${athlete.id}-${index}`} onClick={() => handleClickSelect(athlete.id)} className="hover:cursor-pointer">
+
+                            <TableCell><Checkbox checked={selected.includes(athlete.id)} onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleClickSelect(athlete.id);
+                                }} />
+                            </TableCell>
 
                             {/* Clickable name → detail page */}
                             <TableCell>
@@ -138,6 +172,8 @@ export function RecordsTable({ data, loading, sort, order, onSort, hideYear, hid
                                     {placingLabel(athlete.placing)}
                                 </Badge>
                             </TableCell>
+
+                            <TableCell><Button onClick={() => handleClickRow(athlete.id)} size="xs" className="cursor-pointer" variant="outline"><ArrowRight /></Button></TableCell>
                         </TableRow>
                     ))}
 

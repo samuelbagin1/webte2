@@ -94,6 +94,7 @@ class AthleteController {
             $this->importAthlete($data);
         } catch (Exception $e) {
             Response::json(['error' => $e->getMessage()], 400);
+            return;
         }
 
         Response::json(['message' => "Imported athlete."], 200);
@@ -323,16 +324,20 @@ class AthleteController {
         $deathPlace = !empty($data['death_place']) ? trim($data['death_place']) : null;
         $deathCountry = !empty($data['death_country']) ? trim($data['death_country']) : null;
 
+        // resolve country names to IDs
+        $birthCountryId = $this->countryModel->getOrCreate(trim($birthCountry));
+        $deathCountryId = $deathCountry ? $this->countryModel->getOrCreate(trim($deathCountry)) : null;
+
         // vytvorenie alebo ziskanie sportovca
         $athleteId = $this->athleteModel->getOrCreate(
             $name,
             $surname,
             $parsedBirthDate,
             $birthPlace,
-            $birthCountry,
+            $birthCountryId,
             !empty($deathDateStr) ? parseDate($deathDateStr) : null,
             $deathPlace,
-            $deathCountry
+            $deathCountryId
         );
 
         return $athleteId;
