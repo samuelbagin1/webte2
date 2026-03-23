@@ -57,7 +57,8 @@ class Athlete {
         if (!$athlete) return null;
 
         $stmt = $this->pdo->prepare("
-            SELECT o.year, o.type, o.city, c.name AS host_country,
+            SELECT ar.id AS athlete_record_id, ar.olympics_id, ar.discipline_id,
+                o.year, o.type, o.city, c.name AS host_country,
                 d.name AS discipline, ar.placing
             FROM athlete_record ar
             JOIN olympics o ON ar.olympics_id = o.id

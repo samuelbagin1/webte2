@@ -47,7 +47,7 @@ export function Navbar() {
               </Link>
 
               <Link to="/edit">
-                <Button variant="ghost">Edit</Button>
+                <Button variant="ghost">Editovať</Button>
               </Link>
 
               {/* User dropdown with info — always visible when logged in */}

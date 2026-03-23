@@ -147,6 +147,7 @@ export function NewAthleteForm({ onCreated }: NewAthleteFormProps = {}) {
                             </Popover>
                         )}
                     />
+                    
                     {errors.birth_date && (
                         <p className="text-sm text-destructive">{errors.birth_date.message}</p>
                     )}
