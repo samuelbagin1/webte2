@@ -17,7 +17,7 @@ interface FilterOption {
 export function HomePage() {
     // filters state
     const [selectedYear, setSelectedYear] = useState<number | null>(null);
-    const [selectedDiscipline, setSelectedDiscipline] = useState<number | null>(null);
+    const [selectedDiscipline, setSelectedDiscipline] = useState<string | null>(null);
 
     // sorting and ordering
     const [sort, setSort] = useState<string>("");
@@ -63,7 +63,7 @@ export function HomePage() {
         setPage(1);
     }
 
-    const handleDisciplineChange = (discipline: number | null) => {
+    const handleDisciplineChange = (discipline: string | null) => {
         setSelectedDiscipline(discipline);
         setPage(1);
     }

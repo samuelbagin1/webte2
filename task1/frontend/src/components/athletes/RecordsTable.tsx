@@ -1,43 +1,67 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
+import { AthleteFilters } from "@/components/athletes/AthleteFilters";
+import api from "@/api/client";
 import { Badge } from "../ui/badge";
 import { Skeleton } from "../ui/skeleton";
-import { ArrowUp, ArrowDown, ArrowUpDown, ArrowRight } from "lucide-react";
+import { ArrowUp, ArrowDown, ArrowUpDown, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
+import { Plus, Trash, Download } from "lucide-react";
+import { toast } from "sonner";
+import { useAthletes } from "@/hooks/useAthletes";
 
-// main data table using shadcn + tanstack
-
-interface AthleteRecord {
-  id: number;
-  athlete_record_id: number;
-  name: string;
-  surname: string;
-  year: number;
-  type: string;
-  city: string;
-  country: string;
-  discipline: string;
-  placing: number;
-}
-
-interface AthleteTableProps {
-  data: AthleteRecord[];
-  loading: boolean;
-  sort: string;
-  order: "ASC" | "DESC";
-  onSort: (column: string) => void;
-  hideYear: boolean;
-  hideDiscipline: boolean;
+interface FilterOption {
+    id: number;
+    name: string;
 }
 
 
-export function RecordsTable({ data, loading, sort, order, onSort, hideYear, hideDiscipline }: AthleteTableProps) {
+export function RecordsTable() {
     const navigate = useNavigate();
 
     const [selected, setSelected] = useState<number[]>([]);
+
+    // sorting
+    const [sort, setSort] = useState<string>("");
+    const [order, setOrder] = useState<"ASC" | "DESC">("ASC");
+
+    // pagination
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+
+    // filter options
+    const [years, setYears] = useState<number[]>([]);
+    const [disciplines, setDisciplines] = useState<FilterOption[]>([]);
+
+    // filter state
+    const [selectedYear, setSelectedYear] = useState<number | null>(null);
+    const [selectedDiscipline, setSelectedDiscipline] = useState<string | null>(null);
+
+    // fetch filter options on mount
+    useEffect(() => {
+        api.get("/filters/years").then((res) => setYears(res.data));
+        api.get("/filters/disciplines").then((res) => setDisciplines(res.data));
+    }, []);
+
+    const { data, total, loading, refetch } = useAthletes({ page, limit, sort, order, year: selectedYear, discipline: selectedDiscipline });
+
+    const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
+    const hideYear = selectedYear !== null;
+    const hideDiscipline = selectedDiscipline !== null;
+
+    const handleSort = (column: string) => {
+        if (sort !== column) {
+            setSort(column);
+            setOrder("ASC");
+        } else if (order === "ASC") {
+            setOrder("DESC");
+        } else if (order === "DESC") {
+            setOrder("ASC");
+        }
+        setPage(1);
+    };
 
     // sort indicator icon
     const SortIcon = ({column }: {column: string}) => {
@@ -47,7 +71,7 @@ export function RecordsTable({ data, loading, sort, order, onSort, hideYear, hid
     };
 
     const SortableHead = ({column, label}: {column: string, label: string}) => (
-        <TableHead className="cursor-pointer select-none hover:bg-muted/50" onClick={() => onSort(column)}>
+        <TableHead className="cursor-pointer select-none hover:bg-muted/50" onClick={() => handleSort(column)}>
             {label}
             <SortIcon column={column} />
         </TableHead>
@@ -70,14 +94,43 @@ export function RecordsTable({ data, loading, sort, order, onSort, hideYear, hid
         setSelected((prev) => prev.includes(id) ? prev.filter((i) => i!==id) : [...prev, id]);
     }
 
-    const selectAll = data.length === selected.length;
+    const selectAll = data.length > 0 && data.length === selected.length;
 
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
-            setSelected(data.map((athlete) => athlete.id))
+            setSelected(data.map((athlete) => athlete.athlete_record_id))
         } else {
             setSelected([])
         }
+    }
+
+    const handleDelete = async () => {
+        await Promise.all(selected.map((id) => api.delete(`/athletes/records/${id}`)));
+        toast.success("Úspešne odstraný");
+        setSelected([]);
+        refetch();
+    }
+
+    const handleDownload = () => {
+        const selectedRecords = data.filter((a) => selected.includes(a.athlete_record_id));
+        const blob = new Blob([JSON.stringify(selectedRecords, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "records.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success("Úspešne stiahnuté údaje");
+    }
+
+    const handleYearChange = (year: number | null) => {
+        setSelectedYear(year);
+        setPage(1);
+    }
+
+    const handleDisciplineChange = (discipline: string | null) => {
+        setSelectedDiscipline(discipline);
+        setPage(1);
     }
 
 
@@ -100,86 +153,158 @@ export function RecordsTable({ data, loading, sort, order, onSort, hideYear, hid
     }
 
     return (
-        <div className="rounded-md border">
-            <Table>
-                <TableHeader>
-                    <TableRow>
+        <div className="space-y-4">
+            <h1 className="text-3xl font-bold">Prehľad záznamov olympionikov</h1>
 
-                        <TableHead>
-                            <Checkbox
-                                id="select-all-checkbox"
-                                name="select-all-checkbox"
-                                checked={selectAll}
-                                onCheckedChange={handleSelectAll}
-                            />
-                        </TableHead>
-                        <TableHead>Meno</TableHead>
+            <div className="flex items-center space-x-3">
+                <AthleteFilters
+                    years={years}
+                    disciplines={disciplines}
+                    selectedYear={selectedYear}
+                    selectedDiscipline={selectedDiscipline}
+                    onYearChange={handleYearChange}
+                    onDisciplineChange={handleDisciplineChange}
+                />
+                <Button className="ml-auto" variant="ghost" onClick={() => handleDownload()} disabled={selected.length === 0}><Download /></Button>
+                <Button variant="destructive" onClick={() => handleDelete()} disabled={selected.length === 0}><Trash /></Button>
+                <Button onClick={() => navigate("/athlete/record/new")}><Plus />Nový záznam</Button>
+            </div>
 
-                        {/* "Priezvisko" — sortable */}
-                        <SortableHead column="surname" label="Priezvisko" />
+            <div className="rounded-md border">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
 
-                        {/* "Rok" — sortable, hidden when year filter active */}
-                        {!hideYear && <SortableHead column="year" label="Rok Narodenia" />}
+                            <TableHead>
+                                <Checkbox
+                                    id="select-all-checkbox"
+                                    name="select-all-checkbox"
+                                    checked={selectAll}
+                                    onCheckedChange={handleSelectAll}
+                                />
+                            </TableHead>
+                            <TableHead>Meno</TableHead>
 
-                        {/* Type (LOH/ZOH) */}
-                        <TableHead>Typ</TableHead>
+                            <SortableHead column="surname" label="Priezvisko" />
 
-                        {/* Country */}
-                        <TableHead>Krajina</TableHead>
-                        
-                        {/* "Kategória" — sortable, hidden when discipline filter active */}
-                        {!hideDiscipline && <SortableHead column="discipline" label="Kategória" />}
-                        
-                        {/* Placing */}
-                        <TableHead>Umiestnenie</TableHead>
-                        <TableHead></TableHead>
-                    </TableRow>
-                </TableHeader>
+                            {!hideYear && <SortableHead column="year" label="Rok Narodenia" />}
 
-                <TableBody>
-                    {data.map((athlete, index) => (
-                        <TableRow key={`${athlete.id}-${index}`} onClick={() => handleClickSelect(athlete.athlete_record_id)} className="hover:cursor-pointer">
+                            <TableHead>Typ</TableHead>
 
-                            <TableCell><Checkbox checked={selected.includes(athlete.athlete_record_id)} onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleClickSelect(athlete.athlete_record_id);
-                                }} />
-                            </TableCell>
+                            <TableHead>Krajina</TableHead>
 
-                            {/* Clickable name → detail page */}
-                            <TableCell>
-                                <Link
-                                    to={`/athlete/${athlete.id}`}
-                                    className="font-medium text-primary underline-offset-4 hover:underline"
-                                >
-                                    {athlete.name}
-                                </Link>
-                            </TableCell>
+                            {!hideDiscipline && <SortableHead column="discipline" label="Kategória" />}
 
-                            <TableCell>{athlete.surname}</TableCell>
-
-                            {!hideYear && <TableCell>{athlete.year}</TableCell>}
-
-                            <TableCell>
-                                <Badge variant="outline">{athlete.type}</Badge>
-                            </TableCell>
-
-                            <TableCell>{athlete.country}</TableCell>
-
-                            {!hideDiscipline && <TableCell>{athlete.discipline}</TableCell>}
-
-                            <TableCell>
-                                <Badge variant={athlete.placing <= 3 ? "default" : "secondary"}>
-                                    {placingLabel(athlete.placing)}
-                                </Badge>
-                            </TableCell>
-
-                            <TableCell><Button onClick={() => handleClickRow(athlete.id)} size="xs" className="cursor-pointer" variant="outline"><ArrowRight /></Button></TableCell>
+                            <TableHead>Umiestnenie</TableHead>
+                            <TableHead></TableHead>
                         </TableRow>
-                    ))}
+                    </TableHeader>
 
-                </TableBody>
-            </Table>
+                    <TableBody>
+                        {data.map((athlete, index) => (
+                            <TableRow key={`${athlete.id}-${index}`} onClick={() => handleClickSelect(athlete.athlete_record_id)} className="hover:cursor-pointer">
+
+                                <TableCell><Checkbox checked={selected.includes(athlete.athlete_record_id)} onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleClickSelect(athlete.athlete_record_id);
+                                    }} />
+                                </TableCell>
+
+                                <TableCell>
+                                    <Link
+                                        to={`/athlete/${athlete.id}`}
+                                        className="font-medium text-primary underline-offset-4 hover:underline"
+                                    >
+                                        {athlete.name}
+                                    </Link>
+                                </TableCell>
+
+                                <TableCell>{athlete.surname}</TableCell>
+
+                                {!hideYear && <TableCell>{athlete.year}</TableCell>}
+
+                                <TableCell>
+                                    <Badge variant="outline">{athlete.type}</Badge>
+                                </TableCell>
+
+                                <TableCell>{athlete.country}</TableCell>
+
+                                {!hideDiscipline && <TableCell>{athlete.discipline}</TableCell>}
+
+                                <TableCell>
+                                    <Badge variant={athlete.placing <= 3 ? "default" : "secondary"}>
+                                        {placingLabel(athlete.placing)}
+                                    </Badge>
+                                </TableCell>
+
+                                <TableCell><Button onClick={() => handleClickRow(athlete.id)} size="xs" className="cursor-pointer" variant="outline"><ArrowRight /></Button></TableCell>
+                            </TableRow>
+                        ))}
+
+                    </TableBody>
+                </Table>
+            </div>
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Záznamov na stránku:</span>
+                    {[10, 20, 0].map((l) => (
+                        <Button
+                            key={l}
+                            variant={limit === l ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => { setLimit(l); setPage(1); }}
+                        >
+                            {l === 0 ? "Všetky" : l}
+                        </Button>
+                    ))}
+                </div>
+
+                {limit > 0 && (
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            size="xs"
+                            disabled={page <= 1}
+                            onClick={() => setPage(1)}
+                        >
+                            Prvá
+                        </Button>
+
+                        <Button
+                            variant="outline"
+                            size="xs"
+                            disabled={page <= 1}
+                            onClick={() => setPage((p) => p - 1)}
+                        >
+                            <ChevronLeft />
+                        </Button>
+
+                        <span className="text-sm">
+                            Strana {page} z {totalPages}
+                        </span>
+
+                        <Button
+                            variant="outline"
+                            size="xs"
+                            disabled={page >= totalPages}
+                            onClick={() => setPage((p) => p + 1)}
+                        >
+                            <ChevronRight />
+                        </Button>
+
+                        <Button
+                            variant="outline"
+                            size="xs"
+                            disabled={page >= totalPages}
+                            onClick={() => setPage(totalPages)}
+                        >
+                            Posledná
+                        </Button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

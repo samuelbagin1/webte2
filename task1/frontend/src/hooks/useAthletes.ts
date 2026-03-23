@@ -23,7 +23,7 @@ interface UseAthletesParams {
     sort: string;
     order: "ASC" | "DESC" | "";
     year?: number | null;
-    discipline?: number | null;
+    discipline?: string | null;
 }
 
 interface UseAthletesResult {

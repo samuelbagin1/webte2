@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "@/api/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,6 +37,7 @@ interface AthleteDetail {
 export function AthleteDetailPage() {
     const {id} = useParams<{id: string}>();
     const [athlete, setAthlete] = useState<AthleteDetail | null>(null);
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
 
@@ -71,12 +72,10 @@ export function AthleteDetailPage() {
             <div className="text-center py-12">
                 <p className="text-muted-foreground">Olympionik nebol nájdený.</p>
 
-                <Link to="/">
-                    <Button variant="outline" className="mt-4">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Späť na zoznam
-                    </Button>
-                </Link>
+                <Button variant="outline" className="mt-4" onClick={() => navigate(-1)}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Späť na zoznam
+                </Button>
             </div>
         )
     }
@@ -107,12 +106,10 @@ export function AthleteDetailPage() {
     <div className="space-y-6">
 
         {/* Back navigation */}
-        <Link to="/">
-            <Button variant="ghost" className="gap-2">
-                <ArrowLeft className="h-4 w-4" />
-                Späť na zoznam
-            </Button>
-        </Link>
+        <Button variant="ghost" className="gap-2" onClick={() => navigate(-1)}>
+            <ArrowLeft className="h-4 w-4" />
+            Späť na zoznam
+        </Button>
 
         <div className=""></div>
 

@@ -9,9 +9,9 @@ interface AthleteFiltersProps {
   years: number[];
   disciplines: FilterOption[];
   selectedYear: number | null;
-  selectedDiscipline: number | null;
+  selectedDiscipline: string | null;
   onYearChange: (year: number | null) => void;
-  onDisciplineChange: (discipline: number | null) => void;
+  onDisciplineChange: (discipline: string | null) => void;
 }
 
 export function AthleteFilters({ years, disciplines, selectedYear, selectedDiscipline, onYearChange, onDisciplineChange }: AthleteFiltersProps) {
@@ -45,8 +45,8 @@ export function AthleteFilters({ years, disciplines, selectedYear, selectedDisci
       {/* Discipline/Category filter */}
       <div className="w-64">
         <Select
-          value={selectedDiscipline?.toString() ?? "all"}
-          onValueChange={(val) => onDisciplineChange(val === "all" ? null : Number(val))}
+          value={selectedDiscipline ?? "all"}
+          onValueChange={(val) => onDisciplineChange(val === "all" ? null : val)}
         >
 
           <SelectTrigger>
@@ -57,7 +57,7 @@ export function AthleteFilters({ years, disciplines, selectedYear, selectedDisci
             <SelectItem value="all">Všetky kategórie</SelectItem>
 
             {disciplines.map((d) => (
-              <SelectItem key={d.id} value={d.id.toString()}>
+              <SelectItem key={d.id} value={d.name}>
                 {d.name}
               </SelectItem>
             ))}
