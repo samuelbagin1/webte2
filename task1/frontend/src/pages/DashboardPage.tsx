@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, History, Upload } from "lucide-react";
+import { Settings, History, Upload, Plus } from "lucide-react";
 
 // private zone landing page
 
@@ -40,6 +40,7 @@ export function DashboardPage() {
                     </CardDescription>
                 </CardHeader>
             </Card>
+
 
             {/* Quick actions grid */}
             <div className="grid gap-4 sm:grid-cols-3">
@@ -101,6 +102,67 @@ export function DashboardPage() {
                         </Link>
                     </CardContent>
                 </Card>
+
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                            <Plus className="h-5 w-5" />
+                            Nový atlét
+                        </CardTitle>
+
+                        <CardDescription>
+                            Vytvoorenie nového atléta pomocou formuláru
+                        </CardDescription>
+                    </CardHeader>
+
+                    <CardContent>
+                        <Link to="/athlete/new">
+                            <Button variant="outline" className="w-full">Vytvoriť</Button>
+                        </Link>
+                    </CardContent>
+                </Card>
+
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                            <Plus className="h-5 w-5" />
+                            Nový záznam
+                        </CardTitle>
+
+                        <CardDescription>
+                            Vytvorenie nového záznamu pomocou formuláru
+                        </CardDescription>
+                    </CardHeader>
+
+                    <CardContent>
+                        <Link to="/athlete/record/new">
+                            <Button variant="outline" className="w-full">Vytvoriť</Button>
+                        </Link>
+                    </CardContent>
+                </Card>
+
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                            <Upload className="h-5 w-5" />
+                            Import JSON
+                        </CardTitle>
+
+                        <CardDescription>
+                            Importovanie dát zo súboru JSON
+                        </CardDescription>
+                    </CardHeader>
+
+                    <CardContent>
+                        <Link to="/import/batch">
+                            <Button variant="outline" className="w-full">Importovať</Button>
+                        </Link>
+                    </CardContent>
+                </Card>
+
                 
             </div>
         </div>

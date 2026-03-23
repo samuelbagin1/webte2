@@ -117,7 +117,7 @@ export function NewAthleteForm({ onCreated }: NewAthleteFormProps = {}) {
 
 
 
-            <div className="grid gap-4 sm:grid-cols-7">
+            <div className="grid gap-4 lg:grid-cols-7">
                 {/* birth date */}
                 <div className="space-y-2 col-span-2">
                     <Label htmlFor="birth_date">Dátum narodenia</Label>
@@ -187,7 +187,7 @@ export function NewAthleteForm({ onCreated }: NewAthleteFormProps = {}) {
 
             <div className="h-6"></div>
 
-            <div className="grid gap-4 sm:grid-cols-7">
+            <div className="grid gap-4 lg:grid-cols-7">
                 {/* death date */}
                 <div className="space-y-2 col-span-2">
                     <Label htmlFor="death_date">Dátum úmrtia</Label>

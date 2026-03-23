@@ -48,7 +48,7 @@ $router->delete("/olympics/{id}", [OlympicsController::class, "delete"]);
 $router->get("/disciplines", [DisciplineController::class, "index"]);
 $router->get("/disciplines/{id}", [DisciplineController::class, "show"]);
 $router->post("/disciplines", [DisciplineController::class, "create"]);
-$router->delete("/disciplines", [DisciplineController::class, "delete"]);
+$router->delete("/disciplines/{id}", [DisciplineController::class, "delete"]);
 
 
 // USER routes

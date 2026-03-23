@@ -1,5 +1,5 @@
 <?php 
-// handling user authentication: login, logout, registration
+// handling user authentication: login, logout, profile
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 

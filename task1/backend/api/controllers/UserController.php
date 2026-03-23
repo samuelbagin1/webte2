@@ -28,7 +28,7 @@ class UserController {
     // {} -> {[{id, first_name, last_name, email, password_hash, totp_secret}]}
     public function index() {
         $data = $this->userModel->getAll();
-        if (!$data) { Response::json(['error' => 'Error at the server'], 400); return; }
+        if (!$data) { Response::json(['error' => 'Could not fetch users.'], 500); return; }
 
         Response::json($data, 200);
     }
@@ -40,7 +40,7 @@ class UserController {
     // {id} -> {id, first_name, last_name, email, password_hash, totp_secret}
     public function show(int $id) {
         $data = $this->userModel->getById($id);
-        if (!$data) { Response::json(['error' => 'Error at the server'], 400); return; }
+        if (!$data) { Response::json(['error' => 'User not found.'], 404); return; }
 
         Response::json($data, 200);
     }
@@ -94,13 +94,13 @@ class UserController {
         $lastName = Sanitizer::sanitizeString($input['last_name'] ?? '');
 
         if (empty($firstName) || empty($lastName)) {
-            Response::json(['error' => 'Meno a priezvisko sú povinné'], 400);
+            Response::json(['error' => 'First name and last name are required.'], 400);
             return;
         }
 
         $this->userModel->update($id, $firstName, $lastName);
 
-        Response::json(['message' => 'Uspesne aktualizovane'], 200);
+        Response::json(['message' => 'Successfully updated user.'], 200);
     }
 
 
@@ -116,20 +116,20 @@ class UserController {
         $newPasswordRepeat = $input['new_password_repeat'];
 
         if ($newPassword !== $newPasswordRepeat) {
-            Response::json(['error' => 'Not matching passwords'], 401);
+            Response::json(['error' => 'New passwords do not match.'], 400);
             return;
         }
 
         $user = $this->userModel->getById($id);
         if (!password_verify($currentPassword, $user['password_hash'])) {
-            Response::json(['error' => 'Nesprávne aktuálne heslo'], 401);
+            Response::json(['error' => 'Incorrect current password.'], 401);
             return;
         }
 
         $auth = new Authentication();
         $passwordHash = $auth->hashPassword($newPassword);
         $this->userModel->updatePassword($id, $passwordHash);
-        Response::json(['message' => 'Uspesne aktualizovane'], 200);
+        Response::json(['message' => 'Successfully updated password.'], 200);
     }
 
 

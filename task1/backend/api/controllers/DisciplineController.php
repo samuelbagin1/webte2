@@ -9,9 +9,9 @@ class DisciplineController {
         $this->disciplineModel = new Discipline($pdo);
     }
 
-    // list all olympics events
-    // GET /olympics
-    // {} -> {[{id, type, year, city, host_country, code}]}
+    // list all disciplines
+    // GET /disciplines
+    // {} -> {[{id, name}]}
     public function index() {
         $data = $this->disciplineModel->getAll();
         
@@ -30,10 +30,10 @@ class DisciplineController {
     }
 
 
-    // create olympics record
+    // create discipline
     // authenticate
-    // POST /olympics
-    // {host_country, type, year, city, code} -> {message}
+    // POST /disciplines
+    // {name} -> {message, id, name}
     public function create() {
         AuthMiddleware::verify();
 
@@ -53,14 +53,14 @@ class DisciplineController {
 
     }
 
-    // delete olympics record
+    // delete discipline
     // authenticate
-    // DELETE /olympics/{id}
+    // DELETE /disciplines/{id}
     // {id} -> {message}
     public function delete($id) {
         AuthMiddleware::verify();
         $this->disciplineModel->delete($id);
-        Response::json(['message' => 'Successfully deleted olympics!'], 200);
+        Response::json(['message' => 'Successfully deleted discipline!'], 200);
 
     }
 }

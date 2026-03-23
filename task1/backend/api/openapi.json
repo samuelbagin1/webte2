@@ -12,7 +12,7 @@
     "/auth/login": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Login with email/password/totp",
+        "summary": "Login with email/password and optional 2FA",
         "requestBody": {
           "required": true,
           "content": {
@@ -23,7 +23,7 @@
                 "properties": {
                   "email": { "type": "string", "format": "email" },
                   "password": { "type": "string" },
-                  "totp": { "type": "string", "description": "2FA code (if enabled)" }
+                  "totp": { "type": "string", "description": "2FA TOTP code (if enabled)" }
                 }
               }
             }
@@ -38,9 +38,12 @@
                   "type": "object",
                   "properties": {
                     "message": { "type": "string" },
+                    "access_token": { "type": "string", "description": "JWT access token (1h expiry)" },
+                    "refresh_token": { "type": "string", "description": "JWT refresh token (7d expiry)" },
                     "user": {
                       "type": "object",
                       "properties": {
+                        "id": { "type": "integer" },
                         "full_name": { "type": "string" },
                         "email": { "type": "string" }
                       }
@@ -51,7 +54,7 @@
             }
           },
           "401": {
-            "description": "Invalid credentials",
+            "description": "Invalid credentials or 2FA code",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -64,8 +67,8 @@
     "/auth/logout": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Logout (destroy session)",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Logout and destroy session",
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": {
             "description": "Logged out",
@@ -89,8 +92,8 @@
     "/auth/profile": {
       "get": {
         "tags": ["Auth"],
-        "summary": "Get current user profile",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Get current authenticated user profile",
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": {
             "description": "User profile",
@@ -125,16 +128,16 @@
     "/auth/google": {
       "get": {
         "tags": ["OAuth"],
-        "summary": "Get Google OAuth consent URL",
+        "summary": "Get Google OAuth consent URL for frontend redirect",
         "responses": {
           "200": {
-            "description": "Google OAuth URL",
+            "description": "Google OAuth URL with CSRF state",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "url": { "type": "string", "format": "uri" }
+                    "url": { "type": "string", "format": "uri", "description": "Redirect the user to this URL" }
                   }
                 }
               }
@@ -146,15 +149,15 @@
     "/auth/google/callback": {
       "get": {
         "tags": ["OAuth"],
-        "summary": "Google OAuth callback",
+        "summary": "Handle Google OAuth callback, create/find user, redirect to dashboard",
         "parameters": [
-          { "name": "code", "in": "query", "required": true, "schema": { "type": "string" } },
-          { "name": "state", "in": "query", "required": true, "schema": { "type": "string" } }
+          { "name": "code", "in": "query", "required": true, "schema": { "type": "string" }, "description": "Authorization code from Google" },
+          { "name": "state", "in": "query", "required": true, "schema": { "type": "string" }, "description": "HMAC-signed CSRF state" }
         ],
         "responses": {
-          "302": { "description": "Redirect to /dashboard" },
+          "302": { "description": "Redirect to /dashboard?token=<JWT>" },
           "400": {
-            "description": "State mismatch or error",
+            "description": "State mismatch or OAuth error",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -176,7 +179,7 @@
           { "name": "type", "in": "query", "schema": { "type": "string", "enum": ["LOH", "ZOH"] } },
           { "name": "year", "in": "query", "schema": { "type": "integer" } },
           { "name": "placing", "in": "query", "schema": { "type": "integer" } },
-          { "name": "discipline", "in": "query", "schema": { "type": "string" } }
+          { "name": "discipline", "in": "query", "schema": { "type": "string", "description": "Discipline name to filter by" } }
         ],
         "responses": {
           "200": {
@@ -209,7 +212,7 @@
           { "name": "sort", "in": "query", "schema": { "type": "string", "default": "surname", "enum": ["name", "surname", "year", "discipline", "placing", "city", "type"] } },
           { "name": "order", "in": "query", "schema": { "type": "string", "default": "ASC", "enum": ["ASC", "DESC"] } },
           { "name": "year", "in": "query", "schema": { "type": "integer" } },
-          { "name": "discipline", "in": "query", "schema": { "type": "integer" } }
+          { "name": "discipline", "in": "query", "schema": { "type": "integer", "description": "Discipline ID to filter by" } }
         ],
         "responses": {
           "200": {
@@ -233,8 +236,8 @@
       },
       "post": {
         "tags": ["Athletes"],
-        "summary": "Add single athlete",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Create a single athlete",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -245,10 +248,16 @@
         },
         "responses": {
           "200": {
-            "description": "Athlete imported",
+            "description": "Athlete created",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Message" }
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "id": { "type": "integer" }
+                  }
+                }
               }
             }
           },
@@ -259,19 +268,35 @@
                 "schema": { "$ref": "#/components/schemas/Error" }
               }
             }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
       "delete": {
         "tags": ["Athletes"],
-        "summary": "Delete all athletes + cascade all records",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Delete all athletes and cascade all records",
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": {
             "description": "All athletes deleted",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Message" }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
               }
             }
           }
@@ -283,7 +308,7 @@
         "tags": ["Athletes"],
         "summary": "Get single athlete with all records",
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Athlete ID" }
         ],
         "responses": {
           "200": {
@@ -308,7 +333,7 @@
                         "type": "object",
                         "properties": {
                           "year": { "type": "integer" },
-                          "type": { "type": "string" },
+                          "type": { "type": "string", "enum": ["LOH", "ZOH"] },
                           "city": { "type": "string" },
                           "host_country": { "type": "string" },
                           "discipline": { "type": "string" },
@@ -333,16 +358,29 @@
       },
       "put": {
         "tags": ["Athletes"],
-        "summary": "Modify athlete data",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Update athlete personal data",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Athlete ID" }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/AthleteInput" }
+              "schema": {
+                "type": "object",
+                "required": ["name", "surname", "birth_day", "birth_place", "birth_country"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "surname": { "type": "string" },
+                  "birth_day": { "type": "string", "format": "date", "description": "Supports d/m/Y, d/m/y, or YYYY-MM-DD" },
+                  "birth_place": { "type": "string" },
+                  "birth_country": { "type": "string" },
+                  "death_day": { "type": "string", "format": "date", "nullable": true },
+                  "death_place": { "type": "string", "nullable": true },
+                  "death_country": { "type": "string", "nullable": true }
+                }
+              }
             }
           }
         },
@@ -354,15 +392,23 @@
                 "schema": { "$ref": "#/components/schemas/Message" }
               }
             }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
       "delete": {
         "tags": ["Athletes"],
-        "summary": "Delete single athlete + cascade all records",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Delete single athlete and cascade all records",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Athlete ID" }
         ],
         "responses": {
           "200": {
@@ -372,6 +418,14 @@
                 "schema": { "$ref": "#/components/schemas/Message" }
               }
             }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
@@ -379,8 +433,8 @@
     "/athletes/batch": {
       "post": {
         "tags": ["Athletes"],
-        "summary": "Add multiple athletes from JSON file",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Import multiple athletes with records from JSON file",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -389,7 +443,7 @@
                 "type": "object",
                 "required": ["file"],
                 "properties": {
-                  "file": { "type": "string", "format": "binary", "description": ".json file" }
+                  "file": { "type": "string", "format": "binary", "description": ".json file with array of athlete objects" }
                 }
               }
             }
@@ -411,7 +465,15 @@
             }
           },
           "400": {
-            "description": "No file or wrong format",
+            "description": "No file uploaded or file is not .json",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -424,10 +486,10 @@
     "/athletes/{id}/records": {
       "post": {
         "tags": ["Athletes"],
-        "summary": "Add single record to athlete",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Create a single record for an athlete",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Athlete ID" }
         ],
         "requestBody": {
           "required": true,
@@ -449,7 +511,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Record created",
             "content": {
               "application/json": {
@@ -464,6 +526,14 @@
                 "schema": { "$ref": "#/components/schemas/Error" }
               }
             }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
@@ -473,11 +543,11 @@
         "tags": ["Athletes"],
         "summary": "Get single athlete record by ID",
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Record ID" }
         ],
         "responses": {
           "200": {
-            "description": "Athlete record",
+            "description": "Athlete record details",
             "content": {
               "application/json": {
                 "schema": {
@@ -486,7 +556,7 @@
                     "name": { "type": "string" },
                     "surname": { "type": "string" },
                     "placing": { "type": "integer" },
-                    "type": { "type": "string" },
+                    "type": { "type": "string", "enum": ["LOH", "ZOH"] },
                     "year": { "type": "integer" },
                     "city": { "type": "string" },
                     "host_country": { "type": "string" },
@@ -497,7 +567,7 @@
             }
           },
           "404": {
-            "description": "Athlete not found",
+            "description": "Record not found",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -508,8 +578,8 @@
       },
       "put": {
         "tags": ["Athletes"],
-        "summary": "Modify athlete record",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Update an athlete record",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Record ID" }
         ],
@@ -537,13 +607,21 @@
                 "schema": { "$ref": "#/components/schemas/Message" }
               }
             }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
       "delete": {
         "tags": ["Athletes"],
-        "summary": "Delete single athlete record",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Delete a single athlete record",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Record ID" }
         ],
@@ -555,6 +633,14 @@
                 "schema": { "$ref": "#/components/schemas/Message" }
               }
             }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
@@ -562,8 +648,8 @@
     "/athletes/batch/records": {
       "post": {
         "tags": ["Athletes"],
-        "summary": "Add multiple records from JSON file",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Import multiple athlete records from JSON file",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -594,7 +680,15 @@
             }
           },
           "400": {
-            "description": "No file or wrong format",
+            "description": "No file uploaded or file is not .json",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -607,8 +701,8 @@
     "/athletes/import": {
       "post": {
         "tags": ["Athletes"],
-        "summary": "Import athletes from CSV/Excel file",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Import athletes with records from CSV/Excel file",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -639,7 +733,15 @@
             }
           },
           "400": {
-            "description": "No file or unsupported type",
+            "description": "No file uploaded or unsupported file type",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -655,7 +757,7 @@
         "summary": "List all Olympics events",
         "responses": {
           "200": {
-            "description": "List of Olympics",
+            "description": "List of Olympics events",
             "content": {
               "application/json": {
                 "schema": {
@@ -679,8 +781,8 @@
       },
       "post": {
         "tags": ["Olympics"],
-        "summary": "Create Olympics record",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Create an Olympics event",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -704,12 +806,30 @@
             "description": "Olympics created",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Message" }
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "id": { "type": "integer" },
+                    "type": { "type": "string", "enum": ["LOH", "ZOH"] },
+                    "year": { "type": "integer" },
+                    "city": { "type": "string" },
+                    "host_country": { "type": "string" }
+                  }
+                }
               }
             }
           },
           "400": {
             "description": "Invalid data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -722,9 +842,9 @@
     "/olympics/{id}": {
       "get": {
         "tags": ["Olympics"],
-        "summary": "Get single Olympics event",
+        "summary": "Get single Olympics event by ID",
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Olympics ID" }
         ],
         "responses": {
           "200": {
@@ -745,8 +865,8 @@
               }
             }
           },
-          "400": {
-            "description": "Not found",
+          "404": {
+            "description": "Olympics event not found",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -757,10 +877,10 @@
       },
       "delete": {
         "tags": ["Olympics"],
-        "summary": "Delete Olympics record",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Delete an Olympics event",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Olympics ID" }
         ],
         "responses": {
           "200": {
@@ -770,6 +890,14 @@
                 "schema": { "$ref": "#/components/schemas/Message" }
               }
             }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
@@ -777,8 +905,8 @@
     "/olympics/import": {
       "post": {
         "tags": ["Olympics"],
-        "summary": "Import Olympics data from CSV/Excel file",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Import Olympics events from CSV/Excel file",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -787,7 +915,7 @@
                 "type": "object",
                 "required": ["file"],
                 "properties": {
-                  "file": { "type": "string", "format": "binary", "description": ".csv, .xlsx, or .xls file" }
+                  "file": { "type": "string", "format": "binary", "description": ".csv, .xlsx, or .xls file with columns: type, year, city, country, code" }
                 }
               }
             }
@@ -809,7 +937,151 @@
             }
           },
           "400": {
-            "description": "No file or unsupported type",
+            "description": "No file uploaded or unsupported file type",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/disciplines": {
+      "get": {
+        "tags": ["Disciplines"],
+        "summary": "List all disciplines",
+        "responses": {
+          "200": {
+            "description": "List of disciplines",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer" },
+                      "name": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Disciplines"],
+        "summary": "Create a discipline",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Discipline created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "id": { "type": "integer" },
+                    "name": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/disciplines/{id}": {
+      "get": {
+        "tags": ["Disciplines"],
+        "summary": "Get single discipline by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Discipline ID" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Discipline details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "name": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Discipline not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Disciplines"],
+        "summary": "Delete a discipline",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Discipline ID" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Discipline deleted",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Message" }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -822,7 +1094,7 @@
     "/users": {
       "post": {
         "tags": ["Users"],
-        "summary": "Register new user",
+        "summary": "Register a new user",
         "requestBody": {
           "required": true,
           "content": {
@@ -831,10 +1103,10 @@
                 "type": "object",
                 "required": ["first_name", "last_name", "email", "password", "password_repeat"],
                 "properties": {
-                  "first_name": { "type": "string" },
-                  "last_name": { "type": "string" },
+                  "first_name": { "type": "string", "maxLength": 100 },
+                  "last_name": { "type": "string", "maxLength": 100 },
                   "email": { "type": "string", "format": "email" },
-                  "password": { "type": "string" },
+                  "password": { "type": "string", "description": "Min 8 chars, 1 uppercase, 1 number" },
                   "password_repeat": { "type": "string" }
                 }
               }
@@ -843,7 +1115,7 @@
         },
         "responses": {
           "201": {
-            "description": "User created",
+            "description": "User created with 2FA secret",
             "content": {
               "application/json": {
                 "schema": {
@@ -852,7 +1124,7 @@
                     "message": { "type": "string" },
                     "id": { "type": "integer" },
                     "tfa_secret": { "type": "string" },
-                    "qr_code": { "type": "string", "description": "Base64 QR code data URI" }
+                    "qr_code": { "type": "string", "description": "SVG QR code as data URI" }
                   }
                 }
               }
@@ -867,7 +1139,7 @@
             }
           },
           "409": {
-            "description": "User already exists",
+            "description": "User with this email already exists",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -879,7 +1151,7 @@
       "get": {
         "tags": ["Users"],
         "summary": "List all users",
-        "security": [{ "sessionAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": {
             "description": "All users",
@@ -901,6 +1173,22 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
@@ -908,10 +1196,10 @@
     "/users/{id}": {
       "get": {
         "tags": ["Users"],
-        "summary": "Get single user",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Get single user by ID",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "User ID" }
         ],
         "responses": {
           "200": {
@@ -931,15 +1219,31 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
       "put": {
         "tags": ["Users"],
-        "summary": "Update user name",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Update user first and last name",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "User ID" }
         ],
         "requestBody": {
           "required": true,
@@ -966,7 +1270,15 @@
             }
           },
           "400": {
-            "description": "Missing fields",
+            "description": "First name and last name are required",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -977,10 +1289,10 @@
       },
       "delete": {
         "tags": ["Users"],
-        "summary": "Delete user",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Delete a user",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "User ID" }
         ],
         "responses": {
           "200": {
@@ -988,6 +1300,14 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Message" }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
               }
             }
           }
@@ -998,9 +1318,9 @@
       "put": {
         "tags": ["Users"],
         "summary": "Change user password",
-        "security": [{ "sessionAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "User ID" }
         ],
         "requestBody": {
           "required": true,
@@ -1027,8 +1347,16 @@
               }
             }
           },
+          "400": {
+            "description": "New passwords do not match",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
           "401": {
-            "description": "Wrong current password or passwords don't match",
+            "description": "Not authenticated or incorrect current password",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Error" }
@@ -1042,13 +1370,13 @@
       "get": {
         "tags": ["Users"],
         "summary": "Get user login history",
-        "security": [{ "sessionAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "User ID" }
         ],
         "responses": {
           "200": {
-            "description": "Login history",
+            "description": "Login history entries",
             "content": {
               "application/json": {
                 "schema": {
@@ -1064,6 +1392,14 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
@@ -1071,23 +1407,31 @@
     "/users/{id}/2fa": {
       "post": {
         "tags": ["Users"],
-        "summary": "Setup 2FA (generate secret and QR code)",
-        "security": [{ "sessionAuth": [] }],
+        "summary": "Generate 2FA secret and QR code",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "User ID" }
         ],
         "responses": {
           "200": {
-            "description": "2FA secret and QR code",
+            "description": "2FA secret and QR code generated",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "secret": { "type": "string" },
-                    "qr_code": { "type": "string", "description": "Base64 SVG QR code data URI" }
+                    "qr_code": { "type": "string", "description": "SVG QR code as data URI" }
                   }
                 }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
               }
             }
           }
@@ -1114,6 +1458,14 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Could not fetch years from database",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
@@ -1121,7 +1473,7 @@
     "/filters/disciplines": {
       "get": {
         "tags": ["Filters"],
-        "summary": "Get all disciplines",
+        "summary": "Get all disciplines for filter dropdown",
         "responses": {
           "200": {
             "description": "List of disciplines",
@@ -1139,6 +1491,14 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Could not fetch disciplines from database",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
@@ -1146,11 +1506,11 @@
   },
   "components": {
     "securitySchemes": {
-      "sessionAuth": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "PHPSESSID",
-        "description": "PHP session cookie (set after login)"
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT access token obtained from /auth/login or /auth/google/callback"
       }
     },
     "schemas": {
@@ -1172,7 +1532,7 @@
         "properties": {
           "name": { "type": "string" },
           "surname": { "type": "string" },
-          "birth_date": { "type": "string", "format": "date", "description": "Supports d/m/Y, d/m/y, or standard formats" },
+          "birth_date": { "type": "string", "format": "date", "description": "Supports d/m/Y, d/m/y, or YYYY-MM-DD" },
           "birth_place": { "type": "string" },
           "birth_country": { "type": "string" },
           "death_date": { "type": "string", "format": "date", "nullable": true },
@@ -1183,7 +1543,8 @@
       "AthleteRecord": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer" },
+          "id": { "type": "integer", "description": "Athlete ID" },
+          "athlete_record_id": { "type": "integer", "description": "Record ID" },
           "name": { "type": "string" },
           "surname": { "type": "string" },
           "year": { "type": "integer" },

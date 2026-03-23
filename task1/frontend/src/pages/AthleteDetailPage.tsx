@@ -314,7 +314,7 @@ export function AthleteDetailPage() {
 
     const deleteAthlete = async () => {
         try {
-            await api.delete(`/athlete/${id}`);
+            await api.delete(`/athletes/${id}`);
             toast.success("Atlét bol úspešne odstránený");
             navigate(-1);
 

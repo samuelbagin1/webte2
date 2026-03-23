@@ -140,7 +140,7 @@ class AthleteController {
 
     // add single athlete record
     // authenticate
-    // POST /athletes/{id}/record
+    // POST /athletes/{id}/records
     // {id, year, type, city, olympics_country, discipline, placing} -> {message}
     public function createRecord($id): void {
         AuthMiddleware::verify();
@@ -151,14 +151,17 @@ class AthleteController {
             $this->importRecord($data, $id);
         } catch (Exception $e) {
             Response::json(['error' => $e->getMessage()], 400);
+            return;
         }
+
+        Response::json(['message' => 'Successfully created record.'], 201);
     }
 
 
     // add multiple records from JSON
     // authenticate
-    // POST /athletes/batch/record
-    // {file(.json)[{id, year, type, city, olympics_country, discipline, placing}]} -> {message, imported}
+    // POST /athletes/batch/records
+    // {file(.json)[{athlete_id, year, type, city, olympics_country, discipline, placing}]} -> {message, imported}
     public function createBatchRecord(): void {
         AuthMiddleware::verify();
 
@@ -235,13 +238,13 @@ class AthleteController {
         $this->athleteModel->update($id, $name, $surname, $birthDate, $birthPlace, $birthCountryId,
                     $deathDate, $deathPlace, $deathCountryId);
 
-        Response::json(['message' => 'Successfullu updated athlete info'], 200);
+        Response::json(['message' => 'Successfully updated athlete.'], 200);
     }
 
 
     // modify any record data about an athlete
     // authenticate
-    // PUT /athletes/{id}/record
+    // PUT /athletes/records/{id}
     // {id, olympics_id, discipline_id, placing} -> {message}
     public function updateRecord($id): void {
         AuthMiddleware::verify();
@@ -249,7 +252,7 @@ class AthleteController {
         $data = json_decode(file_get_contents('php://input'), true);
         $this->athleteRecordModel->update($id, $data['olympics_id'], $data['discipline_id'], $data['placing']);
 
-        Response::json(['message' => 'Successfullu updated athlete info'], 200);
+        Response::json(['message' => 'Successfully updated athlete record.'], 200);
     }
 
 
@@ -260,7 +263,7 @@ class AthleteController {
     public function delete(int $id): void {
         AuthMiddleware::verify();
         $this->athleteModel->delete($id);
-        Response::json(['message' => "Deleted all data"], 200);
+        Response::json(['message' => "Successfully deleted athlete."], 200);
     }
 
 
@@ -271,7 +274,7 @@ class AthleteController {
     public function deleteAll(): void {
         AuthMiddleware::verify();
         $this->athleteModel->deleteAll();
-        Response::json(['message' => "Deleted all data"], 200);
+        Response::json(['message' => "Successfully deleted all athletes."], 200);
     }
 
 
@@ -282,7 +285,7 @@ class AthleteController {
     public function deleteRecord(int $id): void {
         AuthMiddleware::verify();
         $this->athleteRecordModel->delete($id);
-        Response::json(['message' => "Deleted all data"], 200);
+        Response::json(['message' => "Successfully deleted athlete record."], 200);
     }
 
 

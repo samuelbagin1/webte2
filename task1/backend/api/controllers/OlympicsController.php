@@ -1,4 +1,5 @@
-<?php 
+<?php
+// CRUD operations for Olympics events
 
 class OlympicsController {
     private Olympics $olympicsModel;
@@ -26,7 +27,7 @@ class OlympicsController {
     public function show($id) {
         $data = $this->olympicsModel->getById($id);
 
-        if (!$data) { Response::json(['error' => 'Could not fetch data from database!'], 400); return; }
+        if (!$data) { Response::json(['error' => 'Olympics event not found.'], 404); return; }
         Response::json($data, 200);
     }
 
