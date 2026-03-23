@@ -1,8 +1,5 @@
-import { NewRecordForm } from "@/components/auth/NewRecordForm";
+import { NewRecordForm } from "@/components/import/NewRecordForm";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-
-import { Link } from "react-router-dom";
 
 // login page with two auth methods: local and google
 
@@ -15,24 +12,17 @@ import { Link } from "react-router-dom";
 export function NewRecordPage() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
-            <Card className="w-full max-w-md">
+            <Card className="w-full max-w-[50vw]">
                 
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Registrácia</CardTitle>
+                    <CardTitle className="text-2xl">Nový záznam atléta</CardTitle>
                     <CardDescription>
-                        Vytvorte si nový účet pre prístup do privátnej zóny
+                        Vytvorte si nový záznam atléta
                     </CardDescription>
                 </CardHeader>
     
                 <CardContent className="space-y-6">
                     <NewRecordForm />
-    
-                    <p className="text-center text-sm text-muted-foreground">
-                        Už máte účet?{" "}
-                        <Link to="/login" className="underline font-medium text-primary">
-                            Prihláste sa
-                        </Link>
-                    </p>
                 </CardContent>
     
             </Card>

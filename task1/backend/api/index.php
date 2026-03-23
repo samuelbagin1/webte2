@@ -44,6 +44,13 @@ $router->post("/olympics/import", [OlympicsController::class, "import"]);
 $router->delete("/olympics/{id}", [OlympicsController::class, "delete"]);
 
 
+// DISCIPLINE routes
+$router->get("/disciplines", [DisciplineController::class, "index"]);
+$router->get("/disciplines/{id}", [DisciplineController::class, "show"]);
+$router->post("/disciplines", [DisciplineController::class, "create"]);
+$router->delete("/disciplines", [DisciplineController::class, "delete"]);
+
+
 // USER routes
 $router->post("/users", [UserController::class, "create"]);
 $router->get("/users", [UserController::class, "index"]);

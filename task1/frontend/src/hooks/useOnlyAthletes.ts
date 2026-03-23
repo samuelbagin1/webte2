@@ -53,7 +53,7 @@ export function useOnlyAthletes(params: UseAthletesParams): UseAthletesResult {
             if (params.year) queryParams.year = params.year;
             if (params.discipline) queryParams.discipline = params.discipline;
 
-            const {data: response} = await api.get("/athletes/records", {
+            const {data: response} = await api.get("/athletes", {
                 params: queryParams
             });
 

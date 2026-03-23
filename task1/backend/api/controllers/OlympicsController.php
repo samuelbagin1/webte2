@@ -16,8 +16,6 @@ class OlympicsController {
     // {} -> {[{id, type, year, city, host_country, code}]}
     public function index() {
         $data = $this->olympicsModel->getAll();
-        
-        if (!$data) { Response::json(['error' => 'Could not fetch data from database!'], 400); return; }
         Response::json($data, 200);
     }
 
@@ -36,7 +34,7 @@ class OlympicsController {
     // create olympics record
     // authenticate
     // POST /olympics
-    // {host_country, type, year, city, code} -> {message}
+    // {host_country, type, year, city, code} -> {message, id, type, year, city, host_country}
     public function create() {
         AuthMiddleware::verify();
 
@@ -54,9 +52,17 @@ class OlympicsController {
 
         } catch (Exception $e) {
             Response::json(['error' => $e->getMessage()], 400);
+            return;
         }
 
-        Response::json(['message' => 'Successfully created olympics.'], 200);
+        Response::json([
+            'message' => 'Successfully created olympics.',
+            'id' => $olympicsId,
+            'type' => $type,
+            'year' => $year,
+            'city' => $city,
+            'host_country' => $name
+        ], 200);
 
     }
 

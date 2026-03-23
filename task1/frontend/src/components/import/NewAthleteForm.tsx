@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { format } from "date-fns"
-import { ChevronDownIcon, CalendarIcon } from "lucide-react"
+import { CalendarIcon } from "lucide-react"
 import { Controller } from "react-hook-form";
 
 
@@ -39,7 +39,11 @@ type NewAthleteFormValues = z.infer<typeof newAthleteSchema>;
 
 
 
-export function NewAthleteForm() {
+interface NewAthleteFormProps {
+    onCreated?: (athlete: { id: number; name: string; surname: string }) => void;
+}
+
+export function NewAthleteForm({ onCreated }: NewAthleteFormProps = {}) {
     const navigate = useNavigate();
     const [submitting, setSubmitting] = useState(false);
 
@@ -58,9 +62,13 @@ export function NewAthleteForm() {
                 death_date: values.death_date ? format(values.death_date, "yyyy-MM-dd") : null,
             };
 
-            await api.post("/athletes", payload);
+            const { data: res } = await api.post("/athletes", payload);
             toast.success("Nový atlét bol úspešne vytvorený.");
-            navigate("/edit")
+            if (onCreated) {
+                onCreated({ id: res.id, name: values.name, surname: values.surname });
+            } else {
+                navigate("/edit");
+            }
 
         } catch (err: unknown) {
             const message = (err as {response?: {data?: {error?: string}}})?.response?.data?.error || "Chyba pri registrácii";
@@ -123,7 +131,7 @@ export function NewAthleteForm() {
                                         variant="outline"
                                         className="w-full justify-start font-normal"
                                     >
-                                        {field.value ? format(field.value, "PPP") : <span>{format(new Date(), "d.M.yyyy")}</span>}
+                                        {field.value ? format(field.value, "PPP") : <span className="opacity-70">{format(new Date(), "d.M.yyyy")}</span>}
                                         <CalendarIcon className="ml-auto" />
                                     </Button>
                                 </PopoverTrigger>
@@ -192,7 +200,7 @@ export function NewAthleteForm() {
                                         variant="outline"
                                         className="w-full justify-start font-normal"
                                     >
-                                        {field.value ? format(field.value, "PPP") :  <span>Vyberte dátum</span>}
+                                        {field.value ? format(field.value, "PPP") :  <span className="opacity-70">Vyberte dátum</span>}
                                         <CalendarIcon className="ml-auto" />
                                     </Button>
                                 </PopoverTrigger>

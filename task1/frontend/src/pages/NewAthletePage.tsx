@@ -1,8 +1,5 @@
-import { NewAthleteForm } from "@/components/auth/NewAthleteForm";
+import { NewAthleteForm } from "@/components/import/NewAthleteForm";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-
-import { Link } from "react-router-dom";
 
 // login page with two auth methods: local and google
 
@@ -15,7 +12,7 @@ import { Link } from "react-router-dom";
 export function NewAthletePage() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
-            <Card className="w-full">
+            <Card className="w-full max-w-[50vw]">
                 
                 <CardHeader className="text-center">
                     <CardTitle className="text-2xl">Nový Atlét</CardTitle>

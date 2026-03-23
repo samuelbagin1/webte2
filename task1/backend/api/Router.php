@@ -32,6 +32,7 @@ require_once __DIR__ . '/controllers/UserController.php';
 require_once __DIR__ . '/controllers/OAuthController.php';
 require_once __DIR__ . '/controllers/OlympicsController.php';
 require_once __DIR__ . '/controllers/FilterController.php';
+require_once __DIR__ . '/controllers/DisciplineController.php';
 
 
 

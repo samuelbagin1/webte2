@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { RecordsTable } from "@/components/athletes/RecordsTable";
 import { Plus } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useOnlyAthletes } from "@/hooks/useOnlyAthletes";
 
 
 // public page
@@ -16,12 +17,6 @@ import { Link, useNavigate } from "react-router-dom";
 interface FilterOption {
     id: number;
     name: string;
-}
-
-interface Athlete {
-  id: number;
-  name: string;
-  surname: string;
 }
 
 
@@ -56,11 +51,9 @@ export function EditPage() {
     }, []);
 
     // fetch athletes with current params - server-side
-    const { data, total, loading } = useAthletes({page, limit, sort, order, year: selectedYear, discipline:  selectedDiscipline});
+    const { data: recordsData, total: recordsTotal, loading: recordsLoading } = useAthletes({page, limit, sort, order, year: selectedYear, discipline: selectedDiscipline});
+    const { data: athletesData, total: athletesTotal, loading: athletesLoading } = useOnlyAthletes({page, limit, sort, order});
 
-    const athletesData: Athlete[] = Array.from(
-        new Map(data.map((r) => [r.id, { id: r.id, name: r.name, surname: r.surname }])).values()
-    );
 
     const handleSort = (column: string) => {
 
@@ -88,7 +81,9 @@ export function EditPage() {
         setPage(1);
     }
 
-    const totalPages = limit>0 ? Math.ceil(total / limit) : 1;
+    const activeTotal = view === "records" ? recordsTotal : athletesTotal;
+    // const activeLoading = view === "records" ? recordsLoading : athletesLoading;
+    const totalPages = limit > 0 ? Math.ceil(activeTotal / limit) : 1;
 
 
 
@@ -134,8 +129,8 @@ export function EditPage() {
             )}
 
             {view === "records" && (<RecordsTable
-                data={data}
-                loading={loading}
+                data={recordsData}
+                loading={recordsLoading}
                 sort={sort}
                 order={order}
                 onSort={handleSort}
@@ -146,7 +141,7 @@ export function EditPage() {
             {/* Table */}
             {view === "athletes" && (<AthletesTable
                 data={athletesData}
-                loading={loading}
+                loading={athletesLoading}
                 sort={sort}
                 order={order}
                 onSort={handleSort}

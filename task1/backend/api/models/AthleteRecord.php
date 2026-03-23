@@ -75,7 +75,7 @@ class AthleteRecord {
         $total = (int) $countStmt->fetchColumn();
 
         // fetch data
-        $dataSQL = "SELECT a.id, a.name, a.surname, o.year, o.type, o.city, c.name AS country, d.name AS discipline, ar.placing $baseQuery ORDER BY $sortCol $order";
+        $dataSQL = "SELECT a.id, ar.id AS athlete_record_id, a.name, a.surname, o.year, o.type, o.city, c.name AS country, d.name AS discipline, ar.placing $baseQuery ORDER BY $sortCol $order";
 
         // set limit and offset
         if ($limit > 0) {

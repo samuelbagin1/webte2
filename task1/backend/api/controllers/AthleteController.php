@@ -85,19 +85,19 @@ class AthleteController {
     // add single athlete with all info and records
     // authenticate
     // POST /athletes
-    // {name, surname, birth_date, birth_place, birth_country, ?death_date, ?death_place, ?death_country} -> {message}
+    // {name, surname, birth_date, birth_place, birth_country, ?death_date, ?death_place, ?death_country} -> {message, id}
     public function create(): void {
         AuthMiddleware::verify();
 
         $data = json_decode(file_get_contents('php://input'), true);
         try {
-            $this->importAthlete($data);
+            $athleteId = $this->importAthlete($data);
         } catch (Exception $e) {
             Response::json(['error' => $e->getMessage()], 400);
             return;
         }
 
-        Response::json(['message' => "Imported athlete."], 200);
+        Response::json(['message' => "Imported athlete.", 'id' => $athleteId], 200);
     }
 
 

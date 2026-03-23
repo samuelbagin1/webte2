@@ -6,6 +6,7 @@ import api from "@/api/client";
 
 interface AthleteRecord {
     id: number;
+    athlete_record_id: number;
     name: string;
     surname: string;
     year: number;

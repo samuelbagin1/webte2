@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 
 interface AthleteRecord {
   id: number;
+  athlete_record_id: number;
   name: string;
   surname: string;
   year: number;
@@ -137,11 +138,11 @@ export function RecordsTable({ data, loading, sort, order, onSort, hideYear, hid
 
                 <TableBody>
                     {data.map((athlete, index) => (
-                        <TableRow key={`${athlete.id}-${index}`} onClick={() => handleClickSelect(athlete.id)} className="hover:cursor-pointer">
+                        <TableRow key={`${athlete.id}-${index}`} onClick={() => handleClickSelect(athlete.athlete_record_id)} className="hover:cursor-pointer">
 
-                            <TableCell><Checkbox checked={selected.includes(athlete.id)} onClick={(e) => {
+                            <TableCell><Checkbox checked={selected.includes(athlete.athlete_record_id)} onClick={(e) => {
                                     e.stopPropagation();
-                                    handleClickSelect(athlete.id);
+                                    handleClickSelect(athlete.athlete_record_id);
                                 }} />
                             </TableCell>
 
