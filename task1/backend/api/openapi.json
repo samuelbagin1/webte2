@@ -430,7 +430,7 @@
         }
       }
     },
-    "/athletes/batch": {
+    "/athletes/import/batch": {
       "post": {
         "tags": ["Athletes"],
         "summary": "Import multiple athletes with records from JSON file",
@@ -645,7 +645,7 @@
         }
       }
     },
-    "/athletes/batch/records": {
+    "/athletes/import/batch/records": {
       "post": {
         "tags": ["Athletes"],
         "summary": "Import multiple athlete records from JSON file",

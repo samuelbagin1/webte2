@@ -24,6 +24,8 @@ interface UseAthletesParams {
     order: "ASC" | "DESC" | "";
     year?: number | null;
     discipline?: string | null;
+    type?: string | null;
+    placing?: number | null;
 }
 
 interface UseAthletesResult {
@@ -59,6 +61,8 @@ export function useAthletes(params: UseAthletesParams): UseAthletesResult {
 
             if (params.year) queryParams.year = params.year;
             if (params.discipline) queryParams.discipline = params.discipline;
+            if (params.type) queryParams.type = params.type;
+            if (params.placing) queryParams.placing = params.placing;
 
             const {data: response} = await api.get("/athletes/records", {
                 params: queryParams
@@ -75,7 +79,7 @@ export function useAthletes(params: UseAthletesParams): UseAthletesResult {
         } finally {
             setLoading(false);
         }
-    }, [params.page, params.limit, params.sort, params.order, params.year, params.discipline]);
+    }, [params.page, params.limit, params.sort, params.order, params.year, params.discipline, params.type, params.placing]);
     
 
     useEffect(() => {

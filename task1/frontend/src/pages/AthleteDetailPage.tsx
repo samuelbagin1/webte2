@@ -339,7 +339,7 @@ export function AthleteDetailPage() {
 
 
         {/* Personal info card */}
-        <Card>
+        <Card className="shadow-xl">
             <CardHeader>
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-2xl">
@@ -515,7 +515,7 @@ export function AthleteDetailPage() {
 
 
         {/* Olympic records table */}
-        <Card>
+        <Card className="shadow-md">
             <CardHeader>
                 <div className="flex items-center justify-between">
                     <CardTitle>Olympijské záznamy</CardTitle>

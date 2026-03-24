@@ -38,6 +38,8 @@ export function RecordsTable() {
     // filter state
     const [selectedYear, setSelectedYear] = useState<number | null>(null);
     const [selectedDiscipline, setSelectedDiscipline] = useState<string | null>(null);
+    const [selectedType, setSelectedType] = useState<string | null>(null);
+    const [selectedPlacing, setSelectedPlacing] = useState<number | null>(null);
 
     // fetch filter options on mount
     useEffect(() => {
@@ -45,7 +47,7 @@ export function RecordsTable() {
         api.get("/filters/disciplines").then((res) => setDisciplines(res.data));
     }, []);
 
-    const { data, total, loading, refetch } = useAthletes({ page, limit, sort, order, year: selectedYear, discipline: selectedDiscipline });
+    const { data, total, loading, refetch } = useAthletes({ page, limit, sort, order, year: selectedYear, discipline: selectedDiscipline, type: selectedType, placing: selectedPlacing });
 
     const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
     const hideYear = selectedYear !== null;
@@ -133,6 +135,16 @@ export function RecordsTable() {
         setPage(1);
     }
 
+    const handleTypeChange = (type: string | null) => {
+        setSelectedType(type);
+        setPage(1);
+    }
+
+    const handlePlacingChange = (placing: number | null) => {
+        setSelectedPlacing(placing);
+        setPage(1);
+    }
+
 
     if (loading) {
         return (
@@ -162,8 +174,12 @@ export function RecordsTable() {
                     disciplines={disciplines}
                     selectedYear={selectedYear}
                     selectedDiscipline={selectedDiscipline}
+                    selectedType={selectedType}
+                    selectedPlacing={selectedPlacing}
                     onYearChange={handleYearChange}
                     onDisciplineChange={handleDisciplineChange}
+                    onTypeChange={handleTypeChange}
+                    onPlacingChange={handlePlacingChange}
                 />
                 <Button className="ml-auto" variant="ghost" onClick={() => handleDownload()} disabled={selected.length === 0}><Download /></Button>
                 <Button variant="destructive" onClick={() => handleDelete()} disabled={selected.length === 0}><Trash /></Button>
