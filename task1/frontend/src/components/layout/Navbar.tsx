@@ -6,7 +6,8 @@ import {
   DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import { User, LogOut, History, Settings, Upload } from "lucide-react";
+import { User, LogOut, History, Settings, Upload, Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
 
 // naviation bar, shows different links based on auth state
 // always displays logged-in user info
@@ -14,6 +15,7 @@ import { User, LogOut, History, Settings, Upload } from "lucide-react";
 export function Navbar() {
   const { user, isLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
 
   const handleLogout = async () => {
     try {
@@ -110,6 +112,16 @@ export function Navbar() {
             </>
 
           )}
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          >
+            <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Prepnúť tému</span>
+          </Button>
         </nav>
         
       </div>
