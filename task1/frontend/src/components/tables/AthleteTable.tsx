@@ -6,6 +6,7 @@ import { Skeleton } from "../ui/skeleton";
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 
 // main data table using shadcn + tanstack
+// in homepage
 
 interface AthleteRecord {
   id: number;

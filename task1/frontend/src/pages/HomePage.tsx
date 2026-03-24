@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { AthleteTable } from "@/components/athletes/AthleteTable";
-import { AthleteFilters } from "@/components/athletes/AthleteFilters";
+import { AthleteTable } from "@/components/tables/AthleteTable";
+import { AthleteFilters } from "@/components/tables/AthleteFilters";
 import { useAthletes } from "@/hooks/useAthletes";
 import api from "@/api/client";
 import { Button } from "@/components/ui/button";
