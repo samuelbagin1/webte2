@@ -27,9 +27,9 @@ $router->put("/athletes/records/{id}", [AthleteController::class, "updateRecord"
 $router->get("/athletes", [AthleteController::class, "index"]);
 $router->get("/athletes/{id}", [AthleteController::class, "show"]);
 $router->post("/athletes", [AthleteController::class, "create"]);
-$router->post("/athletes/batch", [AthleteController::class, "createBatch"]);
+$router->post("/athletes/import/batch", [AthleteController::class, "createBatch"]);
 $router->post("/athletes/{id}/records", [AthleteController::class, "createRecord"]);
-$router->post("/athletes/batch/records", [AthleteController::class, "createBatchRecord"]);
+$router->post("/athletes/import/batch/records", [AthleteController::class, "createBatchRecord"]);
 $router->post("/athletes/import", [AthleteController::class, "import"]); 
 $router->put("/athletes/{id}", [AthleteController::class, "update"]);  
 $router->delete("/athletes/{id}", [AthleteController::class, "delete"]);

@@ -14,6 +14,7 @@ import { ImportPage } from "@/pages/ImportPage";
 import { EditPage } from "@/pages/EditPage";
 import { NewAthletePage } from "@/pages/NewAthletePage";
 import { NewRecordPage } from "@/pages/NewRecordPage";
+import { ImportJsonPage } from "@/pages/ImportJsonPage";
 
 export function AppRoutes() {
   return (
@@ -34,6 +35,7 @@ export function AppRoutes() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/login-history" element={<LoginHistoryPage />} />
           <Route path="/import" element={<ImportPage />} />
+          <Route path="/import/batch" element={<ImportJsonPage />} />
           <Route path="/edit" element={<EditPage />} />
           <Route path="/athlete/new" element={<NewAthletePage />} />
           <Route path="/athlete/record/new" element={<NewRecordPage />} />
