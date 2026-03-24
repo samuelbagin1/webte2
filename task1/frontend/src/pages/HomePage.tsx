@@ -4,6 +4,7 @@ import { AthleteFilters } from "@/components/tables/AthleteFilters";
 import { useAthletes } from "@/hooks/useAthletes";
 import api from "@/api/client";
 import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // public page
 // athletes table with year/discipline dropdown filters, 3-state column sorting (ASC -> DESC -> ASC)
@@ -133,11 +134,20 @@ export function HomePage() {
                     <div className="flex items-center gap-2">
                         <Button
                             variant="outline"
-                            size="sm"
+                            size="xs"
+                            disabled={page <= 1}
+                            onClick={() => setPage(1)}
+                        >
+                            Prvá
+                        </Button>
+
+                        <Button
+                            variant="outline"
+                            size="xs"
                             disabled={page <= 1}
                             onClick={() => setPage((p) => p - 1)}
                         >
-                            Predchádzajúca
+                            <ChevronLeft />
                         </Button>
 
                         <span className="text-sm">
@@ -146,11 +156,20 @@ export function HomePage() {
 
                         <Button
                             variant="outline"
-                            size="sm"
+                            size="xs"
                             disabled={page >= totalPages}
                             onClick={() => setPage((p) => p + 1)}
                         >
-                            Nasledujúca
+                            <ChevronRight />
+                        </Button>
+
+                        <Button
+                            variant="outline"
+                            size="xs"
+                            disabled={page >= totalPages}
+                            onClick={() => setPage(totalPages)}
+                        >
+                            Posledná
                         </Button>
                     </div>
                 )}

@@ -118,20 +118,29 @@ class AthleteController {
 
         if ($extension !== 'json') {
             Response::json(['error' => 'File is not .json!'], 400);
+            return;
         }
 
         $data = parseJsonToAssocArray($file['tmp_name']);
 
         $imported = 0;
-        foreach ($data as $row) {
+        $errors = [];
+        foreach ($data as $i => $row) {
             try {
                 $athleteId = $this->importAthlete($row);
                 $this->importRecord($row, $athleteId);
                 $imported++;
 
             } catch (Exception $e) {
+                $errors[] = "Row $i: " . $e->getMessage();
                 continue;
             }
+        }
+
+        
+        if (!empty($errors)) {
+            Response::json(['error' => $errors], 400);
+            return;
         }
 
         Response::json(['message' => "Imported $imported records"], 200);

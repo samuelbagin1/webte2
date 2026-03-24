@@ -3,6 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { FileUpload } from "@/components/import/FileUpload";
 import { OlympicsFileUpload } from "@/components/import/OlympicsFileUpload";
 import { DeleteDataButton } from "@/components/import/DeleteDataButton";
+import { JsonUpload } from "@/components/import/JsonUpload";
 
 // private zone - file upload input for xlsx/csv
 
@@ -42,6 +43,23 @@ export function ImportPage() {
 
                 <CardContent>
                     <OlympicsFileUpload />
+                </CardContent>
+            </Card>
+
+            
+
+            {/* JSON upload section */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Import JSON súboru</CardTitle>
+
+                    <CardDescription>
+                        Nahrajte súbor vo formáte JSON dátami olympionikov.
+                    </CardDescription>
+                </CardHeader>
+
+                <CardContent>
+                    <JsonUpload />
                 </CardContent>
             </Card>
 

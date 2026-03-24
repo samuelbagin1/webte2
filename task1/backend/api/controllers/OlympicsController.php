@@ -106,6 +106,35 @@ class OlympicsController {
 
     }
 
+    // update olympicrecord
+    // authenticate
+    // UPDATE /olympics/{id}
+    // {id, host_country, type, year, city, code} -> {meessage}
+    public function update($id) {
+        AuthMiddleware::verify();
+
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        $name = trim($data['host_country']);
+        $type = $data['type'];
+        $year = (int) $data['year'];
+        $city = trim($data['city']);
+        $code = trim($data['code']);
+
+        try {
+            $countryId = $this->countryModel->getOrCreate($name);
+            $this->olympicsModel->update($id, $type, $year, $city, $countryId, $code);
+
+        } catch (Exception $e) {
+            Response::json(['error' => $e->getMessage()], 400);
+            return;
+        }
+
+        Response::json([
+            'message' => 'Successfully update olympics.'
+        ], 200);
+    }
+
 
     private function importData(array $data): int {
         $imported = 0;

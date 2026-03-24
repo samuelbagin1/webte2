@@ -45,7 +45,7 @@ export function JsonUpload() {
             formData.append("file", file);
 
             const {data} = await api.post("/athletes/import/batch", formData, {
-                headers: {"Content-Type": "multipart/form-data"}
+                headers: {"Content-Type": undefined}
             });
 
             toast.success(data.message || "Import úspešný");

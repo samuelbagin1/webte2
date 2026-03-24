@@ -42,6 +42,7 @@ $router->get("/olympics/{id}", [OlympicsController::class, "show"]);
 $router->post("/olympics", [OlympicsController::class, "create"]);
 $router->post("/olympics/import", [OlympicsController::class, "import"]);
 $router->delete("/olympics/{id}", [OlympicsController::class, "delete"]);
+$router->put("/olympics/{id}", [OlympicsController::class, "update"]);
 
 
 // DISCIPLINE routes
@@ -49,6 +50,7 @@ $router->get("/disciplines", [DisciplineController::class, "index"]);
 $router->get("/disciplines/{id}", [DisciplineController::class, "show"]);
 $router->post("/disciplines", [DisciplineController::class, "create"]);
 $router->delete("/disciplines/{id}", [DisciplineController::class, "delete"]);
+$router->put("/disciplines/{id}", [DisciplineController::class, "update"]);
 
 
 // USER routes

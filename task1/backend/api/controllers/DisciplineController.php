@@ -63,6 +63,29 @@ class DisciplineController {
         Response::json(['message' => 'Successfully deleted discipline!'], 200);
 
     }
+
+    // update discipline
+    // authenticate
+    // PUT /disciplines/{id}
+    // {id, name} -> {message}
+    public function update($id) {
+        AuthMiddleware::verify();
+
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        $name = trim($data['name']);
+
+        try {
+            $this->disciplineModel->update($id, $name);
+
+        } catch (Exception $e) {
+            Response::json(['error' => $e->getMessage()], 400);
+            return;
+        }
+
+        Response::json(['message' => 'Successfully updated discipline.'], 200);
+    }
+
 }
 
 ?>

@@ -2,13 +2,14 @@ import { useEffect, useState, useMemo } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import api from "@/api/client";
 import { Skeleton } from "../ui/skeleton";
-import { ArrowUp, ArrowDown, ArrowUpDown, Plus } from "lucide-react";
+import { ArrowUp, ArrowDown, ArrowUpDown, Plus, Pencil } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { NewDisciplineForm } from "@/components/import/NewDisciplineForm"
 import { Trash, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
+import { UpdateDiscipline } from "../update/UpdateDiscipline";
 
 interface Discipline {
     id: number;
@@ -20,6 +21,8 @@ export function DisciplinesTable() {
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState<number[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
+
+    const [editingId, setEditingId] = useState<number | null>(null);
 
     // sorting
     const [sort, setSort] = useState<string>("name");
@@ -179,22 +182,50 @@ export function DisciplinesTable() {
                                 />
                             </TableHead>
                             <SortableHead column="name" label="Názov" />
+                            <TableHead></TableHead>
                         </TableRow>
                     </TableHeader>
 
                     <TableBody>
                         {paged.map((discipline) => (
+
                             <TableRow key={discipline.id} onClick={() => handleClickSelect(discipline.id)} className="hover:cursor-pointer">
+
                                 <TableCell>
                                     <Checkbox checked={selected.includes(discipline.id)} onClick={(e) => {
                                         e.stopPropagation();
                                         handleClickSelect(discipline.id);
                                     }} />
                                 </TableCell>
+
                                 <TableCell>{discipline.name}</TableCell>
+
+                                <TableCell>
+                                    <Dialog open={editingId === discipline.id} onOpenChange={(open) => setEditingId(open ? discipline.id : null)}>
+
+                                        <DialogTrigger asChild>
+                                            <Button variant="outline" size="xs"><Pencil /></Button>
+                                        </DialogTrigger>
+
+                                        <DialogContent className="max-w-lg">
+                                            <DialogHeader>
+                                                <DialogTitle>Upraviť disciplínu</DialogTitle>
+                                            </DialogHeader>
+
+                                            <UpdateDiscipline data={discipline} onUpdated={() => {
+                                                setEditingId(null);
+                                                fetchData();
+                                            }} />
+
+                                        </DialogContent>
+
+                                    </Dialog>
+                                </TableCell>
                             </TableRow>
+
                         ))}
                     </TableBody>
+
                 </Table>
             </div>
 

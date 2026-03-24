@@ -9,10 +9,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { NewOlympicsForm } from "@/components/import/NewOlympicsForm"
 import { Trash, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
+import { UpdateOlympics } from "../update/UpdateOlympics";
 
 interface Olympics {
     id: number;
-    type: string;
+    type: "LOH" | "ZOH";
     year: number;
     city: string;
     host_country: string;
@@ -24,6 +25,8 @@ export function OlympicsTable() {
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState<number[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
+
+    const [editingId, setEditingId] = useState<number | null>(null);
 
     // sorting
     const [sort, setSort] = useState<string>("year");
@@ -130,6 +133,11 @@ export function OlympicsTable() {
         toast.success("Úspešne stiahnuté údaje");
     };
 
+
+
+
+
+
     if (loading) {
         return (
             <div className="space-y-2">
@@ -150,6 +158,8 @@ export function OlympicsTable() {
 
     return (
         <div className="space-y-4">
+
+
             <div className="flex w-[95%] space-x-3">
                 <h1 className="text-3xl font-bold">Prehľad olympiád</h1>
                 <Button className="ml-auto" variant="ghost" onClick={() => handleDownload()} disabled={selected.length === 0}><Download /></Button>
@@ -169,6 +179,8 @@ export function OlympicsTable() {
                     </DialogContent>
                 </Dialog>
             </div>
+
+
 
             <div className="rounded-md border w-[85%] mx-auto mt-4">
                 <Table>
@@ -194,23 +206,52 @@ export function OlympicsTable() {
                     <TableBody>
                         {paged.map((olympics) => (
                             <TableRow key={olympics.id} onClick={() => handleClickSelect(olympics.id)} className="hover:cursor-pointer">
+                                
                                 <TableCell>
                                     <Checkbox checked={selected.includes(olympics.id)} onClick={(e) => {
                                         e.stopPropagation();
                                         handleClickSelect(olympics.id);
                                     }} />
                                 </TableCell>
+
                                 <TableCell>{olympics.type}</TableCell>
                                 <TableCell>{olympics.year}</TableCell>
                                 <TableCell>{olympics.city}</TableCell>
                                 <TableCell>{olympics.host_country}</TableCell>
                                 <TableCell>{olympics.code}</TableCell>
-                                <TableCell><Button variant="outline" size="xs"><Pencil /></Button></TableCell>
+
+                                <TableCell>
+                                    <Dialog open={editingId === olympics.id} onOpenChange={(open) => setEditingId(open ? olympics.id : null)}>
+
+                                        <DialogTrigger asChild>
+                                            <Button variant="outline" size="xs"><Pencil /></Button>
+                                        </DialogTrigger>
+
+                                        <DialogContent className="max-w-lg">
+                                            <DialogHeader>
+                                                <DialogTitle>Upraviť olympiádu</DialogTitle>
+                                            </DialogHeader>
+
+                                            <UpdateOlympics data={olympics} onUpdated={() => {
+                                                setEditingId(null);
+                                                fetchData();
+                                            }} />
+
+                                        </DialogContent>
+
+                                    </Dialog>
+                                </TableCell>
+
                             </TableRow>
                         ))}
                     </TableBody>
+
                 </Table>
             </div>
+
+
+
+
 
             {/* Pagination */}
             <div className="flex items-center justify-between">
