@@ -111,6 +111,16 @@ class UserController {
     public function updatePassword($id): void {
         AuthMiddleware::verify();
         $input = json_decode(file_get_contents('php://input'), true);
+        if (!$input) {
+            Response::json(['error' => 'Invalid JSON input.'], 400);
+            return;
+        }
+
+        if (empty($input['current_password']) || empty($input['new_password']) || empty($input['new_password_repeat'])) {
+            Response::json(['error' => 'Missing required fields: current_password, new_password, new_password_repeat.'], 400);
+            return;
+        }
+
         $currentPassword = $input['current_password'];
         $newPassword = $input['new_password'];
         $newPasswordRepeat = $input['new_password_repeat'];

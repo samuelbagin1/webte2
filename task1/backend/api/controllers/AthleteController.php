@@ -90,6 +90,11 @@ class AthleteController {
         AuthMiddleware::verify();
 
         $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) {
+            Response::json(['error' => 'Invalid JSON input.'], 400);
+            return;
+        }
+
         try {
             $athleteId = $this->importAthlete($data);
         } catch (Exception $e) {
@@ -155,7 +160,11 @@ class AthleteController {
         AuthMiddleware::verify();
 
         $data = json_decode(file_get_contents('php://input'), true);
-        
+        if (!$data) {
+            Response::json(['error' => 'Invalid JSON input.'], 400);
+            return;
+        }
+
         try {
             $this->importRecord($data, $id);
         } catch (Exception $e) {
@@ -184,14 +193,26 @@ class AthleteController {
 
         if ($extension !== 'json') {
             Response::json(['error' => 'File is not .json!'], 400);
+            return;
         }
 
         $data = parseJsonToAssocArray($file['tmp_name']);
 
         $imported = 0;
-        foreach ($data as $row) {
-            $this->importRecord($row, (int) $row['athlete_id']);
-            $imported++;
+        $errors = [];
+        foreach ($data as $i => $row) {
+            try {
+                $this->importRecord($row, (int) $row['athlete_id']);
+                $imported++;
+            } catch (Exception $e) {
+                $errors[] = "Row $i: " . $e->getMessage();
+                continue;
+            }
+        }
+
+        if (!empty($errors)) {
+            Response::json(['error' => $errors], 400);
+            return;
         }
 
         Response::json(['message' => "Imported $imported records"], 200);
@@ -235,6 +256,16 @@ class AthleteController {
         AuthMiddleware::verify();
 
         $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) {
+            Response::json(['error' => 'Invalid JSON input.'], 400);
+            return;
+        }
+
+        if (empty($data['name']) || empty($data['surname']) || empty($data['birth_day']) || empty($data['birth_place']) || empty($data['birth_country'])) {
+            Response::json(['error' => 'Missing required fields: name, surname, birth_day, birth_place, birth_country.'], 400);
+            return;
+        }
+
         $name = Sanitizer::sanitizeString($data['name']);
         $surname = Sanitizer::sanitizeString($data['surname']);
         $birthDate = parseDate($data['birth_day']);
@@ -259,6 +290,16 @@ class AthleteController {
         AuthMiddleware::verify();
 
         $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) {
+            Response::json(['error' => 'Invalid JSON input.'], 400);
+            return;
+        }
+
+        if (empty($data['olympics_id']) || empty($data['discipline_id']) || !isset($data['placing'])) {
+            Response::json(['error' => 'Missing required fields: olympics_id, discipline_id, placing.'], 400);
+            return;
+        }
+
         $this->athleteRecordModel->update($id, $data['olympics_id'], $data['discipline_id'], $data['placing']);
 
         Response::json(['message' => 'Successfully updated athlete record.'], 200);

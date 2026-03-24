@@ -40,6 +40,15 @@ class OlympicsController {
         AuthMiddleware::verify();
 
         $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) {
+            Response::json(['error' => 'Invalid JSON input.'], 400);
+            return;
+        }
+
+        if (empty($data['host_country']) || empty($data['type']) || empty($data['year']) || empty($data['city']) || empty($data['code'])) {
+            Response::json(['error' => 'Missing required fields: host_country, type, year, city, code.'], 400);
+            return;
+        }
 
         $name = trim($data['host_country']);
         $type = $data['type'];
@@ -114,6 +123,15 @@ class OlympicsController {
         AuthMiddleware::verify();
 
         $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) {
+            Response::json(['error' => 'Invalid JSON input.'], 400);
+            return;
+        }
+
+        if (empty($data['host_country']) || empty($data['type']) || empty($data['year']) || empty($data['city']) || empty($data['code'])) {
+            Response::json(['error' => 'Missing required fields: host_country, type, year, city, code.'], 400);
+            return;
+        }
 
         $name = trim($data['host_country']);
         $type = $data['type'];

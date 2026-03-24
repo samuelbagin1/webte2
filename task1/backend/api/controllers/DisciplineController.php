@@ -38,6 +38,10 @@ class DisciplineController {
         AuthMiddleware::verify();
 
         $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data || empty($data['name'])) {
+            Response::json(['error' => 'Missing required field: name.'], 400);
+            return;
+        }
 
         $name = trim($data['name']);
 
@@ -72,6 +76,10 @@ class DisciplineController {
         AuthMiddleware::verify();
 
         $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data || empty($data['name'])) {
+            Response::json(['error' => 'Missing required field: name.'], 400);
+            return;
+        }
 
         $name = trim($data['name']);
 
