@@ -19,8 +19,8 @@ $password = "Risojegay12@";  // vps: iykyk, local: pass
 // $callbackRedirectUri = "http://localhost:8080/api/auth/google/callback";
 // $redirectToDashboard = "http://localhost:5173/dashboard";
 
-$callbackRedirectUri = "https://node22.webte.fei.stuba.sk/api/auth/google/callback";
-$redirectToDashboard = "https://node22.webte.fei.stuba.sk/dashboard";
+$callbackRedirectUri = "https://node22.webte.fei.stuba.sk/task1and2/api/auth/google/callback";
+$redirectToDashboard = "https://node22.webte.fei.stuba.sk/task1and2/dashboard";
 
 
 // Funkcia sluzi ako abstrakcia pripojenia k DB – po include ju mozeme zavolat.

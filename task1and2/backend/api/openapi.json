@@ -6,7 +6,7 @@
     "description": "REST API for managing Slovak Olympic athletes and their records"
   },
   "servers": [
-    { "url": "/api" }
+    { "url": "/task1and2/api" }
   ],
   "paths": {
     "/auth/login": {

@@ -5,7 +5,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-*, *::before, *::after {
+*:not(button), *::before, *::after {
   border-color: var(--border);
 }
 
