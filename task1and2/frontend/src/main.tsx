@@ -10,7 +10,7 @@ import App from './App.tsx'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <BrowserRouter>
+      <BrowserRouter basename="/task1and2">
         <AuthProvider>
           <App />
           <Toaster position="top-center" closeButton/>

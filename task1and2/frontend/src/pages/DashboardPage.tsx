@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, History, Upload, Plus } from "lucide-react";
+import { Settings, History, Upload, Plus, File } from "lucide-react";
 
 // private zone landing page
 
@@ -147,19 +147,19 @@ export function DashboardPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-lg">
-                            <Upload className="h-5 w-5" />
-                            Import JSON
+                            <File className="h-5 w-5" />
+                            API DOCS
                         </CardTitle>
 
                         <CardDescription>
-                            Importovanie dát zo súboru JSON
+                            Detailná dokumentácia k API web aplikácie
                         </CardDescription>
                     </CardHeader>
 
                     <CardContent>
-                        <Link to="/import/batch">
-                            <Button variant="outline" className="w-full">Importovať</Button>
-                        </Link>
+                        <a href="https://node22.webte.fei.stuba.sk/task1and2/api/docs" target="_blank" rel="noopener noreferrer">
+                            <Button variant="outline" className="w-full">Otvoriť</Button>
+                        </a>
                     </CardContent>
                 </Card>
 
