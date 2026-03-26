@@ -76,6 +76,11 @@ $router->get("/docs", function () {
     readfile(__DIR__ . '/docs.html');
     exit;
 });
+$router->get("/openapi.json", function () {
+    header('Content-Type: application/json');
+    readfile(__DIR__ . '/openapi.json');
+    exit;
+});
 
 $router->run();
 
