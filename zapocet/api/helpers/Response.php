@@ -6,5 +6,9 @@ class Response {
         header('Content-Type: application/json');
         echo json_encode($data);
     }
+
+    public static function error(string $message, int $statusCode = 400): void {
+        self::json(['error' => $message], $statusCode);
+    }
 }
 ?>
