@@ -13,7 +13,7 @@
 $hostname = "localhost";  // vps: localhost; local: db
 $database = "app_db";  // nazov databazy - v nasom pripade to bolo ogames_app
 $username = "xbagins";  // nazov pouzivatela - ktoreho ste vytvarali cez MariaDB konzolu. Ak ste isli podla navodu, mal by to byt vas login.
-$password = "Risojegay12@";  // vps: iykyk, local: pass
+$password = "pass";  // vps: iykyk, local: pass
 // 
 
 // $callbackRedirectUri = "http://localhost:8080/api/auth/google/callback";
