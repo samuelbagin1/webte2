@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Backgrounds */
+    --bg-page:        40 12% 93%;
+    --bg-card:        40 33% 97%;
+    --bg-subtle:      38 13% 93%;
+    --bg-muted:       38 11% 90%;
+
+    /* Text */
+    --text-primary:   60 3% 8%;
+    --text-secondary: 30 2% 23%;
+    --text-muted:     30 2% 44%;
+    --text-on-dark:   0 0% 100%;
+
+    /* Accent — terracotta */
+    --accent-primary:   22 62% 53%;
+    --accent-copper:    22 49% 66%;
+
+    /* Accent — blue */
+    --accent-blue:      211 76% 44%;
+    --accent-blue-hover: 211 65% 55%;
+
+    /* Player colours */
+    --player-red:     22 62% 53%;
+    --player-blue:    211 76% 44%;
+
+    /* Danger */
+    --danger:         357 73% 47%;
+
+    /* Borders */
+    --border-default: 0 0% 87%;
+    --border-subtle:  0 0% 90%;
+
+    /* Buttons */
+    --btn-primary-bg: 0 0% 5%;
+    --btn-primary-fg: 0 0% 100%;
+
+    /* shadcn/ui semantic aliases */
+    --background:              var(--bg-page);
+    --foreground:              var(--text-primary);
+    --card:                    var(--bg-card);
+    --card-foreground:         var(--text-primary);
+    --popover:                 var(--bg-card);
+    --popover-foreground:      var(--text-primary);
+    --primary:                 var(--btn-primary-bg);
+    --primary-foreground:      var(--text-on-dark);
+    --secondary:               var(--bg-subtle);
+    --secondary-foreground:    var(--text-primary);
+    --muted:                   var(--bg-muted);
+    --muted-foreground:        var(--text-muted);
+    --accent:                  var(--accent-primary);
+    --accent-foreground:       var(--text-on-dark);
+    --destructive:             var(--danger);
+    --destructive-foreground:  var(--text-on-dark);
+    --border:                  var(--border-default);
+    --input:                   var(--border-default);
+    --ring:                    var(--accent-primary);
+    --radius:                  0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}

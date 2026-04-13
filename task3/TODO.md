@@ -7,15 +7,15 @@
 
 ## Phase 1 — Project Setup
 
-- [ ] Init Vite + React + TypeScript (`client/`)
-- [ ] Configure Tailwind CSS v3 + custom design tokens ([README §3](README.md))
-- [ ] Install & configure shadcn/ui (Button, Card, Dialog, Input, Badge, Toast)
-- [ ] Install Lucide React, Matter.js
-- [ ] Init Node.js + TypeScript backend (`server/`)
-- [ ] Install Express, ws, pg, dotenv
-- [ ] Create `tsconfig.json` for both client and server
-- [ ] Create `client/public/game-config.json` with initial values ([README §4](README.md))
-- [ ] Create `.env.example` for DB credentials
+- [x] Init Vite + React + TypeScript (`client/`)
+- [x] Configure Tailwind CSS v3 + custom design tokens ([README §3](README.md))
+- [x] Install & configure shadcn/ui (Button, Card, Dialog, Input, Badge, Toast)
+- [x] Install Lucide React, Matter.js
+- [x] Init Node.js + TypeScript backend (`server/`)
+- [x] Install Express, ws, pg, dotenv
+- [x] Create `tsconfig.json` for both client and server
+- [x] Create `client/public/game-config.json` with initial values ([README §4](README.md))
+- [x] Create `.env.example` for DB credentials
 
 ---
 
@@ -120,7 +120,7 @@
 | # | Requirement | Done |
 |---|---|---|
 | 1 | WebSocket real-time game for 2 players | ⬜ |
-| 2 | Configuration from JSON file | ⬜ |
+| 2 | Configuration from JSON file | ✅ |
 | 3 | Canvas API rendering | ⬜ |
 | 4 | Color-coded target (concentric rings) | ⬜ |
 | 5 | Color-coded stones per player | ⬜ |

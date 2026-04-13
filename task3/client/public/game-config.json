@@ -1,0 +1,28 @@
+{
+  "stones": {
+    "perPlayer": 5,
+    "radius": 20,
+    "friction": 0.015,
+    "restitution": 0.5,
+    "frictionAir": 0.02
+  },
+  "target": {
+    "x": 0.5,
+    "y": 0.2,
+    "radius": 80,
+    "rings": [80, 55, 30, 10]
+  },
+  "field": {
+    "width": 600,
+    "height": 1000,
+    "wallRestitution": 0.6
+  },
+  "shot": {
+    "maxForce": 0.08,
+    "forceMultiplier": 0.0004
+  },
+  "physics": {
+    "stoppedVelocityThreshold": 0.1,
+    "checkInterval": 100
+  }
+}
