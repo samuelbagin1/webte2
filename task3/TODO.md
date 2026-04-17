@@ -51,14 +51,14 @@
 
 ## Phase 4 — Frontend: Core Infrastructure
 
-- [ ] Write `client/src/types/game.ts` — `GameConfig`, `Stone`, `Player`, `WSMessage`
-- [ ] Write `client/src/lib/config.ts` — load & parse `game-config.json`
-- [ ] Write `client/src/lib/ws-client.ts` — WebSocket client wrapper (connect, send, close)
-- [ ] Write `client/src/lib/utils.ts` — distance helpers, coordinate scaling
-- [ ] Write `client/src/hooks/useWebSocket.ts` — connect, send, receive, reconnect logic
-- [ ] Write `client/src/hooks/useGameLoop.ts` — `requestAnimationFrame` loop
-- [ ] Write `client/src/hooks/useResponsiveCanvas.ts` — ResizeObserver, scale factor
-- [ ] Write `client/src/App.tsx` — root component + screen routing (menu → lobby → game → stats)
+- [x] Write `client/src/types/game.ts` — `GameConfig`, `Stone`, `Player`, `WSMessage`
+- [x] Write `client/src/lib/config.ts` — load & parse `game-config.json`
+- [x] Write `client/src/lib/ws-client.ts` — WebSocket client wrapper (connect, send, close)
+- [x] Write `client/src/lib/utils.ts` — distance helpers, coordinate scaling
+- [x] Write `client/src/hooks/useWebSocket.ts` — connect, send, receive, reconnect logic
+- [x] Write `client/src/hooks/useGameLoop.ts` — `requestAnimationFrame` loop
+- [x] Write `client/src/hooks/useResponsiveCanvas.ts` — ResizeObserver, scale factor
+- [x] Write `client/src/App.tsx` — root component + screen routing (menu → lobby → game → stats)
 
 ---
 
@@ -135,7 +135,7 @@
 | 14 | Winner = closest stone to target | ✅ |
 | 15 | Show result to both players | ✅ |
 | 16 | Login / lobby | ✅ |
-| 17 | Main menu | ⬜ |
+| 17 | Main menu | ✅ |
 | 18 | Pause | ✅ |
 | 19 | Restart (mutual consent) | ✅ |
 | 20 | Disconnect — clean game end | ✅ |

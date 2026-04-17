@@ -1,0 +1,60 @@
+export interface StonePosition {
+  player: 0 | 1;
+  index: number;
+  x: number; // normalized 0–1 relative to field width
+  y: number; // normalized 0–1 relative to field height
+}
+
+export interface Stone {
+  player: 0 | 1;
+  index: number;
+  x: number;      // canvas pixels
+  y: number;      // canvas pixels
+  radius: number; // canvas pixels
+}
+
+export interface Player {
+  index: 0 | 1;
+  nickname: string;
+  stonesLeft: number;
+}
+
+export interface GameConfig {
+  stones: {
+    perPlayer: number;
+    radius: number;
+    friction: number;
+    restitution: number;
+    frictionAir: number;
+  };
+  target: { x: number; y: number; radius: number; rings: number[] };
+  field: { width: number; height: number; wallRestitution: number };
+  shot: { maxForce: number; forceMultiplier: number };
+  physics: { stoppedVelocityThreshold: number; checkInterval: number };
+}
+
+// ---------- Client → Server ----------
+export type C2SMessage =
+  | { type: 'join'; nickname: string }
+  | { type: 'shoot'; forceX: number; forceY: number; stoneIndex: number }
+  | { type: 'stones_stopped'; stones: StonePosition[] }
+  | { type: 'pause' }
+  | { type: 'unpause' }
+  | { type: 'restart_request' }
+  | { type: 'restart_accept' };
+
+// ---------- Server → Client ----------
+export type S2CMessage =
+  | { type: 'waiting' }
+  | { type: 'game_start'; playerIndex: 0 | 1; opponentNickname: string; config: GameConfig; stonesPerPlayer: number }
+  | { type: 'opponent_shot'; forceX: number; forceY: number; stoneIndex: number }
+  | { type: 'turn_change'; activePlayer: 0 | 1; throwsRemaining: [number, number] }
+  | { type: 'game_over'; winner: 0 | 1 | null; distances: number[] }
+  | { type: 'paused'; by: 0 | 1 }
+  | { type: 'unpaused' }
+  | { type: 'restart_requested'; by: 0 | 1 }
+  | { type: 'restarting'; config: GameConfig; stonesPerPlayer: number }
+  | { type: 'opponent_disconnected' }
+  | { type: 'error'; message: string };
+
+export type Screen = 'menu' | 'lobby' | 'game' | 'stats';
