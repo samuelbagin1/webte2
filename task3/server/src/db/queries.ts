@@ -1,12 +1,13 @@
+import type { RowDataPacket, ResultSetHeader } from 'mysql2';
 import pool from './pool.js';
 
-export interface PlayerRow {
+export interface PlayerRow extends RowDataPacket {
   id: number;
   nickname: string;
   created_at: Date;
 }
 
-export interface GameStatRow {
+export interface GameStatRow extends RowDataPacket {
   id: number;
   player1: string;
   player2: string;
@@ -16,18 +17,13 @@ export interface GameStatRow {
   finished_at: Date | null;
 }
 
-/** Upsert a player by nickname; returns existing row if nickname already exists. */
 async function upsertPlayer(nickname: string): Promise<PlayerRow> {
-  const { rows } = await pool.query<PlayerRow>(
-    `INSERT INTO players (nickname) VALUES ($1) ON CONFLICT DO NOTHING RETURNING *`,
+  await pool.query('INSERT IGNORE INTO players (nickname) VALUES (?)', [nickname]);
+  const [rows] = await pool.query<PlayerRow[]>(
+    'SELECT * FROM players WHERE nickname = ?',
     [nickname],
   );
-  if (rows.length) return rows[0];
-  const { rows: existing } = await pool.query<PlayerRow>(
-    'SELECT * FROM players WHERE nickname = $1',
-    [nickname],
-  );
-  return existing[0];
+  return rows[0];
 }
 
 export async function savePlayers(nicknames: [string, string]): Promise<[PlayerRow, PlayerRow]> {
@@ -39,23 +35,23 @@ export async function saveGame(
   player2Id: number,
   config: Record<string, unknown>,
 ): Promise<number> {
-  const { rows } = await pool.query<{ id: number }>(
-    `INSERT INTO games (player1_id, player2_id, config) VALUES ($1, $2, $3) RETURNING id`,
+  const [result] = await pool.query<ResultSetHeader>(
+    'INSERT INTO games (player1_id, player2_id, config) VALUES (?, ?, ?)',
     [player1Id, player2Id, JSON.stringify(config)],
   );
-  return rows[0].id;
+  return result.insertId;
 }
 
 export async function finishGame(gameId: number, winnerId: number): Promise<void> {
   await pool.query(
-    `UPDATE games SET status = 'completed', winner_id = $1, finished_at = NOW() WHERE id = $2`,
+    `UPDATE games SET status = 'completed', winner_id = ?, finished_at = NOW() WHERE id = ?`,
     [winnerId, gameId],
   );
 }
 
 export async function abandonGame(gameId: number): Promise<void> {
   await pool.query(
-    `UPDATE games SET status = 'abandoned', finished_at = NOW() WHERE id = $1`,
+    `UPDATE games SET status = 'abandoned', finished_at = NOW() WHERE id = ?`,
     [gameId],
   );
 }
@@ -68,13 +64,13 @@ export async function saveThrow(
   forceY: number,
 ): Promise<void> {
   await pool.query(
-    `INSERT INTO throws (game_id, player_id, throw_order, force_x, force_y) VALUES ($1, $2, $3, $4, $5)`,
+    'INSERT INTO throws (game_id, player_id, throw_order, force_x, force_y) VALUES (?, ?, ?, ?, ?)',
     [gameId, playerId, throwOrder, forceX, forceY],
   );
 }
 
 export async function getStats(): Promise<GameStatRow[]> {
-  const { rows } = await pool.query<GameStatRow>(`
+  const [rows] = await pool.query<GameStatRow[]>(`
     SELECT
       g.id,
       p1.nickname  AS player1,

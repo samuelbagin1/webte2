@@ -1,30 +1,35 @@
 CREATE TABLE IF NOT EXISTS players (
-    id         SERIAL PRIMARY KEY,
-    nickname   VARCHAR(50) NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
+    id         INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nickname   VARCHAR(50) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS games (
-    id          SERIAL PRIMARY KEY,
-    player1_id  INTEGER REFERENCES players(id),
-    player2_id  INTEGER REFERENCES players(id),
-    winner_id   INTEGER REFERENCES players(id),
+    id          INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    player1_id  INT,
+    player2_id  INT,
+    winner_id   INT,
     status      VARCHAR(20) DEFAULT 'in_progress',
-    config      JSONB NOT NULL,
-    started_at  TIMESTAMP DEFAULT NOW(),
-    finished_at TIMESTAMP
+    config      JSON NOT NULL,
+    started_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    finished_at TIMESTAMP NULL,
+    FOREIGN KEY (player1_id) REFERENCES players(id),
+    FOREIGN KEY (player2_id) REFERENCES players(id),
+    FOREIGN KEY (winner_id)  REFERENCES players(id)
 );
 
 CREATE TABLE IF NOT EXISTS throws (
-    id          SERIAL PRIMARY KEY,
-    game_id     INTEGER REFERENCES games(id) ON DELETE CASCADE,
-    player_id   INTEGER REFERENCES players(id),
-    throw_order INTEGER NOT NULL,
+    id          INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    game_id     INT,
+    player_id   INT,
+    throw_order INT NOT NULL,
     force_x     FLOAT NOT NULL,
     force_y     FLOAT NOT NULL,
-    created_at  TIMESTAMP DEFAULT NOW()
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (game_id)   REFERENCES games(id)   ON DELETE CASCADE,
+    FOREIGN KEY (player_id) REFERENCES players(id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_games_status  ON games(status);
-CREATE INDEX IF NOT EXISTS idx_games_players ON games(player1_id, player2_id);
-CREATE INDEX IF NOT EXISTS idx_throws_game   ON throws(game_id);
+CREATE INDEX idx_games_status  ON games(status);
+CREATE INDEX idx_games_players ON games(player1_id, player2_id);
+CREATE INDEX idx_throws_game   ON throws(game_id);

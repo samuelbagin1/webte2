@@ -104,7 +104,7 @@
 
 ## Phase 7 — Deployment
 
-- [ ] Write `nginx/zadanie3.conf` — static files, WS upgrade, API proxy ([README §11](README.md))
+- [x] Write `nginx/zadanie3.conf` — static files, WS upgrade, API proxy ([README §11](README.md))
 - [ ] Build frontend: `npm run build` → `client/dist/`
 - [ ] Build backend: `tsc` → `server/dist/`
 - [ ] Upload to VPS `node22.webte.fei.stuba.sk`
