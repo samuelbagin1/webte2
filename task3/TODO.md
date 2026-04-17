@@ -64,26 +64,26 @@
 
 ## Phase 5 — Frontend: Game Engine
 
-- [ ] Write `client/src/game/PhysicsEngine.ts`:
-  - [ ] Matter.js engine setup (gravity = 0, top-down view)
-  - [ ] Stone body creation (circle, friction, frictionAir, restitution)
-  - [ ] Static wall bodies with wall restitution
-  - [ ] `applyForce` for shooting
-  - [ ] Stopped-detection loop (velocity < threshold every 100ms)
-- [ ] Write `client/src/game/GameState.ts`:
-  - [ ] Stone positions, player index, turn state
-  - [ ] Stones remaining per player
-  - [ ] Score / distance tracking
-- [ ] Write `client/src/game/Renderer.ts`:
-  - [ ] Draw background (`#F0EFEA`)
-  - [ ] Draw target — 4 concentric rings (muted → copper → terracotta → bullseye)
-  - [ ] Draw stones — terracotta (P1) vs blue (P2), with border + shadow
-  - [ ] Draw aiming arrow — direction line, thickness by force
-  - [ ] Draw field border (`#DEDEDE`)
-- [ ] Write `client/src/game/InputHandler.ts`:
-  - [ ] `mousedown` on player's own stone (only if player's turn)
-  - [ ] `mousemove` — compute drag vector, reverse for slingshot direction, clamp to maxForce
-  - [ ] `mouseup` — fire `shoot` event with `{ forceX, forceY, stoneIndex }`
+- [x] Write `client/src/game/PhysicsEngine.ts`:
+  - [x] Matter.js engine setup (gravity = 0, top-down view)
+  - [x] Stone body creation (circle, friction, frictionAir, restitution)
+  - [x] Static wall bodies with wall restitution
+  - [x] `applyForce` for shooting
+  - [x] Stopped-detection loop (velocity < threshold every 100ms)
+- [x] Write `client/src/game/GameState.ts`:
+  - [x] Stone positions, player index, turn state
+  - [x] Stones remaining per player
+  - [x] Score / distance tracking
+- [x] Write `client/src/game/Renderer.ts`:
+  - [x] Draw background (`#F0EFEA`)
+  - [x] Draw target — 4 concentric rings (muted → copper → terracotta → bullseye)
+  - [x] Draw stones — terracotta (P1) vs blue (P2), with border + shadow
+  - [x] Draw aiming arrow — direction line, thickness by force
+  - [x] Draw field border (`#DEDEDE`)
+- [x] Write `client/src/game/InputHandler.ts`:
+  - [x] `mousedown` on player's own stone (only if player's turn)
+  - [x] `mousemove` — compute drag vector, reverse for slingshot direction, clamp to maxForce
+  - [x] `mouseup` — fire `shoot` event with `{ forceX, forceY, stoneIndex }`
 
 ---
 
@@ -121,15 +121,15 @@
 |---|---|---|
 | 1 | WebSocket real-time game for 2 players | ✅ |
 | 2 | Configuration from JSON file | ✅ |
-| 3 | Canvas API rendering | ⬜ |
-| 4 | Color-coded target (concentric rings) | ⬜ |
-| 5 | Color-coded stones per player | ⬜ |
-| 6 | Responsive game field | ⬜ |
-| 7 | Slingshot mechanics (click + drag + release) | ⬜ |
-| 8 | Visual aiming aid (direction/force arrow) | ⬜ |
-| 9 | Friction — stones come to rest | ⬜ |
-| 10 | Circle-circle collisions | ⬜ |
-| 11 | Wall bounces | ⬜ |
+| 3 | Canvas API rendering | ✅ |
+| 4 | Color-coded target (concentric rings) | ✅ |
+| 5 | Color-coded stones per player | ✅ |
+| 6 | Responsive game field | ✅ |
+| 7 | Slingshot mechanics (click + drag + release) | ✅ |
+| 8 | Visual aiming aid (direction/force arrow) | ✅ |
+| 9 | Friction — stones come to rest | ✅ |
+| 10 | Circle-circle collisions | ✅ |
+| 11 | Wall bounces | ✅ |
 | 12 | Turn alternation | ✅ |
 | 13 | Waiting player blocked until stones stop | ✅ |
 | 14 | Winner = closest stone to target | ✅ |
@@ -141,8 +141,8 @@
 | 20 | Disconnect — clean game end | ✅ |
 | 21 | Server is authority (turns, events) | ✅ |
 | 22 | Client sends shot vector | ✅ |
-| 23 | Identical simulation on both clients | ⬜ |
-| 24 | Visual design | ⬜ |
+| 23 | Identical simulation on both clients | ✅ |
+| 24 | Visual design | ✅ |
 | 25 | PostgreSQL statistics | ✅ |
 
 ---
