@@ -21,31 +21,31 @@
 
 ## Phase 2 — Database
 
-- [ ] Write `server/src/db/schema.sql` — tables: `players`, `games`, `throws` + indexes ([README §5](README.md))
-- [ ] Write `server/src/db/pool.ts` — PostgreSQL connection pool
-- [ ] Write `server/src/db/queries.ts` — `saveGame`, `getStats`, `savePlayers`, `saveThrow`
-- [ ] Create `database/dump.sql` from schema
+- [x] Write `server/src/db/schema.sql` — tables: `players`, `games`, `throws` + indexes ([README §5](README.md))
+- [x] Write `server/src/db/pool.ts` — PostgreSQL connection pool
+- [x] Write `server/src/db/queries.ts` — `saveGame`, `getStats`, `savePlayers`, `saveThrow`
+- [x] Create `database/dump.sql` from schema
 - [ ] Test DB connection locally
 
 ---
 
 ## Phase 3 — Backend / WebSocket Server
 
-- [ ] Write `server/src/index.ts` — Express HTTP server setup
-- [ ] Write `server/src/websocket/WebSocketServer.ts` — WS server, connection handler
-- [ ] Write `server/src/websocket/RoomManager.ts` — matchmaking lobby, waiting queue
-- [ ] Write `server/src/websocket/GameRoom.ts`:
-  - [ ] Player pairing + `game_start` broadcast
-  - [ ] Turn management (`activePlayer`, `stonesLeft`)
-  - [ ] Handle `shoot` → validate → broadcast `opponent_shot`
-  - [ ] Handle `stones_stopped` from both clients → send `turn_change`
-  - [ ] End-of-game detection → calculate distances → send `game_over`
-  - [ ] Handle `pause` / `unpause`
-  - [ ] Handle `restart_request` / `restart_accept`
-  - [ ] Handle `opponent_disconnected` on WS close
-- [ ] REST endpoint `GET /api/stats` for leaderboard / history
-- [ ] Save game results to PostgreSQL on `game_over`
-- [ ] Write shared `server/src/types/game.ts`
+- [x] Write `server/src/index.ts` — Express HTTP server setup
+- [x] Write `server/src/websocket/WebSocketServer.ts` — WS server, connection handler
+- [x] Write `server/src/websocket/RoomManager.ts` — matchmaking lobby, waiting queue
+- [x] Write `server/src/websocket/GameRoom.ts`:
+  - [x] Player pairing + `game_start` broadcast
+  - [x] Turn management (`activePlayer`, `stonesLeft`)
+  - [x] Handle `shoot` → validate → broadcast `opponent_shot`
+  - [x] Handle `stones_stopped` from both clients → send `turn_change`
+  - [x] End-of-game detection → calculate distances → send `game_over`
+  - [x] Handle `pause` / `unpause`
+  - [x] Handle `restart_request` / `restart_accept`
+  - [x] Handle `opponent_disconnected` on WS close
+- [x] REST endpoint `GET /api/stats` for leaderboard / history
+- [x] Save game results to PostgreSQL on `game_over`
+- [x] Write shared `server/src/types/game.ts`
 
 ---
 
@@ -119,7 +119,7 @@
 
 | # | Requirement | Done |
 |---|---|---|
-| 1 | WebSocket real-time game for 2 players | ⬜ |
+| 1 | WebSocket real-time game for 2 players | ✅ |
 | 2 | Configuration from JSON file | ✅ |
 | 3 | Canvas API rendering | ⬜ |
 | 4 | Color-coded target (concentric rings) | ⬜ |
@@ -130,20 +130,20 @@
 | 9 | Friction — stones come to rest | ⬜ |
 | 10 | Circle-circle collisions | ⬜ |
 | 11 | Wall bounces | ⬜ |
-| 12 | Turn alternation | ⬜ |
-| 13 | Waiting player blocked until stones stop | ⬜ |
-| 14 | Winner = closest stone to target | ⬜ |
-| 15 | Show result to both players | ⬜ |
-| 16 | Login / lobby | ⬜ |
+| 12 | Turn alternation | ✅ |
+| 13 | Waiting player blocked until stones stop | ✅ |
+| 14 | Winner = closest stone to target | ✅ |
+| 15 | Show result to both players | ✅ |
+| 16 | Login / lobby | ✅ |
 | 17 | Main menu | ⬜ |
-| 18 | Pause | ⬜ |
-| 19 | Restart (mutual consent) | ⬜ |
-| 20 | Disconnect — clean game end | ⬜ |
-| 21 | Server is authority (turns, events) | ⬜ |
-| 22 | Client sends shot vector | ⬜ |
+| 18 | Pause | ✅ |
+| 19 | Restart (mutual consent) | ✅ |
+| 20 | Disconnect — clean game end | ✅ |
+| 21 | Server is authority (turns, events) | ✅ |
+| 22 | Client sends shot vector | ✅ |
 | 23 | Identical simulation on both clients | ⬜ |
 | 24 | Visual design | ⬜ |
-| 25 | PostgreSQL statistics | ⬜ |
+| 25 | PostgreSQL statistics | ✅ |
 
 ---
 
