@@ -23,6 +23,6 @@
   },
   "physics": {
     "stoppedVelocityThreshold": 0.1,
-    "checkInterval": 100
+    "checkInterval": 50
   }
 }

@@ -40,7 +40,7 @@ export class GameState {
   }
 
   markShot(): void {
-    if (this.phase !== 'aiming') return;
+    if (this.phase !== 'aiming' && this.phase !== 'waiting') return;
     this.phase = 'sliding';
   }
 

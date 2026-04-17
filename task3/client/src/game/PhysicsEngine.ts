@@ -8,19 +8,21 @@ export interface StonePhysicsState {
   vy: number;
 }
 
+const STOP_DISPLACEMENT_THRESHOLD = 0.5; // logical pixels per checkInterval
+
 export class PhysicsEngine {
   private engine: Matter.Engine;
   private world: Matter.World;
   private stones = new Map<string, Matter.Body>();
-  private threshold: number;
   private checkInterval: number;
   private lastCheckTime = 0;
   private _stopped = true;
+  private prevPositions = new Map<string, { x: number; y: number }>();
+  private snapshotReady = false;
 
   constructor(private config: GameConfig) {
     this.engine = Matter.Engine.create({ gravity: { x: 0, y: 0 } });
     this.world = this.engine.world;
-    this.threshold = config.physics.stoppedVelocityThreshold;
     this.checkInterval = config.physics.checkInterval;
     this._addWalls();
   }
@@ -60,6 +62,16 @@ export class PhysicsEngine {
     if (!body) return;
     Matter.Body.applyForce(body, body.position, { x: fx, y: fy });
     this._stopped = false;
+    this.snapshotReady = false;
+    this.prevPositions.clear();
+  }
+
+  setPosition(id: string, x: number, y: number): void {
+    const body = this.stones.get(id);
+    if (!body) return;
+    Matter.Body.setPosition(body, { x, y });
+    Matter.Body.setVelocity(body, { x: 0, y: 0 });
+    Matter.Body.setAngularVelocity(body, 0);
   }
 
   step(deltaMs: number): void {
@@ -83,15 +95,36 @@ export class PhysicsEngine {
     if (this.stones.size === 0) return true;
     if (nowMs - this.lastCheckTime < this.checkInterval) return this._stopped;
     this.lastCheckTime = nowMs;
-    this._stopped = [...this.stones.values()].every(
-      (b) => Math.hypot(b.velocity.x, b.velocity.y) < this.threshold,
-    );
+
+    if (!this.snapshotReady) {
+      this.prevPositions.clear();
+      for (const [id, body] of this.stones) {
+        this.prevPositions.set(id, { x: body.position.x, y: body.position.y });
+      }
+      this.snapshotReady = true;
+      this._stopped = false;
+      return false;
+    }
+
+    let maxDisplacement = 0;
+    for (const [id, body] of this.stones) {
+      const prev = this.prevPositions.get(id);
+      if (prev) {
+        const d = Math.hypot(body.position.x - prev.x, body.position.y - prev.y);
+        if (d > maxDisplacement) maxDisplacement = d;
+      }
+      this.prevPositions.set(id, { x: body.position.x, y: body.position.y });
+    }
+
+    this._stopped = maxDisplacement < STOP_DISPLACEMENT_THRESHOLD;
     return this._stopped;
   }
 
   reset(): void {
     Matter.Composite.clear(this.world, false);
     this.stones.clear();
+    this.prevPositions.clear();
+    this.snapshotReady = false;
     this._stopped = true;
     this._addWalls();
   }

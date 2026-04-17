@@ -48,7 +48,7 @@ export type S2CMessage =
   | { type: 'waiting' }
   | { type: 'game_start'; playerIndex: 0 | 1; opponentNickname: string; config: GameConfig; stonesPerPlayer: number }
   | { type: 'opponent_shot'; forceX: number; forceY: number; stoneIndex: number }
-  | { type: 'turn_change'; activePlayer: 0 | 1; throwsRemaining: [number, number] }
+  | { type: 'turn_change'; activePlayer: 0 | 1; throwsRemaining: [number, number]; positions?: StonePosition[] }
   | { type: 'game_over'; winner: 0 | 1 | null; distances: number[] }
   | { type: 'paused'; by: 0 | 1 }
   | { type: 'unpaused' }

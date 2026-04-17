@@ -37,9 +37,11 @@ export function GameCanvas({
   const onStoppedRef = useRef(onStonesStopped);
   onStoppedRef.current = onStonesStopped;
 
-  const { scale } = useResponsiveCanvas(canvasRef, config.field.width, config.field.height);
-  const scaleRef = useRef(scale);
-  scaleRef.current = scale;
+  const { cssScale, renderScale } = useResponsiveCanvas(canvasRef, config.field.width, config.field.height);
+  const cssScaleRef = useRef(cssScale);
+  cssScaleRef.current = cssScale;
+  const renderScaleRef = useRef(renderScale);
+  renderScaleRef.current = renderScale;
 
   // Initialize engine objects once on mount
   useEffect(() => {
@@ -54,7 +56,7 @@ export function GameCanvas({
     const input = new InputHandler(
       canvas,
       config,
-      () => scaleRef.current,
+      () => cssScaleRef.current,
       () => gameStateRef.current!,
     );
 
@@ -90,16 +92,28 @@ export function GameCanvas({
     if (!physics || !gs) return;
 
     if (incomingMessage.type === 'turn_change') {
-      const { activePlayer, throwsRemaining } = incomingMessage;
+      const { activePlayer, throwsRemaining, positions } = incomingMessage;
       gs.applyTurnChange(activePlayer, throwsRemaining);
       stoppedSentRef.current = false;
 
-      const stoneIdx = config.stones.perPlayer - throwsRemaining[activePlayer];
-      const startX = config.field.width * 0.5;
-      const startY = config.field.height * 0.88;
-      const id = `${activePlayer}-${stoneIdx}`;
-      physics.addStone(id, startX, startY);
-      gs.addStone(activePlayer, stoneIdx, startX, startY);
+      if (positions) {
+        for (const p of positions) {
+          const px = p.x * config.field.width;
+          const py = p.y * config.field.height;
+          physics.setPosition(`${p.player}-${p.index}`, px, py);
+          const stone = gs.stones.find((s) => s.player === p.player && s.index === p.index);
+          if (stone) { stone.x = px; stone.y = py; }
+        }
+      }
+
+      if (throwsRemaining[activePlayer] > 0) {
+        const stoneIdx = config.stones.perPlayer - throwsRemaining[activePlayer];
+        const startX = config.field.width * 0.5;
+        const startY = config.field.height * 0.88;
+        const id = `${activePlayer}-${stoneIdx}`;
+        physics.addStone(id, startX, startY);
+        gs.addStone(activePlayer, stoneIdx, startX, startY);
+      }
     }
 
     if (incomingMessage.type === 'opponent_shot') {
@@ -143,7 +157,7 @@ export function GameCanvas({
         }
       }
 
-      renderer.draw(gs, scaleRef.current, gs.phase === 'aiming' ? aimRef.current : null);
+      renderer.draw(gs, renderScaleRef.current, gs.phase === 'aiming' ? aimRef.current : null);
     },
     [config],
   );

@@ -76,6 +76,12 @@ export class GameRoom {
         stonesPerPlayer: this.config.stones.perPlayer,
       });
     });
+
+    this.broadcast({
+      type: 'turn_change',
+      activePlayer: this.activePlayer,
+      throwsRemaining: this.throwsRemaining,
+    });
   }
 
   // ── Message dispatch ──────────────────────────────────────────────────────
@@ -147,6 +153,7 @@ export class GameRoom {
         type: 'turn_change',
         activePlayer: this.activePlayer,
         throwsRemaining: this.throwsRemaining,
+        positions: this.lastStones,
       });
     }
   }
@@ -216,6 +223,12 @@ export class GameRoom {
       type: 'restarting',
       config: this.config,
       stonesPerPlayer: this.config.stones.perPlayer,
+    });
+
+    this.broadcast({
+      type: 'turn_change',
+      activePlayer: this.activePlayer,
+      throwsRemaining: this.throwsRemaining,
     });
   }
 

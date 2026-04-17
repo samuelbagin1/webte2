@@ -3,7 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 export interface CanvasSize {
   width: number;
   height: number;
-  scale: number; // combined CSS-fit + devicePixelRatio factor
+  /** CSS pixels per logical pixel — use for mouse/touch coordinate conversion */
+  cssScale: number;
+  /** Device pixels per logical pixel (cssScale × devicePixelRatio) — use for canvas drawing */
+  renderScale: number;
 }
 
 export function useResponsiveCanvas(
@@ -11,7 +14,12 @@ export function useResponsiveCanvas(
   logicalWidth: number,
   logicalHeight: number,
 ): CanvasSize {
-  const [size, setSize] = useState<CanvasSize>({ width: logicalWidth, height: logicalHeight, scale: 1 });
+  const [size, setSize] = useState<CanvasSize>({
+    width: logicalWidth,
+    height: logicalHeight,
+    cssScale: 1,
+    renderScale: 1,
+  });
   const observerRef = useRef<ResizeObserver | null>(null);
 
   useEffect(() => {
@@ -20,12 +28,12 @@ export function useResponsiveCanvas(
 
     const update = (cssW: number, cssH: number) => {
       const dpr = window.devicePixelRatio || 1;
-      const scale = Math.min(cssW / logicalWidth, cssH / logicalHeight);
-      canvas.width = Math.round(logicalWidth * scale * dpr);
-      canvas.height = Math.round(logicalHeight * scale * dpr);
-      canvas.style.width = `${logicalWidth * scale}px`;
-      canvas.style.height = `${logicalHeight * scale}px`;
-      setSize({ width: canvas.width, height: canvas.height, scale: scale * dpr });
+      const cssScale = Math.min(cssW / logicalWidth, cssH / logicalHeight);
+      canvas.width = Math.round(logicalWidth * cssScale * dpr);
+      canvas.height = Math.round(logicalHeight * cssScale * dpr);
+      canvas.style.width = `${logicalWidth * cssScale}px`;
+      canvas.style.height = `${logicalHeight * cssScale}px`;
+      setSize({ width: canvas.width, height: canvas.height, cssScale, renderScale: cssScale * dpr });
     };
 
     observerRef.current = new ResizeObserver((entries) => {
