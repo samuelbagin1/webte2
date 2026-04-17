@@ -28,7 +28,7 @@ export class PhysicsEngine {
   private _addWalls(): void {
     const { width, height, wallRestitution } = this.config.field;
     const t = 50;
-    const opts: Matter.IBodyDefinition = {
+    const opts: Matter.IChamferableBodyDefinition = {
       isStatic: true,
       restitution: wallRestitution,
       friction: 0,

@@ -17,6 +17,7 @@ export default {
           blue: "#1A72C7",
           "blue-hover": "#3F8FD9",
         },
+        copper: "#D4A27F",
         text: {
           primary: "#141413",
           secondary: "#3D3C39",
@@ -29,6 +30,10 @@ export default {
         player: {
           red: "#D4713A",
           blue: "#1A72C7",
+        },
+        border: {
+          default: "#DEDEDE",
+          subtle: "#E8E7E3",
         },
       },
       borderRadius: {

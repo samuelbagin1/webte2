@@ -89,16 +89,16 @@
 
 ## Phase 6 — Frontend: UI Screens
 
-- [ ] `client/src/components/MainMenu.tsx` — logo, New Game, Rules, Statistics buttons
-- [ ] `client/src/components/Lobby.tsx` — nickname input, connect button, waiting animation
-- [ ] `client/src/components/GameCanvas.tsx` — canvas element, PhysicsEngine + Renderer integration
-- [ ] `client/src/components/GameHUD.tsx` — player names, stones remaining (Badge), turn indicator, pause button
-- [ ] `client/src/components/AimingIndicator.tsx` — canvas overlay for slingshot arrow
-- [ ] `client/src/components/RulesDialog.tsx` — rules text in shadcn Dialog
-- [ ] `client/src/components/GameOverDialog.tsx` — winner, stone distances, New Game / Menu buttons
-- [ ] `client/src/components/PauseOverlay.tsx` — semi-transparent overlay, who paused, Resume button
-- [ ] `client/src/components/StatsPage.tsx` — table of past games from REST API
-- [ ] Wire all shadcn/ui components in `components/ui/`
+- [x] `client/src/components/MainMenu.tsx` — logo, New Game, Rules, Statistics buttons
+- [x] `client/src/components/Lobby.tsx` — nickname input, connect button, waiting animation
+- [x] `client/src/components/GameCanvas.tsx` — canvas element, PhysicsEngine + Renderer integration
+- [x] `client/src/components/GameHUD.tsx` — player names, stones remaining (Badge), turn indicator, pause button
+- [x] `client/src/components/AimingIndicator.tsx` — folded into GameCanvas/Renderer (no separate file needed)
+- [x] `client/src/components/RulesDialog.tsx` — rules text in shadcn Dialog
+- [x] `client/src/components/GameOverDialog.tsx` — winner, stone distances, New Game / Menu buttons
+- [x] `client/src/components/PauseOverlay.tsx` — semi-transparent overlay, who paused, Resume button
+- [x] `client/src/components/StatsPage.tsx` — table of past games from REST API
+- [x] Wire all shadcn/ui components in `components/ui/`
 
 ---
 
