@@ -14,7 +14,10 @@ interface GameCanvasProps {
   incomingMessage: S2CMessage | null;
   onShoot: (msg: Extract<C2SMessage, { type: 'shoot' }>) => void;
   onStonesStopped: (msg: Extract<C2SMessage, { type: 'stones_stopped' }>) => void;
+  onPositionsUpdate: (msg: Extract<C2SMessage, { type: 'positions_update' }>) => void;
 }
+
+const POSITION_STREAM_INTERVAL_MS = 33; // ~30 Hz
 
 export function GameCanvas({
   playerIndex,
@@ -22,6 +25,7 @@ export function GameCanvas({
   incomingMessage,
   onShoot,
   onStonesStopped,
+  onPositionsUpdate,
 }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -36,6 +40,10 @@ export function GameCanvas({
   onShootRef.current = onShoot;
   const onStoppedRef = useRef(onStonesStopped);
   onStoppedRef.current = onStonesStopped;
+  const onPositionsUpdateRef = useRef(onPositionsUpdate);
+  onPositionsUpdateRef.current = onPositionsUpdate;
+
+  const lastStreamAtRef = useRef(0);
 
   const { cssScale, renderScale } = useResponsiveCanvas(canvasRef, config.field.width, config.field.height);
   const cssScaleRef = useRef(cssScale);
@@ -124,6 +132,16 @@ export function GameCanvas({
       stoppedSentRef.current = false;
     }
 
+    if (incomingMessage.type === 'opponent_positions') {
+      for (const p of incomingMessage.stones) {
+        const px = p.x * config.field.width;
+        const py = p.y * config.field.height;
+        physics.setPosition(`${p.player}-${p.index}`, px, py);
+        const stone = gs.stones.find((s) => s.player === p.player && s.index === p.index);
+        if (stone) { stone.x = px; stone.y = py; }
+      }
+    }
+
     if (incomingMessage.type === 'restarting') {
       physics.reset();
       gs.start(0, incomingMessage.stonesPerPlayer);
@@ -143,7 +161,24 @@ export function GameCanvas({
         physics.step(delta);
         gs.syncPositions(physics.getPositions());
 
-        if (!stoppedSentRef.current && physics.checkStopped(performance.now())) {
+        const now = performance.now();
+
+        // Active player streams positions so the opponent sees movement reliably
+        if (
+          gs.activePlayer === playerIndex &&
+          now - lastStreamAtRef.current >= POSITION_STREAM_INTERVAL_MS
+        ) {
+          lastStreamAtRef.current = now;
+          const stones: StonePosition[] = gs.stones.map((s) => ({
+            player: s.player,
+            index: s.index,
+            x: s.x / config.field.width,
+            y: s.y / config.field.height,
+          }));
+          onPositionsUpdateRef.current({ type: 'positions_update', stones });
+        }
+
+        if (!stoppedSentRef.current && physics.checkStopped(now)) {
           gs.markStopped();
           stoppedSentRef.current = true;
 
@@ -159,7 +194,7 @@ export function GameCanvas({
 
       renderer.draw(gs, renderScaleRef.current, gs.phase === 'aiming' ? aimRef.current : null);
     },
-    [config],
+    [config, playerIndex],
   );
 
   useGameLoop(gameLoop, true);

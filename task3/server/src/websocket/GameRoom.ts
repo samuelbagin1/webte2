@@ -91,13 +91,25 @@ export class GameRoom {
     try { msg = JSON.parse(raw) as C2SMessage; } catch { return; }
 
     switch (msg.type) {
-      case 'shoot':           return this.handleShoot(playerIdx, msg);
-      case 'stones_stopped':  return this.handleStopped(playerIdx, msg.stones);
-      case 'pause':           return this.handlePause(playerIdx);
-      case 'unpause':         return this.handleUnpause(playerIdx);
-      case 'restart_request': return this.handleRestartRequest(playerIdx);
-      case 'restart_accept':  return this.handleRestartAccept(playerIdx);
+      case 'shoot':            return this.handleShoot(playerIdx, msg);
+      case 'positions_update': return this.handlePositionsUpdate(playerIdx, msg.stones);
+      case 'stones_stopped':   return this.handleStopped(playerIdx, msg.stones);
+      case 'pause':            return this.handlePause(playerIdx);
+      case 'unpause':          return this.handleUnpause(playerIdx);
+      case 'restart_request':  return this.handleRestartRequest(playerIdx);
+      case 'restart_accept':   return this.handleRestartAccept(playerIdx);
     }
+  }
+
+  // ── Position streaming ────────────────────────────────────────────────────
+
+  private handlePositionsUpdate(playerIdx: 0 | 1, stones: StonePosition[]): void {
+    // Only the active player's stream is authoritative — ignore any others
+    if (playerIdx !== this.activePlayer) return;
+    this.send(this.sockets[this.other(playerIdx)], {
+      type: 'opponent_positions',
+      stones,
+    });
   }
 
   // ── Shot ──────────────────────────────────────────────────────────────────
