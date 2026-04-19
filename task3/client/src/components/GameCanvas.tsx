@@ -117,7 +117,7 @@ export function GameCanvas({
       if (throwsRemaining[activePlayer] > 0) {
         const stoneIdx = config.stones.perPlayer - throwsRemaining[activePlayer];
         const startX = config.field.width * 0.5;
-        const startY = config.field.height * 0.88;
+        const startY = config.field.height * 0.80;
         const id = `${activePlayer}-${stoneIdx}`;
         physics.addStone(id, startX, startY);
         gs.addStone(activePlayer, stoneIdx, startX, startY);

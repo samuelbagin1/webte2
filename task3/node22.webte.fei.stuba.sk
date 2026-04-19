@@ -1,0 +1,120 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name node22.webte.fei.stuba.sk;
+    rewrite ^ https://$server_name$request_uri? permanent;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name node22.webte.fei.stuba.sk;
+
+    access_log /var/log/nginx/access.log;
+    error_log  /var/log/nginx/error.log info;
+
+    ssl_certificate /etc/ssl/certs/webte_fei_stuba_sk.pem;
+    ssl_certificate_key /etc/ssl/private/webte.fei.stuba.sk-ec.key;
+
+    root /var/www/node22.webte.fei.stuba.sk/frontend;
+    index index.html;
+
+    client_max_body_size 500M;
+
+
+    # === task1and2 ===
+    # task1and2 backend API
+    location ~ ^/task1and2/api(/.*)?$ {
+        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME /var/www/node22.webte.fei.stuba.sk/task1and2/backend/api/index.php;
+        fastcgi_param SCRIPT_NAME /index.php;
+        fastcgi_param REQUEST_URI /api$1;
+    }
+
+    # task1and2 frontend (React SPA)
+    location /task1and2/ {
+	alias /var/www/node22.webte.fei.stuba.sk/task1and2/frontend/;
+	index index.html;
+	try_files $uri $uri/ /task1and2/index.html;
+    }
+
+
+    # zapocet
+    location ~ ^/zapocet/api(/.*)?$ {
+	fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
+	include fastcgi_params;
+	fastcgi_param SCRIPT_FILENAME /var/www/node22.webte.fei.stuba.sk/zapocet/api/api.php;
+	fastcgi_param SCRIPT_NAME /api.php;
+	fastcgi_param REQUEST_URI /api$1;
+    }
+
+
+    # ws-chat app
+    location /ws/ {
+    	# Presmerovanie na Node.js server
+	proxy_pass http://localhost:3000/;
+
+    	# Povolenie WebSocket upgrade mechanizmu
+	proxy_http_version 1.1;
+	proxy_set_header Upgrade $http_upgrade;
+	proxy_set_header Connection "Upgrade";
+
+    	# Zachovanie hlavicky hosta.
+	proxy_set_header Host $host;
+    }
+
+    
+
+
+    # === task3 (Online Curling) ===
+    location /task3/ {
+	alias /var/www/node22.webte.fei.stuba.sk/task3/;
+	index index.html;
+	try_files $uri $uri/ /task3/index.html;
+    }
+
+    location /task3/ws {
+	proxy_pass http://localhost:3001;
+	proxy_http_version 1.1;
+	proxy_set_header Upgrade $http_upgrade;
+	proxy_set_header Connection "Upgrade";
+	proxy_set_header Host $host;
+	proxy_read_timeout 86400;
+    }
+
+    location /task3/api/ {
+	proxy_pass http://localhost:3001/api/;
+	proxy_set_header Host $host;
+    }
+
+
+   
+
+
+
+    # === global rules ===
+    # Block vendor directory
+    location ~* /vendor/ {
+        deny all;
+        return 403;
+    }
+
+    location ~ /\. {
+        deny all;
+    }
+
+    # root fallback (optional landing page or redirect)
+    location = / {
+	return 302 /task1and2/;
+    }
+
+
+    # after reconfiguration
+    # sudo nginx -t
+    # sudo systemctl reload nginx
+
+    include snippets/phpmyadmin.conf;
+}
+
