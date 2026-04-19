@@ -18,7 +18,7 @@ export function StatsPage({ onBack }: StatsPageProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/stats')
+    fetch(`${import.meta.env.BASE_URL}api/stats`)
       .then((r) => r.json())
       .then((data) => {
         setRecords(data);

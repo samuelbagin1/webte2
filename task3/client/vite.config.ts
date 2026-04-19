@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    base: '/task3/',
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),

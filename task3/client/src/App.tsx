@@ -9,7 +9,7 @@ import { GameHUD } from './components/GameHUD';
 import { PauseOverlay } from './components/PauseOverlay';
 import { GameOverDialog } from './components/GameOverDialog';
 
-const WS_URL = (import.meta.env.VITE_WS_URL as string | undefined) ?? `ws://${location.host}/ws`;
+const WS_URL = (import.meta.env.VITE_WS_URL as string | undefined) ?? `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}${import.meta.env.BASE_URL}ws`;
 
 interface GameSession {
   playerIndex: 0 | 1;
