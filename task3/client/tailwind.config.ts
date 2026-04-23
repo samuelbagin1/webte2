@@ -32,7 +32,7 @@ export default {
           blue: "#1A72C7",
         },
         border: {
-          default: "#DEDEDE",
+          default: "#DBD9D6",
           subtle: "#E8E7E3",
         },
       },
@@ -49,6 +49,15 @@ export default {
       },
       transitionTimingFunction: {
         DEFAULT: "cubic-bezier(0.4, 0, 0.2, 1)",
+      },
+      keyframes: {
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+      },
+      animation: {
+        "fade-in": "fade-in 200ms cubic-bezier(0.4, 0, 0.2, 1)",
       },
     },
   },

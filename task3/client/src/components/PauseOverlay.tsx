@@ -35,7 +35,7 @@ export function PauseOverlay({
           <div className="bg-subtle rounded-xl px-4 py-3 text-center w-full">
             <p className="text-text-secondary text-sm mb-2">Opponent wants to restart.</p>
             <button
-              className="px-4 py-1.5 rounded-pill bg-btn-dark text-white text-sm hover:opacity-90 transition"
+              className="px-4 py-1.5 rounded-pill bg-btn-dark text-white text-sm hover:opacity-90 active:scale-[0.98] transition"
               onClick={onRestartAccept}
             >
               Accept Restart
@@ -44,7 +44,7 @@ export function PauseOverlay({
         )}
 
         <button
-          className="w-full px-6 py-2.5 rounded-pill bg-btn-dark text-white font-semibold hover:opacity-90 transition"
+          className="w-full px-6 py-2.5 rounded-pill bg-btn-dark text-white font-semibold hover:opacity-90 active:scale-[0.98] transition"
           onClick={onResume}
         >
           Resume

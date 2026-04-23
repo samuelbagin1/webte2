@@ -16,6 +16,8 @@ const STONE_FILL: [string, string] = ['#C0614A', '#4A7FC0'];
 const STONE_BORDER: [string, string] = ['#8B2500', '#1A3F70'];
 
 export class Renderer {
+  private _iceGradient: CanvasGradient | null = null;
+
   constructor(
     private ctx: CanvasRenderingContext2D,
     private config: GameConfig,
@@ -38,8 +40,27 @@ export class Renderer {
   }
 
   private _drawBackground(w: number, h: number): void {
-    this.ctx.fillStyle = '#F0EFEA';
-    this.ctx.fillRect(0, 0, w, h);
+    const ctx = this.ctx;
+    if (!this._iceGradient) {
+      const g = ctx.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, '#F4F3EE');
+      g.addColorStop(1, '#E9E7E1');
+      this._iceGradient = g;
+    }
+    ctx.fillStyle = this._iceGradient;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(120, 120, 130, 0.04)';
+    ctx.lineWidth = 1;
+    for (let i = 1; i < 6; i++) {
+      const y = (h / 6) * i;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 
   private _drawTarget(): void {
@@ -119,8 +140,15 @@ export class Renderer {
   }
 
   private _drawBorder(w: number, h: number): void {
-    this.ctx.strokeStyle = '#DEDEDE';
-    this.ctx.lineWidth = 2;
-    this.ctx.strokeRect(0, 0, w, h);
+    const ctx = this.ctx;
+    ctx.strokeStyle = '#D4D2CC';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (typeof ctx.roundRect === 'function') {
+      ctx.roundRect(1, 1, w - 2, h - 2, 8);
+    } else {
+      ctx.rect(1, 1, w - 2, h - 2);
+    }
+    ctx.stroke();
   }
 }

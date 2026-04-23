@@ -61,13 +61,13 @@ export function GameOverDialog({
 
         <div className="flex gap-3 mt-4">
           <button
-            className="flex-1 px-4 py-2.5 rounded-pill bg-btn-dark text-white font-semibold hover:opacity-90 transition text-sm"
+            className="flex-1 px-4 py-2.5 rounded-pill bg-btn-dark text-white font-semibold hover:opacity-90 active:scale-[0.98] transition text-sm"
             onClick={onNewGame}
           >
             New Game
           </button>
           <button
-            className="flex-1 px-4 py-2.5 rounded-pill border border-border-default text-text-secondary hover:bg-subtle transition text-sm"
+            className="flex-1 px-4 py-2.5 rounded-pill border border-border-default text-text-secondary hover:bg-subtle active:scale-[0.98] transition text-sm"
             onClick={onMenu}
           >
             Main Menu

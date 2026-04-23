@@ -10,7 +10,7 @@ export function MainMenu({ onPlay, onStats }: MainMenuProps) {
   const [rulesOpen, setRulesOpen] = useState(false);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-6 bg-page">
+    <div className="flex flex-col items-center justify-center min-h-screen gap-6 bg-[radial-gradient(ellipse_at_center,theme(colors.card)_0%,theme(colors.page)_75%)]">
       <div className="flex flex-col items-center gap-1 mb-4">
         <div className="w-16 h-16 rounded-full bg-copper flex items-center justify-center shadow-lg">
           <span className="text-white text-3xl font-bold select-none">●</span>
@@ -20,19 +20,19 @@ export function MainMenu({ onPlay, onStats }: MainMenuProps) {
       </div>
 
       <button
-        className="w-48 px-8 py-3 rounded-pill bg-btn-dark text-white font-semibold hover:opacity-90 transition"
+        className="w-48 px-8 py-3 rounded-pill bg-btn-dark text-white font-semibold hover:opacity-90 active:scale-[0.98] transition"
         onClick={onPlay}
       >
         New Game
       </button>
       <button
-        className="w-48 px-8 py-3 rounded-pill border border-border-default text-text-secondary hover:bg-subtle transition"
+        className="w-48 px-8 py-3 rounded-pill border border-border-default text-text-secondary hover:bg-subtle active:scale-[0.98] transition"
         onClick={() => setRulesOpen(true)}
       >
         Rules
       </button>
       <button
-        className="w-48 px-8 py-3 rounded-pill border border-border-default text-text-secondary hover:bg-subtle transition"
+        className="w-48 px-8 py-3 rounded-pill border border-border-default text-text-secondary hover:bg-subtle active:scale-[0.98] transition"
         onClick={onStats}
       >
         Statistics
