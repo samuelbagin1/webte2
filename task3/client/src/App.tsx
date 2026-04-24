@@ -77,7 +77,7 @@ export default function App() {
         break;
 
       case 'opponent_shot':
-      case 'opponent_positions':
+      case 'stone_positions':
         setIncomingMessage({ ...msg });
         break;
 
@@ -182,8 +182,6 @@ export default function App() {
             config={session.config}
             incomingMessage={incomingMessage}
             onShoot={(msg) => send(msg)}
-            onStonesStopped={(msg) => send(msg)}
-            onPositionsUpdate={(msg) => send(msg)}
           />
           <GameHUD
             players={session.players}

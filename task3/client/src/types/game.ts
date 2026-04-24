@@ -37,8 +37,6 @@ export interface GameConfig {
 export type C2SMessage =
   | { type: 'join'; nickname: string }
   | { type: 'shoot'; forceX: number; forceY: number; stoneIndex: number }
-  | { type: 'positions_update'; stones: StonePosition[] }
-  | { type: 'stones_stopped'; stones: StonePosition[] }
   | { type: 'pause' }
   | { type: 'unpause' }
   | { type: 'restart_request' }
@@ -49,7 +47,7 @@ export type S2CMessage =
   | { type: 'waiting' }
   | { type: 'game_start'; playerIndex: 0 | 1; opponentNickname: string; config: GameConfig; stonesPerPlayer: number }
   | { type: 'opponent_shot'; forceX: number; forceY: number; stoneIndex: number }
-  | { type: 'opponent_positions'; stones: StonePosition[] }
+  | { type: 'stone_positions'; stones: StonePosition[] }
   | { type: 'turn_change'; activePlayer: 0 | 1; throwsRemaining: [number, number]; positions?: StonePosition[] }
   | { type: 'game_over'; winner: 0 | 1 | null; distances: number[] }
   | { type: 'paused'; by: 0 | 1 }

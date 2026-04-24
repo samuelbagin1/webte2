@@ -1,5 +1,5 @@
 import Matter from 'matter-js';
-import type { GameConfig } from '../types/game';
+import type { GameConfig } from '../types/game.js';
 
 export interface StonePhysicsState {
   x: number;
@@ -8,9 +8,9 @@ export interface StonePhysicsState {
   vy: number;
 }
 
-const STOP_DISPLACEMENT_THRESHOLD = 0.5; // logical pixels per checkInterval
+const STOP_DISPLACEMENT_THRESHOLD = 0.5;
 
-export class PhysicsEngine {
+export class ServerPhysicsEngine {
   private engine: Matter.Engine;
   private world: Matter.World;
   private stones = new Map<string, Matter.Body>();
@@ -24,10 +24,10 @@ export class PhysicsEngine {
     this.engine = Matter.Engine.create({ gravity: { x: 0, y: 0 } });
     this.world = this.engine.world;
     this.checkInterval = config.physics.checkInterval;
-    this._addWalls();
+    this.addWalls();
   }
 
-  private _addWalls(): void {
+  private addWalls(): void {
     const { width, height, wallRestitution } = this.config.field;
     const t = 50;
     const opts: Matter.IChamferableBodyDefinition = {
@@ -57,6 +57,13 @@ export class PhysicsEngine {
     Matter.Composite.add(this.world, body);
   }
 
+  removeStone(id: string): void {
+    const body = this.stones.get(id);
+    if (!body) return;
+    Matter.Composite.remove(this.world, body);
+    this.stones.delete(id);
+  }
+
   applyForce(id: string, fx: number, fy: number): void {
     const body = this.stones.get(id);
     if (!body) return;
@@ -64,6 +71,7 @@ export class PhysicsEngine {
     this._stopped = false;
     this.snapshotReady = false;
     this.prevPositions.clear();
+    this.lastCheckTime = 0;
   }
 
   setPosition(id: string, x: number, y: number): void {
@@ -91,7 +99,7 @@ export class PhysicsEngine {
     return out;
   }
 
-  checkStopped(nowMs: number): boolean {
+  isSettled(nowMs: number): boolean {
     if (this.stones.size === 0) return true;
     if (nowMs - this.lastCheckTime < this.checkInterval) return this._stopped;
     this.lastCheckTime = nowMs;
@@ -126,11 +134,13 @@ export class PhysicsEngine {
     this.prevPositions.clear();
     this.snapshotReady = false;
     this._stopped = true;
-    this._addWalls();
+    this.lastCheckTime = 0;
+    this.addWalls();
   }
 
   destroy(): void {
     Matter.Engine.clear(this.engine);
     this.stones.clear();
+    this.prevPositions.clear();
   }
 }

@@ -1,5 +1,4 @@
 import type { GameConfig } from '../types/game';
-import type { StonePhysicsState } from './PhysicsEngine';
 
 export type GamePhase = 'idle' | 'waiting' | 'aiming' | 'sliding' | 'stopped';
 
@@ -53,15 +52,5 @@ export class GameState {
     this.activePlayer = activePlayer;
     this.stonesLeft = throwsRemaining;
     this.phase = activePlayer === this.playerIndex ? 'aiming' : 'waiting';
-  }
-
-  syncPositions(positions: Map<string, StonePhysicsState>): void {
-    for (const stone of this.stones) {
-      const pos = positions.get(`${stone.player}-${stone.index}`);
-      if (pos) {
-        stone.x = pos.x;
-        stone.y = pos.y;
-      }
-    }
   }
 }
