@@ -4,42 +4,33 @@
 
 ---
 
-## 📋 Phase 0 — Príprava
-
-- [ ] Vytvoriť git repozitár `xbagins_baginsky_z4` (privátny)
-- [ ] Vytvoriť `.gitignore` (vendor/, node_modules/, .env, dist/, *.log, .DS_Store)
-- [ ] Overiť verzie na VPS node22: `php -v` (≥8.2), `nginx -v`, `mariadb --version`, `node -v`
-- [ ] Získať Anthropic API key, vložiť do lokálneho `.env`
-- [ ] Pripraviť priečinok `/var/www/xbagins/z4/` na VPS (cez SFTP/SSH)
-- [ ] Overiť, že MariaDB databáza pre účet existuje (alebo požiadať o vytvorenie)
-
 ---
 
 ## 🏗 Phase 1 — Setup projektu
 
 ### Backend (Laravel)
-- [ ] `composer create-project laravel/laravel backend`
-- [ ] Nakonfigurovať `.env` (DB, APP_URL, ANTHROPIC_API_KEY)
-- [ ] Pridať balíčky:
-  - [ ] `composer require guzzlehttp/guzzle` (HTTP client pre external API)
-- [ ] Konfigurácia CORS (`config/cors.php`) — povoliť FE origin pre dev (`localhost:5173`)
-- [ ] Nastaviť API routes prefix `/api`
-- [ ] Otestovať: `php artisan serve` → http://localhost:8000
+- [x] `composer create-project laravel/laravel backend`
+- [x] Nakonfigurovať `.env` (DB, APP_URL, OPENAI_API_KEY)
+- [x] Pridať balíčky:
+  - [x] `composer require guzzlehttp/guzzle` (HTTP client pre external API)
+- [x] Konfigurácia CORS (`config/cors.php`) — povoliť FE origin pre dev (`localhost:5173`)
+- [x] Nastaviť API routes prefix `/api`
+- [x] Otestovať: `php artisan serve` → http://localhost:8000
 
 ### Frontend (React + Vite)
-- [ ] `npm create vite@latest frontend -- --template react-ts`
-- [ ] `cd frontend && npm install`
-- [ ] Nainštalovať závislosti:
-  - [ ] `npm install react-router-dom`
-  - [ ] `npm install @tanstack/react-query @tanstack/react-table`
-  - [ ] `npm install react-hook-form @hookform/resolvers zod`
-  - [ ] `npm install axios`
-  - [ ] `npm install recharts`
-  - [ ] `npm install date-fns`
-  - [ ] `npm install lucide-react`
-  - [ ] `npm install class-variance-authority clsx tailwind-merge`
-- [ ] Vite config: `base: '/z4/'`, proxy `/api` → `http://localhost:8000` pre dev
-- [ ] Otestovať dev server: `npm run dev` → http://localhost:5173
+- [x] `npm create vite@latest frontend -- --template react-ts`
+- [x] `cd frontend && npm install`
+- [x] Nainštalovať závislosti:
+  - [x] `npm install react-router-dom`
+  - [x] `npm install @tanstack/react-query @tanstack/react-table`
+  - [x] `npm install react-hook-form @hookform/resolvers zod`
+  - [x] `npm install axios`
+  - [x] `npm install recharts`
+  - [x] `npm install date-fns`
+  - [x] `npm install lucide-react`
+  - [x] `npm install class-variance-authority clsx tailwind-merge`
+- [x] Vite config: `base: '/z4/'`, proxy `/api` → `http://localhost:8000` pre dev
+- [x] Otestovať dev server: `npm run dev` → http://localhost:5173
 
 ---
 
@@ -48,65 +39,65 @@
 > **DÔLEŽITÉ:** Všetko musí byť v design tokenoch hneď od začiatku. Nikdy nepoužívaj raw hex farby v komponentoch — vždy cez `bg-card`, `text-foreground`, atď.
 
 ### Tailwind & globals
-- [ ] Setup Tailwind CSS v3:
-  - [ ] `npm install -D tailwindcss@3 postcss autoprefixer`
-  - [ ] `npm install -D tailwindcss-animate`
-  - [ ] `npx tailwindcss init -p`
-- [ ] Nakonfigurovať `tailwind.config.ts`:
-  - [ ] Mapovať CSS variables na Tailwind colors (background, card, accent, primary, foreground, muted, border, ring, destructive — viď PLAN.md sekcia 2.1)
-  - [ ] Custom font families: sans (Inter), display (Fraunces), mono (JetBrains Mono)
-  - [ ] Custom container max-widths
-  - [ ] Border radius extensions (xl: 12px je už default)
-  - [ ] Plugin: `tailwindcss-animate`
-- [ ] Vytvoriť `src/styles/globals.css`:
-  - [ ] Import Google Fonts (Inter, Fraunces, JetBrains Mono) — `<link>` v index.html alebo @import
-  - [ ] Tailwind base/components/utilities
-  - [ ] CSS custom properties pre `:root` (light mode tokens — viď PLAN.md)
-  - [ ] CSS custom properties pre `.dark` (dark mode tokens)
-  - [ ] Reduced motion media query block
-  - [ ] `--scroll-mt: 9.5rem` pre sticky header offset
-- [ ] Vytvoriť `src/lib/utils.ts` s `cn()` helper (clsx + tailwind-merge)
-- [ ] Update `src/main.tsx`: import globals.css
+- [x] Setup Tailwind CSS v3:
+  - [x] `npm install -D tailwindcss@3 postcss autoprefixer`
+  - [x] `npm install -D tailwindcss-animate`
+  - [x] `npx tailwindcss init -p`
+- [x] Nakonfigurovať `tailwind.config.ts`:
+  - [x] Mapovať CSS variables na Tailwind colors (background, card, accent, primary, foreground, muted, border, ring, destructive — viď PLAN.md sekcia 2.1)
+  - [x] Custom font families: sans (Inter), display (Fraunces), mono (JetBrains Mono)
+  - [x] Custom container max-widths
+  - [x] Border radius extensions (xl: 12px je už default)
+  - [x] Plugin: `tailwindcss-animate`
+- [x] Vytvoriť `src/styles/globals.css`:
+  - [x] Import Google Fonts (Inter, Fraunces, JetBrains Mono) — `<link>` v index.html alebo @import
+  - [x] Tailwind base/components/utilities
+  - [x] CSS custom properties pre `:root` (light mode tokens — viď PLAN.md)
+  - [x] CSS custom properties pre `.dark` (dark mode tokens)
+  - [x] Reduced motion media query block
+  - [x] `--scroll-mt: 9.5rem` pre sticky header offset
+- [x] Vytvoriť `src/lib/utils.ts` s `cn()` helper (clsx + tailwind-merge)
+- [x] Update `src/main.tsx`: import globals.css
 
 ### shadcn/ui setup
-- [ ] `npx shadcn@latest init`
-  - [ ] Style: New York
-  - [ ] Base color: Neutral (preferiér nemusíme — máme custom)
-  - [ ] CSS variables: yes
-- [ ] Override `components.json` aby sedel s našou structúrou (paths, alias `@/`)
-- [ ] Nainštalovať komponenty:
-  - [ ] `npx shadcn@latest add button card input label select radio-group checkbox calendar popover form table badge progress skeleton sonner tabs separator`
-- [ ] **Customizovať shadcn komponenty na náš design system:**
-  - [ ] `Button.tsx`:
-    - [ ] Variant `default` → primary dark pill (bg-primary text-primary-foreground rounded-xl)
-    - [ ] Variant `secondary` → cream pill with shadow (bg-card shadow-sm rounded-xl)
-    - [ ] Variant `accent` (NEW) → terracotta CTA (bg-accent text-accent-foreground rounded-xl)
-    - [ ] Variant `ghost` → transparent (text-muted-foreground hover:bg-muted)
-    - [ ] Variant `outline` → bg-transparent border border-border rounded-xl
-    - [ ] Sizes: default h-10, sm h-9, lg h-12, icon h-10 w-10 (44px touch min)
-  - [ ] `Card.tsx`: bg-card rounded-2xl border border-border (NIE shadow)
-  - [ ] `Input.tsx`: h-10 rounded-xl bg-card
-  - [ ] `Badge.tsx`: rounded-full pre tags, rounded-lg pre chips
-- [ ] Theme provider:
-  - [ ] Vytvoriť `ThemeProvider.tsx` s context pre light/dark/system
-  - [ ] Persist v localStorage
-  - [ ] Toggle button v header s Sun/Moon ikonou (Lucide)
+- [x] `npx shadcn@latest init`
+  - [x] Style: New York
+  - [x] Base color: Neutral (preferiér nemusíme — máme custom)
+  - [x] CSS variables: yes
+- [x] Override `components.json` aby sedel s našou structúrou (paths, alias `@/`)
+- [x] Nainštalovať komponenty:
+  - [x] `npx shadcn@latest add button card input label select radio-group checkbox calendar popover form table badge progress skeleton sonner tabs separator`
+- [x] **Customizovať shadcn komponenty na náš design system:**
+  - [x] `Button.tsx`:
+    - [x] Variant `default` → primary dark pill (bg-primary text-primary-foreground rounded-xl)
+    - [x] Variant `secondary` → cream pill with shadow (bg-card shadow-sm rounded-xl)
+    - [x] Variant `accent` (NEW) → terracotta CTA (bg-accent text-accent-foreground rounded-xl)
+    - [x] Variant `ghost` → transparent (text-muted-foreground hover:bg-muted)
+    - [x] Variant `outline` → bg-transparent border border-border rounded-xl
+    - [x] Sizes: default h-10, sm h-9, lg h-12, icon h-10 w-10 (44px touch min)
+  - [x] `Card.tsx`: bg-card rounded-2xl border border-border (NIE shadow)
+  - [x] `Input.tsx`: h-10 rounded-xl bg-card
+  - [x] `Badge.tsx`: rounded-full pre tags, rounded-lg pre chips
+- [x] Theme provider:
+  - [x] Vytvoriť `ThemeProvider.tsx` s context pre light/dark/system
+  - [x] Persist v localStorage
+  - [x] Toggle button v header s Sun/Moon ikonou (Lucide)
 
 ### Layout shell
-- [ ] `Header.tsx`:
-  - [ ] Sticky top-0, h-14, bg-page/80 backdrop-blur, border-b
-  - [ ] Layout: [Logo: Plane icon + "Kam na dovolenku?" v Fraunces] [flex-1] [Štatistiky link] [Theme toggle]
-  - [ ] Mobile: hamburger menu pre nav links (md breakpoint)
-- [ ] `Layout.tsx`:
-  - [ ] Header + main + Toaster (sonner)
-  - [ ] `useTrackVisit` hook volaný v useEffect
-- [ ] `Footer.tsx` (voliteľne — minimalistický)
+- [x] `Header.tsx`:
+  - [x] Sticky top-0, h-14, bg-page/80 backdrop-blur, border-b
+  - [x] Layout: [Logo: Plane icon + "Kam na dovolenku?" v Fraunces] [flex-1] [Štatistiky link] [Theme toggle]
+  - [x] Mobile: hamburger menu pre nav links (md breakpoint)
+- [x] `Layout.tsx`:
+  - [x] Header + main + Toaster (sonner)
+  - [x] `useTrackVisit` hook volaný v useEffect
+- [x] `Footer.tsx` (voliteľne — minimalistický)
 
 ### Reusable design components
-- [ ] `MatchProgress.tsx` — animated progress bar s accent farbou
-- [ ] `WeatherIcon.tsx` — mapa Open-Meteo weather code → Lucide icon
-- [ ] `CountryFlag.tsx` — img tag s geonames URL + alt text + onError fallback
-- [ ] `Skeleton` shimmer cards pre loading states
+- [x] `MatchProgress.tsx` — animated progress bar s accent farbou
+- [x] `WeatherIcon.tsx` — mapa Open-Meteo weather code → Lucide icon
+- [x] `CountryFlag.tsx` — img tag s geonames URL + alt text + onError fallback
+- [x] `Skeleton` shimmer cards pre loading states
 
 ### Verification
 - [ ] Otvoriť dev server v prehliadači — stránka má warm cream background
@@ -120,41 +111,41 @@
 ## 🗄 Phase 3 — Databáza a seed
 
 ### Migrácie
-- [ ] `php artisan make:migration create_countries_table`
-  - [ ] Stĺpce: id, iso_code (CHAR(2), UNIQUE), name_sk, capital, currency_code (CHAR(3))
-- [ ] `php artisan make:migration create_destination_types_table`
-  - [ ] code (UNIQUE), name_sk
-- [ ] `php artisan make:migration create_destinations_table`
-  - [ ] name, country_id (FK), latitude, longitude, flight_hours_from_vienna, description_sk, image_url nullable
-- [ ] `php artisan make:migration create_destination_destination_type_table` (pivot)
-- [ ] `php artisan make:migration create_monthly_climates_table`
-  - [ ] destination_id (FK), month (1-12), temp_avg, temp_min, temp_max
-  - [ ] UNIQUE(destination_id, month)
-- [ ] `php artisan make:migration create_searches_table`
-  - [ ] trip_types JSON, temperature_pref, max_flight_hours nullable, start_date, end_date, month
-- [ ] `php artisan make:migration create_search_results_table`
-  - [ ] search_id FK, destination_id FK, match_score
-- [ ] `php artisan make:migration create_visits_table`
-  - [ ] ip_hash CHAR(64), visited_at, INDEX(visited_at, ip_hash)
+- [x] `php artisan make:migration create_countries_table`
+  - [x] Stĺpce: id, iso_code (CHAR(2), UNIQUE), name_sk, capital, currency_code (CHAR(3))
+- [x] `php artisan make:migration create_destination_types_table`
+  - [x] code (UNIQUE), name_sk
+- [x] `php artisan make:migration create_destinations_table`
+  - [x] name, country_id (FK), latitude, longitude, flight_hours_from_vienna, description_sk, image_url nullable
+- [x] `php artisan make:migration create_destination_destination_type_table` (pivot)
+- [x] `php artisan make:migration create_monthly_climates_table`
+  - [x] destination_id (FK), month (1-12), temp_avg, temp_min, temp_max
+  - [x] UNIQUE(destination_id, month)
+- [x] `php artisan make:migration create_searches_table`
+  - [x] trip_types JSON, temperature_pref, max_flight_hours nullable, start_date, end_date, month
+- [x] `php artisan make:migration create_search_results_table`
+  - [x] search_id FK, destination_id FK, match_score
+- [x] `php artisan make:migration create_visits_table`
+  - [x] ip_hash CHAR(64), visited_at, INDEX(visited_at, ip_hash)
 
 ### Modely + vzťahy
-- [ ] `Country` (hasMany destinations)
-- [ ] `Destination` (belongsTo country, belongsToMany types, hasMany monthlyClimates)
-- [ ] `DestinationType` (belongsToMany destinations)
-- [ ] `MonthlyClimate` (belongsTo destination)
-- [ ] `Search` (hasMany results)
-- [ ] `SearchResult` (belongsTo search, belongsTo destination)
-- [ ] `Visit`
+- [x] `Country` (hasMany destinations)
+- [x] `Destination` (belongsTo country, belongsToMany types, hasMany monthlyClimates)
+- [x] `DestinationType` (belongsToMany destinations)
+- [x] `MonthlyClimate` (belongsTo destination)
+- [x] `Search` (hasMany results)
+- [x] `SearchResult` (belongsTo search, belongsTo destination)
+- [x] `Visit`
 
 ### Seedy
-- [ ] `DestinationTypeSeeder` — 5 typov:
+- [x] `DestinationTypeSeeder` — 5 typov:
   - sea_beach → "More a pláž"
   - mountains → "Hory a príroda"
   - historic → "Historické mestá"
   - city_break → "Mestský výlet"
   - adventure → "Aktivity a dobrodružstvo"
-- [ ] `CountrySeeder` — krajiny pre všetkých ~40 destinácií (~25 unikátnych krajín)
-- [ ] `DestinationSeeder` — pripraviť JSON/PHP array s 40 destináciami:
+- [x] `CountrySeeder` — krajiny pre všetkých ~40 destinácií (~25 unikátnych krajín)
+- [x] `DestinationSeeder` — pripraviť JSON/PHP array s 40 destináciami:
   - **More & pláž (8):** Barcelona, Palma de Mallorca, Nice, Split, Mykonos, Antalya, Hurghada, Dubrovník
   - **Hory & príroda (7):** Innsbruck, Chamonix, Zermatt, Reykjavík, Bergen, Tatranská Lomnica, Garmisch-Partenkirchen
   - **Historické mestá (8):** Rím, Atény, Praha, Krakov, Istanbul, Budapešť, Edinburgh, Lisabon
@@ -162,87 +153,87 @@
   - **Aktivity & dobrodružstvo (5):** Marrákeš, Petra (Wadi Musa), Madeira (Funchal), Tenerife (Costa Adeje), Kapadócia (Goreme)
   - **Crossover/extra (4):** ďalšie destinácie alebo viac typov pre niektoré z hore
   - Pre každú: lat/lon, flight_hours, description_sk, types[], image_url
-- [ ] `ClimateSeeder` — 12 mesiacov × 40 destinácií = 480 záznamov
+- [x] `ClimateSeeder` — 12 mesiacov × 40 destinácií = 480 záznamov
   - Zdroj: `php artisan climate:fetch` (viď nižšie)
-- [ ] Spustiť `php artisan migrate:fresh --seed` a overiť dáta
+- [x] Spustiť `php artisan migrate:fresh --seed` a overiť dáta
 
 ### Climate fetch command (helper)
-- [ ] `php artisan make:command FetchClimates`
-- [ ] Pre každú destináciu: stiahni `archive-api.open-meteo.com/v1/archive` za posledných 5 rokov
-- [ ] Agreguj po mesiacoch: avg/min/max temperature_2m
-- [ ] Insert do `monthly_climates` (use updateOrCreate aby bolo idempotentné)
+- [x] `php artisan make:command FetchClimates`
+- [x] Pre každú destináciu: stiahni `archive-api.open-meteo.com/v1/archive` za posledných 5 rokov
+- [x] Agreguj po mesiacoch: avg/min/max temperature_2m
+- [x] Insert do `monthly_climates` (use updateOrCreate aby bolo idempotentné)
 
 ---
 
 ## 🔌 Phase 4 — Backend API + scoring
 
 ### Services
-- [ ] `app/Services/ScoringService.php`
-  - [ ] `score(Destination $d, array $userPrefs, int $month): float`
-  - [ ] `getMatchReasons(Destination $d, array $userPrefs, int $month): array<string>` — vráti list dôvodov pre UI
-- [ ] `app/Services/StatsService.php`
-  - [ ] `getVisits(): array{total: int, unique: int}`
-  - [ ] `getHourlyDistribution(): array<string, int>`
-  - [ ] `getSearchedDestinations(string $sort, string $order): Collection`
-  - [ ] `getPreferenceStats(): array{types, temperatures}`
+- [x] `app/Services/ScoringService.php`
+  - [x] `score(Destination $d, array $userPrefs, int $month): float`
+  - [x] `getMatchReasons(Destination $d, array $userPrefs, int $month): array<string>` — vráti list dôvodov pre UI
+- [x] `app/Services/StatsService.php`
+  - [x] `getVisits(): array{total: int, unique: int}`
+  - [x] `getHourlyDistribution(): array<string, int>`
+  - [x] `getSearchedDestinations(string $sort, string $order): Collection`
+  - [x] `getPreferenceStats(): array{types, temperatures}`
 
 ### Controllers + Routes
-- [ ] `php artisan make:controller Api/SearchController` → `POST /api/search`
-  - [ ] FormRequest validácia
-  - [ ] Volanie ScoringService pre každú destináciu
-  - [ ] Filter: flight_hours, aspoň 1 typ match
-  - [ ] Sort + limit 20
-  - [ ] Insert do `searches` + `search_results`
-  - [ ] Response: array s match_score, reasons[], destination data
-- [ ] `php artisan make:controller Api/DestinationController` → `GET /api/destinations/{id}?month=N`
-  - [ ] Vráti destination + country (s flag URL) + monthly_climate(month) + currency rate + current weather
-- [ ] `php artisan make:controller Api/CompareController` → `GET /api/compare?ids=1,2&month=N`
-  - [ ] Validácia: presne 2 ids
-  - [ ] Vráti dáta pre obe destinácie
-- [ ] `php artisan make:controller Api/StatsController`
-  - [ ] `GET /api/stats/visits`
-  - [ ] `GET /api/stats/hourly`
-  - [ ] `GET /api/stats/searches?sort=name|country|count&order=asc|desc`
-  - [ ] `GET /api/stats/preferences`
-- [ ] `php artisan make:controller Api/VisitController` → `POST /api/visits/track`
+- [x] `php artisan make:controller Api/SearchController` → `POST /api/search`
+  - [x] FormRequest validácia
+  - [x] Volanie ScoringService pre každú destináciu
+  - [x] Filter: flight_hours, aspoň 1 typ match
+  - [x] Sort + limit 20
+  - [x] Insert do `searches` + `search_results`
+  - [x] Response: array s match_score, reasons[], destination data
+- [x] `php artisan make:controller Api/DestinationController` → `GET /api/destinations/{id}?month=N`
+  - [x] Vráti destination + country (s flag URL) + monthly_climate(month) + currency rate + current weather
+- [x] `php artisan make:controller Api/CompareController` → `GET /api/compare?ids=1,2&month=N`
+  - [x] Validácia: presne 2 ids
+  - [x] Vráti dáta pre obe destinácie
+- [x] `php artisan make:controller Api/StatsController`
+  - [x] `GET /api/stats/visits`
+  - [x] `GET /api/stats/hourly`
+  - [x] `GET /api/stats/searches?sort=name|country|count&order=asc|desc`
+  - [x] `GET /api/stats/preferences`
+- [x] `php artisan make:controller Api/VisitController` → `POST /api/visits/track`
 
 ### Middleware
-- [ ] `php artisan make:middleware TrackVisit`
-  - [ ] Hash IP (SHA-256 + APP_KEY salt)
-  - [ ] Insert do `visits`
-  - [ ] Registrovať na web routes alebo volať z FE
+- [x] `php artisan make:middleware TrackVisit`
+  - [x] Hash IP (SHA-256 + APP_KEY salt)
+  - [x] Insert do `visits`
+  - [x] Registrovať na web routes alebo volať z FE
 
 ### Validácia (FormRequests)
-- [ ] `SearchRequest` — trip_types (array, min 1), temperature_pref (in:hot,warm,mild,any), distance, dates
-- [ ] `CompareRequest` — ids (array, size 2), month (1-12)
+- [x] `SearchRequest` — trip_types (array, min 1), temperature_pref (in:hot,warm,mild,any), distance, dates
+- [x] `CompareRequest` — ids (array, size 2), month (1-12)
 
 ---
 
 ## 🌐 Phase 5 — Externé API integrácia
 
-- [ ] `app/Services/WeatherService.php`
-  - [ ] `getCurrent(float $lat, float $lon): array` (s cache 1h)
-  - [ ] Mapa Open-Meteo weather_code → ikona name + popis (slovenský)
-  - [ ] Fallback na najbližšie hub mesto (Madrid/Rím/Atény/Istanbul/Dubaj)
-- [ ] `app/Services/CurrencyService.php`
-  - [ ] `getRateFromEur(string $currency): ?float` (s cache 6h)
-  - [ ] Vráti null pre EUR
-  - [ ] Bulk fetch pre všetky meny v DB pri prvom volaní
-- [ ] `app/Services/CountryService.php`
-  - [ ] (Voliteľné) doplňujúce info z REST Countries
-- [ ] `app/Services/LlmService.php`
-  - [ ] `generateWhyNow(Destination $d, int $month, MonthlyClimate $climate): string`
-  - [ ] Cache 24h podľa kľúča `why_now:{id}:{month}`
-  - [ ] Anthropic SDK alebo Guzzle direct call na `/v1/messages`
-  - [ ] Model: `claude-haiku-4-5-20251001`
-  - [ ] Max tokens: 200
-  - [ ] Fallback šablonový text pri chybe / chýbajúcom API key
-- [ ] Endpoint `GET /api/destinations/{id}/why-now?month=N` — volá LlmService
+- [x] `app/Services/WeatherService.php`
+  - [x] `getCurrent(float $lat, float $lon): array` (s cache 1h)
+  - [x] Mapa Open-Meteo weather_code → ikona name + popis (slovenský)
+  - [x] Fallback na najbližšie hub mesto (Madrid/Rím/Atény/Istanbul/Dubaj)
+- [x] `app/Services/CurrencyService.php`
+  - [x] `getRateFromEur(string $currency): ?float` (s cache 6h)
+  - [x] Vráti null pre EUR
+  - [x] Bulk fetch pre všetky meny v DB pri prvom volaní
+- [x] `app/Services/CountryService.php`
+  - [x] (Voliteľné) doplňujúce info z REST Countries
+- [x] `app/Services/LlmService.php`
+  - [x] `generateWhyNow(Destination $d, int $month, MonthlyClimate $climate): string`
+  - [x] Cache 24h podľa kľúča `why_now:{id}:{month}`
+  - [x] OpenAI SDK alebo Guzzle direct call na `/v1/responses`
+  - [x] Model: `gpt-5.4-mini`
+  - [x] Max tokens: 200
+  - [x] Fallback šablonový text pri chybe / chýbajúcom API key
+- [x] Endpoint `GET /api/destinations/{id}/why-now?month=N` — volá LlmService
 
 ### Test
-- [ ] Zavolať každý service jednotlivo cez tinker / route
-- [ ] Skontrolovať cache funkciu — druhé volanie rovnaké by malo byť instant
-- [ ] Skontrolovať fallback — disable internet a zavolať
+- [x] Zavolať každý service jednotlivo cez tinker / route
+- [x] Skontrolovať cache funkciu — druhé volanie rovnaké by malo byť instant
+- [x] Skontrolovať fallback — disable internet a zavolať
 
 ---
 
@@ -482,7 +473,7 @@ URL: https://node22.webte.fei.stuba.sk/z4/
 - UI: shadcn/ui + Tailwind CSS v3
 - Databáza: MariaDB
 - Server: Nginx + PHP-FPM
-- Externé API: Open-Meteo, Frankfurter, REST Countries, Anthropic Claude
+- Externé API: Open-Meteo, Frankfurter, REST Countries, OpenAI
 
 ═══════════════════════════════════════════════
 3. EXTERNÉ API
@@ -510,12 +501,12 @@ URL: https://node22.webte.fei.stuba.sk/z4/
     URL: https://www.geonames.org/flags/x/{iso}.gif
     Autentifikácia: žiadna.
 
-3.5 Anthropic Claude API (https://api.anthropic.com)
+3.5 OpenAI API (https://api.openai.com)
     Účel: Generovanie textu "Prečo práve teraz" pre detail destinácie
     na základe dát z databázy (mesiac, teploty, typ dovolenky).
-    Endpoint: api.anthropic.com/v1/messages
-    Model: claude-haiku-4-5
-    Autentifikácia: API key v .env (ANTHROPIC_API_KEY).
+    Endpoint: api.openai.com/v1/responses
+    Model: gpt-5.4-mini
+    Autentifikácia: API key v .env (OPENAI_API_KEY).
     Cache: 24 hodín pre každú kombináciu destinácia+mesiac.
 
 ═══════════════════════════════════════════════
@@ -537,13 +528,13 @@ nginx/z4.conf    — konfigurácia Nginx serveru
 ═══════════════════════════════════════════════
 PREDPOKLADY:
   - PHP 8.2+, Composer, Node.js 18+, MariaDB 10+
-  - Anthropic API key (https://console.anthropic.com)
+  - OpenAI API key (https://platform.openai.com/api-keys)
 
 LOKÁLNE SPUSTENIE (DEV):
   1. Klonovať / rozbaliť ZIP
   2. cd backend && composer install
   3. cp .env.example .env && php artisan key:generate
-  4. Upraviť .env: DB credentials, ANTHROPIC_API_KEY
+  4. Upraviť .env: DB credentials, OPENAI_API_KEY
   5. php artisan migrate --seed
   6. (voliteľne) php artisan climate:fetch
        — stiahne historické teploty z Open-Meteo
@@ -575,7 +566,7 @@ PRODUKČNÝ BUILD A NASADENIE:
      cd /var/www/xbagins/z4
      composer install --no-dev --optimize-autoloader
      cp .env.example .env
-     # upraviť .env (DB, APP_URL, ANTHROPIC_API_KEY)
+     # upraviť .env (DB, APP_URL, OPENAI_API_KEY)
      php artisan key:generate
      mysql -u xbagins -p xbagins_z4 < database/dump.sql
      php artisan config:cache
@@ -649,18 +640,18 @@ DB_PORT=3306
 DB_DATABASE=xbagins_z4
 DB_USERNAME=xbagins
 DB_PASSWORD=***
-ANTHROPIC_API_KEY=sk-ant-***
+OPENAI_API_KEY=sk-***
 
 ═══════════════════════════════════════════════
 8. POZNÁMKY A OBMEDZENIA
 ═══════════════════════════════════════════════
-- "Prečo práve teraz" text vyžaduje Anthropic API key. Ak nie je
+- "Prečo práve teraz" text vyžaduje OpenAI API key. Ak nie je
   nastavený, použije sa fallback šablónový text generovaný
   z dostupných dát.
 - Historické teploty sú uložené v DB; aktuálne počasie sa načítava
   v reálnom čase z Open-Meteo (cache 1h).
 - Vlajky sa načítavajú priamo z geonames.org cez img tag.
-- Rotácia API kľúčov: zmeniť ANTHROPIC_API_KEY v .env a urobiť
+- Rotácia API kľúčov: zmeniť OPENAI_API_KEY v .env a urobiť
   php artisan config:cache.
 - Aplikácia je optimalizovaná pre posledné verzie Chrome a Firefox.
 - Counter unique návštev: jedna IP počas posledných 60 min sa počíta
