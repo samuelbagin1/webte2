@@ -26,7 +26,7 @@ export function WeatherCard({ climate, month }: WeatherCardProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Thermometer className="h-5 w-5" aria-hidden="true" />
-          Počasie v {monthLabel(month).toLowerCase()}
+          Počasie v mesiaci {monthLabel(month).toLowerCase()}
         </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-3 sm:grid-cols-3">
