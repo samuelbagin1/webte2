@@ -302,61 +302,61 @@
 ## 🃏 Phase 7 — Frontend: Compare + Stats
 
 ### ComparePage
-- [ ] Query params: `?ids=1,2&month=N`
-- [ ] `useQuery` na `GET /api/compare`
-- [ ] Header s 2 hero kartami (image + name + flag side by side)
-- [ ] Comparison table (mobile: stacked):
-  - [ ] Krajina + flag
-  - [ ] Hlavné mesto
-  - [ ] Mena + kurz
-  - [ ] Typy dovolenky (badges)
-  - [ ] Priemerná teplota v zvolenom mesiaci
-  - [ ] Min / max teplota
-  - [ ] Aktuálne počasie + ikona
-  - [ ] Letové hodiny z Viedne
-- [ ] Vizuálne odlíšenie zhôd: jemný `bg-accent-soft` highlight + Check icon (nie len color)
-- [ ] State pre výber 2 destinácií — `useCompareSelection.ts` hook (sessionStorage)
+- [x] Query params: `?ids=1,2&month=N`
+- [x] `useQuery` na `GET /api/compare`
+- [x] Header s 2 hero kartami (image + name + flag side by side)
+- [x] Comparison table (mobile: stacked):
+  - [x] Krajina + flag
+  - [x] Hlavné mesto
+  - [x] Mena + kurz
+  - [x] Typy dovolenky (badges)
+  - [x] Priemerná teplota v zvolenom mesiaci
+  - [x] Min / max teplota
+  - [x] Aktuálne počasie + ikona
+  - [x] Letové hodiny z Viedne
+- [x] Vizuálne odlíšenie zhôd: jemný `bg-accent-soft` highlight + Check icon (nie len color)
+- [x] State pre výber 2 destinácií — `useCompareSelection.ts` hook (sessionStorage)
 
 ### StatsPage
-- [ ] Layout: max-w-7xl, h1 "Štatistiky portálu" v Fraunces
-- [ ] Grid lg:grid-cols-12 gap-6:
+- [x] Layout: max-w-7xl, h1 "Štatistiky portálu" v Fraunces
+- [x] Grid lg:grid-cols-12 gap-6:
 
 #### VisitsCard (col-span-12 lg:col-span-6)
-- [ ] 2 veľké čísla: Total / Unique
-- [ ] font-display 5xl font-medium tabular-nums
-- [ ] Label v text-sm text-muted-foreground
-- [ ] `useQuery` s `refetchInterval: 30000`
+- [x] 2 veľké čísla: Total / Unique
+- [x] font-display 5xl font-medium tabular-nums
+- [x] Label v text-sm text-muted-foreground
+- [x] `useQuery` s `refetchInterval: 30000`
 
 #### HourlyChart (col-span-12 lg:col-span-6)
-- [ ] Recharts BarChart, 4 stĺpce
-- [ ] Custom theme: bars `fill="hsl(var(--accent))"`
-- [ ] Tooltips, axis labels v slovenčine
-- [ ] Responsive container
+- [x] Recharts BarChart, 4 stĺpce
+- [x] Custom theme: bars `fill="hsl(var(--accent))"`
+- [x] Tooltips, axis labels v slovenčine
+- [x] Responsive container
 
 #### SearchTable (col-span-12)
-- [ ] TanStack Table + shadcn Table komponent
-- [ ] Stĺpce: Destinácia | Štát | Počet vyhľadávaní
-- [ ] Sortovateľné (chevron up/down indicators)
-- [ ] Server-side sort cez query params (alebo client-side ak <500 rows)
-- [ ] Sort štát → secondary sort by destination name (handled v API)
-- [ ] aria-sort na <th> (accessibility)
-- [ ] Empty state ak žiadne searches
+- [x] TanStack Table + shadcn Table komponent
+- [x] Stĺpce: Destinácia | Štát | Počet vyhľadávaní
+- [x] Sortovateľné (chevron up/down indicators)
+- [x] Server-side sort cez query params (alebo client-side ak <500 rows)
+- [x] Sort štát → secondary sort by destination name (handled v API)
+- [x] aria-sort na <th> (accessibility)
+- [x] Empty state ak žiadne searches
 
 #### PreferencesChart (col-span-12)
-- [ ] Grid 2 columns: Bar (typy) + Pie (teploty)
-- [ ] Recharts s accent palette (variations of terracotta)
-- [ ] Legends visible, tooltips
+- [x] Grid 2 columns: Bar (typy) + Pie (teploty)
+- [x] Recharts s accent palette (variations of terracotta)
+- [x] Legends visible, tooltips
 
 ---
 
 ## 👀 Phase 8 — Visit tracking + kvality
 
-- [ ] Implementovať middleware/endpoint na trackovanie
-- [ ] Hash IP + APP_KEY (defenzívne)
-- [ ] `useTrackVisit.ts` hook v Layout (volá `/api/visits/track` raz za session)
-  - [ ] sessionStorage flag aby sa nevolalo viackrát na page reload
-- [ ] Logika pre unique-per-60min (StatsService)
-- [ ] **Test:** spustiť pár requestov z toho istého IP rýchlo za sebou → Total++, Unique nezvyšuje sa pre 60 min
+- [x] Implementovať middleware/endpoint na trackovanie
+- [x] Hash IP + APP_KEY (defenzívne)
+- [x] `useTrackVisit.ts` hook v Layout (volá `/api/visits/track` raz za session)
+  - [x] sessionStorage flag aby sa nevolalo viackrát na page reload
+- [x] Logika pre unique-per-60min (StatsService)
+- [x] **Test:** spustiť pár requestov z toho istého IP rýchlo za sebou → Total++, Unique nezvyšuje sa pre 60 min
 
 ---
 

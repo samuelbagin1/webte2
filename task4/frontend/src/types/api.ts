@@ -75,3 +75,29 @@ export type WhyNowResponse = {
   month: number
   why_now: string
 }
+
+export type CompareResponse = {
+  destinations: Destination[]
+}
+
+export type VisitsStats = {
+  total: number
+  unique: number
+}
+
+export type HourlyStats = Record<'0-6' | '6-15' | '15-21' | '21-24', number>
+
+export type SearchStatsSort = 'name' | 'country' | 'count'
+export type SortOrder = 'asc' | 'desc'
+
+export type SearchStatsRow = {
+  id: number
+  name: string
+  country: string
+  count: number
+}
+
+export type PreferenceStats = {
+  types: Partial<Record<TripTypeCode, number>>
+  temperatures: Partial<Record<TemperaturePreference, number>>
+}

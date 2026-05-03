@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-const STORAGE_KEY = 'z4:compare-selection'
+const STORAGE_KEY = 'task4:compare-selection'
 
 function readSelection(): number[] {
   if (typeof window === 'undefined') {

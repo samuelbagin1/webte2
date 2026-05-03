@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/z4/',
+  base: '/task4/',
   plugins: [react()],
   resolve: {
     alias: {
