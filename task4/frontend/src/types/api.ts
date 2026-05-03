@@ -1,0 +1,77 @@
+export type TripTypeCode =
+  | 'sea_beach'
+  | 'mountains'
+  | 'historic'
+  | 'city_break'
+  | 'adventure'
+
+export type TemperaturePreference = 'hot' | 'warm' | 'mild' | 'any'
+
+export type SearchRequest = {
+  trip_types: TripTypeCode[]
+  temperature_pref: TemperaturePreference
+  max_flight_hours: number | null
+  start_date: string
+  end_date: string
+  month: number
+}
+
+export type Country = {
+  id: number
+  iso_code: string
+  name_sk: string
+  capital: string
+  currency_code: string
+  flag_url: string
+  external_info?: unknown
+}
+
+export type DestinationType = {
+  code: TripTypeCode
+  name_sk: string
+}
+
+export type MonthlyClimate = {
+  month: number
+  temp_avg: number
+  temp_min: number
+  temp_max: number
+}
+
+export type CurrentWeather = {
+  temperature: number | null
+  humidity: number | null
+  wind_speed: number | null
+  weather_code: number | null
+  icon: string
+  description_sk: string
+  observed_at: string | null
+  source: string
+  fallback_hub?: string
+}
+
+export type Destination = {
+  id: number
+  name: string
+  latitude: number
+  longitude: number
+  flight_hours_from_vienna: number
+  description_sk: string
+  image_url: string | null
+  country: Country
+  types: DestinationType[]
+  monthly_climate: MonthlyClimate | null
+  currency_rate: number | null
+  current_weather: CurrentWeather
+}
+
+export type SearchResult = Destination & {
+  match_score: number
+  reasons: string[]
+}
+
+export type WhyNowResponse = {
+  destination_id: number
+  month: number
+  why_now: string
+}

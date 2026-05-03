@@ -240,62 +240,62 @@
 ## 🎨 Phase 6 — Frontend: Home + Results + Detail
 
 ### HomePage
-- [ ] `SearchForm.tsx` (React Hook Form + Zod schema)
-- [ ] **Hero sekcia:**
-  - [ ] Decorative copper glow div (aria-hidden, -z-10, blur-3xl)
-  - [ ] h1 "Kam na dovolenku?" v font-display (Fraunces)
-  - [ ] Sub-text v text-muted-foreground
-- [ ] **Form card** (max-w-3xl bg-card rounded-2xl border p-6 lg:p-8 space-y-6):
-  - [ ] Toggle Mesiac vs. Rozsah dátumov (shadcn Tabs)
-  - [ ] Mesiac: shadcn Select s 12 možnosťami
-  - [ ] Rozsah: shadcn Calendar v Popover (mode="range")
-  - [ ] Počet dní: number input s +/- buttons (custom NumberInput.tsx)
-  - [ ] Typy dovolenky: 5× toggleable card v grid grid-cols-2 lg:grid-cols-3
-    - [ ] `TripTypeCard.tsx` — toggleable, accent-soft when selected
-    - [ ] Lucide ikony pre každý typ (Waves, Mountain, Building, Coffee, Compass)
-  - [ ] Teplota: segmented `RadioGroup` (4 možnosti)
-  - [ ] Vzdialenosť: segmented `RadioGroup` (3 možnosti)
-- [ ] Submit button (accent variant, h-12, w-full lg:w-auto)
-- [ ] Validácia: aspoň 1 typ dovolenky required, dátumy korektné
-- [ ] Submit → `navigate('/results?...')` s query stringom
+- [x] `SearchForm.tsx` (React Hook Form + Zod schema)
+- [x] **Hero sekcia:**
+  - [x] Decorative copper glow div (aria-hidden, -z-10, blur-3xl)
+  - [x] h1 "Kam na dovolenku?" v font-display (Fraunces)
+  - [x] Sub-text v text-muted-foreground
+- [x] **Form card** (max-w-3xl bg-card rounded-2xl border p-6 lg:p-8 space-y-6):
+  - [x] Toggle Mesiac vs. Rozsah dátumov (shadcn Tabs)
+  - [x] Mesiac: shadcn Select s 12 možnosťami
+  - [x] Rozsah: shadcn Calendar v Popover (mode="range")
+  - [x] Počet dní: number input s +/- buttons (custom NumberInput.tsx)
+  - [x] Typy dovolenky: 5× toggleable card v grid grid-cols-2 lg:grid-cols-3
+    - [x] `TripTypeCard.tsx` — toggleable, accent-soft when selected
+    - [x] Lucide ikony pre každý typ (Waves, Mountain, Building, Coffee, Compass)
+  - [x] Teplota: segmented `RadioGroup` (4 možnosti)
+  - [x] Vzdialenosť: segmented `RadioGroup` (3 možnosti)
+- [x] Submit button (accent variant, h-12, w-full lg:w-auto)
+- [x] Validácia: aspoň 1 typ dovolenky required, dátumy korektné
+- [x] Submit → `navigate('/results?...')` s query stringom
 
 ### ResultsPage
-- [ ] Parsovanie query params → search request body
-- [ ] `useQuery` na `POST /api/search` (mutácia ako query)
-- [ ] **Sticky filter bar** (top-14 z-10 backdrop-blur):
-  - [ ] "← Späť na hľadanie"
-  - [ ] "Vybrané: X/2" + "Porovnať →" button (disabled until 2)
-- [ ] **Grid kariet** (`ResultCard.tsx`):
-  - [ ] Image (aspect-[4/3] object-cover) — picsum.photos seed alebo destination.image_url
-  - [ ] Header row: flag + name + country small text
-  - [ ] Match progress bar + "X% zhoda" label
-  - [ ] **MatchReasons.tsx** — bullet list s Check ikonami
-  - [ ] Footer: Compare checkbox + Detail link
-  - [ ] Card hover: border-accent transition
-- [ ] Empty state ak žiadne výsledky (Lucide SearchX icon + CTA)
-- [ ] Loading state (skeleton kariet — 6 placeholderov)
+- [x] Parsovanie query params → search request body
+- [x] `useQuery` na `POST /api/search` (mutácia ako query)
+- [x] **Sticky filter bar** (top-14 z-10 backdrop-blur):
+  - [x] "← Späť na hľadanie"
+  - [x] "Vybrané: X/2" + "Porovnať →" button (disabled until 2)
+- [x] **Grid kariet** (`ResultCard.tsx`):
+  - [x] Image (aspect-[4/3] object-cover) — picsum.photos seed alebo destination.image_url
+  - [x] Header row: flag + name + country small text
+  - [x] Match progress bar + "X% zhoda" label
+  - [x] **MatchReasons.tsx** — bullet list s Check ikonami
+  - [x] Footer: Compare checkbox + Detail link
+  - [x] Card hover: border-accent transition
+- [x] Empty state ak žiadne výsledky (Lucide SearchX icon + CTA)
+- [x] Loading state (skeleton kariet — 6 placeholderov)
 
 ### DetailPage
-- [ ] `useQuery` na `GET /api/destinations/:id?month=N`
-- [ ] **Hero** — full-bleed image (h-64 lg:h-80) s gradient overlay
-  - [ ] Title overlay bottom-left v Fraunces, white text
-  - [ ] Back button top-left, ghost on dark
-- [ ] **Main column (lg:col-span-2):**
-  - [ ] h2 "O destinácii" + description text
-  - [ ] **WhyNowCard.tsx** — separátny `useQuery` na `/why-now`
-    - [ ] Card s `border-l-4 border-accent`
-    - [ ] Skeleton shimmer počas načítavania
-  - [ ] **WeatherCard.tsx** — sekcia "Počasie v {month}"
-    - [ ] 3 stat cards: Avg / Min / Max
-    - [ ] Číslo v font-display 3xl tabular-nums
-  - [ ] **Aktuálne počasie** — card s WeatherIcon + popis
-    - [ ] Indicator chip "Z najbližšieho mesta {X}" ak fallback
-- [ ] **Sidebar (lg:col-span-1) — sticky top-20:**
-  - [ ] Country card: flag (32px) + name + capital
-  - [ ] **CurrencyCard.tsx**: "1 EUR = X CZK" alebo "Používa sa euro"
-  - [ ] Trip types badges (rounded-full)
-  - [ ] Letové hodiny s Plane icon
-  - [ ] "Pridať do porovnania" accent button (full width)
+- [x] `useQuery` na `GET /api/destinations/:id?month=N`
+- [x] **Hero** — full-bleed image (h-64 lg:h-80) s gradient overlay
+  - [x] Title overlay bottom-left v Fraunces, white text
+  - [x] Back button top-left, ghost on dark
+- [x] **Main column (lg:col-span-2):**
+  - [x] h2 "O destinácii" + description text
+  - [x] **WhyNowCard.tsx** — separátny `useQuery` na `/why-now`
+    - [x] Card s `border-l-4 border-accent`
+    - [x] Skeleton shimmer počas načítavania
+  - [x] **WeatherCard.tsx** — sekcia "Počasie v {month}"
+    - [x] 3 stat cards: Avg / Min / Max
+    - [x] Číslo v font-display 3xl tabular-nums
+  - [x] **Aktuálne počasie** — card s WeatherIcon + popis
+    - [x] Indicator chip "Z najbližšieho mesta {X}" ak fallback
+- [x] **Sidebar (lg:col-span-1) — sticky top-20:**
+  - [x] Country card: flag (32px) + name + capital
+  - [x] **CurrencyCard.tsx**: "1 EUR = X CZK" alebo "Používa sa euro"
+  - [x] Trip types badges (rounded-full)
+  - [x] Letové hodiny s Plane icon
+  - [x] "Pridať do porovnania" accent button (full width)
 
 ---
 
