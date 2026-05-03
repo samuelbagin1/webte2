@@ -23,6 +23,9 @@ class StatsController extends Controller
         $data = $request->validate([
             'sort' => ['sometimes', 'in:name,country,count'],
             'order' => ['sometimes', 'in:asc,desc'],
+        ], [
+            'sort.in' => 'Zvolený stĺpec radenia nie je platný.',
+            'order.in' => 'Smer radenia musí byť vzostupný alebo zostupný.',
         ]);
 
         return response()->json($statsService->getSearchedDestinations(

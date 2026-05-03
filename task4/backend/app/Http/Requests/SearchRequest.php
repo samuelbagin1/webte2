@@ -30,4 +30,29 @@ class SearchRequest extends FormRequest
             'month' => ['required', 'integer', 'between:1,12'],
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'trip_types.required' => 'Vyber aspoň jeden typ dovolenky.',
+            'trip_types.array' => 'Typy dovolenky musia byť odoslané ako zoznam.',
+            'trip_types.min' => 'Vyber aspoň jeden typ dovolenky.',
+            'trip_types.*.in' => 'Vybraný typ dovolenky nie je platný.',
+            'temperature_pref.required' => 'Vyber preferovanú teplotu.',
+            'temperature_pref.in' => 'Vybraná teplota nie je platná.',
+            'max_flight_hours.numeric' => 'Maximálny čas letu musí byť číslo.',
+            'max_flight_hours.min' => 'Maximálny čas letu nemôže byť záporný.',
+            'start_date.required' => 'Zadaj začiatok pobytu.',
+            'start_date.date' => 'Začiatok pobytu musí byť platný dátum.',
+            'end_date.required' => 'Zadaj koniec pobytu.',
+            'end_date.date' => 'Koniec pobytu musí byť platný dátum.',
+            'end_date.after_or_equal' => 'Koniec pobytu nemôže byť pred začiatkom.',
+            'month.required' => 'Zadaj mesiac cesty.',
+            'month.integer' => 'Mesiac musí byť celé číslo.',
+            'month.between' => 'Mesiac musí byť od 1 do 12.',
+        ];
+    }
 }

@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, ArrowRight, SearchX } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
-import { searchDestinations } from '@/api/client'
+import { getApiErrorMessage, searchDestinations } from '@/api/client'
+import { EmptyState } from '@/components/design/EmptyState'
 import { ResultCard } from '@/components/results/ResultCard'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -26,6 +29,12 @@ export function ResultsPage() {
     enabled: requestBody !== null,
   })
 
+  useEffect(() => {
+    if (resultsQuery.isError) {
+      toast.error(getApiErrorMessage(resultsQuery.error))
+    }
+  }, [resultsQuery.error, resultsQuery.isError])
+
   const compareHref =
     selectedIds.length === 2 && requestBody
       ? `/compare?ids=${selectedIds.join(',')}&month=${requestBody.month}`
@@ -33,16 +42,16 @@ export function ResultsPage() {
 
   if (!requestBody) {
     return (
-      <div className="mx-auto max-w-2xl py-16 text-center">
-        <SearchX className="mx-auto h-12 w-12 text-muted-foreground" />
-        <h1 className="mt-4 text-3xl">Vyhľadávanie nie je kompletné</h1>
-        <p className="mt-3 text-muted-foreground">
-          Chýbajú filtre potrebné na odporúčanie destinácií.
-        </p>
-        <Button asChild variant="accent" className="mt-6">
-          <Link to="/">Späť na hľadanie</Link>
-        </Button>
-      </div>
+      <EmptyState
+        title="Vyhľadávanie nie je kompletné"
+        description="Chýbajú filtre potrebné na odporúčanie destinácií."
+        className="py-12"
+        action={
+          <Button asChild variant="accent">
+            <Link to="/">Späť na hľadanie</Link>
+          </Button>
+        }
+      />
     )
   }
 
@@ -94,26 +103,22 @@ export function ResultsPage() {
       {resultsQuery.isLoading && <ResultsSkeleton />}
 
       {resultsQuery.isError && (
-        <div className="rounded-2xl border border-border bg-card p-8 text-center">
-          <SearchX className="mx-auto h-10 w-10 text-muted-foreground" />
-          <h2 className="mt-4 text-xl font-semibold">Výsledky sa nepodarilo načítať</h2>
-          <p className="mt-2 text-muted-foreground">
-            Skontroluj, či beží Laravel API server na porte 8000.
-          </p>
-        </div>
+        <EmptyState
+          title="Výsledky sa nepodarilo načítať"
+          description={getApiErrorMessage(resultsQuery.error)}
+        />
       )}
 
       {!resultsQuery.isLoading && !resultsQuery.isError && results.length === 0 && (
-        <div className="rounded-2xl border border-border bg-card p-8 text-center">
-          <SearchX className="mx-auto h-10 w-10 text-muted-foreground" />
-          <h2 className="mt-4 text-xl font-semibold">Nenašli sa žiadne destinácie</h2>
-          <p className="mt-2 text-muted-foreground">
-            Skús upraviť vzdialenosť, teplotu alebo typ dovolenky.
-          </p>
-          <Button asChild variant="accent" className="mt-6">
-            <Link to="/">Upraviť hľadanie</Link>
-          </Button>
-        </div>
+        <EmptyState
+          title="Nenašli sa žiadne destinácie"
+          description="Skús upraviť vzdialenosť, teplotu alebo typ dovolenky."
+          action={
+            <Button asChild variant="accent">
+              <Link to="/">Upraviť hľadanie</Link>
+            </Button>
+          }
+        />
       )}
 
       {results.length > 0 && (

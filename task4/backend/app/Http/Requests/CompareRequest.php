@@ -31,4 +31,23 @@ class CompareRequest extends FormRequest
             'month' => ['required', 'integer', 'between:1,12'],
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'ids.required' => 'Vyber presne dve destinácie na porovnanie.',
+            'ids.array' => 'Destinácie na porovnanie musia byť odoslané ako zoznam.',
+            'ids.size' => 'Na porovnanie vyber presne dve destinácie.',
+            'ids.*.required' => 'Chýba destinácia na porovnanie.',
+            'ids.*.integer' => 'Identifikátor destinácie musí byť celé číslo.',
+            'ids.*.distinct' => 'Na porovnanie vyber dve rôzne destinácie.',
+            'ids.*.exists' => 'Jedna z vybraných destinácií neexistuje.',
+            'month.required' => 'Zadaj mesiac porovnania.',
+            'month.integer' => 'Mesiac musí byť celé číslo.',
+            'month.between' => 'Mesiac musí byť od 1 do 12.',
+        ];
+    }
 }

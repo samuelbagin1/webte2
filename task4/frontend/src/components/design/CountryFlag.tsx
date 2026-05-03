@@ -35,6 +35,7 @@ export function CountryFlag({
       src={`https://img.geonames.org/flags/x/${normalizedCode}.gif`}
       alt={`Vlajka krajiny ${countryName}`}
       className={cn('h-5 w-7 rounded-md border border-border object-cover', className)}
+      loading="lazy"
       onError={() => setHasError(true)}
     />
   )

@@ -21,6 +21,30 @@ export const api = axios.create({
   },
 })
 
+export function getApiErrorMessage(error: unknown) {
+  if (!axios.isAxiosError(error)) {
+    return 'Nastala neočakávaná chyba. Skús to znova.'
+  }
+
+  if (!error.response) {
+    return 'Server momentálne neodpovedá. Skontroluj pripojenie alebo API server.'
+  }
+
+  if (error.response.status === 422) {
+    return 'Skontroluj zadané údaje a skús to znova.'
+  }
+
+  if (error.response.status === 404) {
+    return 'Požadované údaje sa nenašli.'
+  }
+
+  if (error.response.status >= 500) {
+    return 'Server má momentálne problém. Skús to neskôr.'
+  }
+
+  return 'Údaje sa nepodarilo načítať. Skús to znova.'
+}
+
 export async function searchDestinations(body: SearchRequest) {
   const response = await api.post<SearchResult[]>('/search', body)
   return response.data

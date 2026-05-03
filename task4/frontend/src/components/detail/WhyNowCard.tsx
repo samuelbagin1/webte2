@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { toast } from 'sonner'
 
-import { getWhyNow } from '@/api/client'
+import { getApiErrorMessage, getWhyNow } from '@/api/client'
 import {
   Card,
   CardContent,
@@ -19,6 +21,12 @@ export function WhyNowCard({ destinationId, month }: WhyNowCardProps) {
     queryKey: ['why-now', destinationId, month],
     queryFn: () => getWhyNow(destinationId, month),
   })
+
+  useEffect(() => {
+    if (whyNowQuery.isError) {
+      toast.error(getApiErrorMessage(whyNowQuery.error))
+    }
+  }, [whyNowQuery.error, whyNowQuery.isError])
 
   return (
     <Card className="border-l-4 border-l-accent">

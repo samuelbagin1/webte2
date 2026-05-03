@@ -4,6 +4,7 @@ function Toaster({ ...props }: ToasterProps) {
   return (
     <Sonner
       className="toaster group"
+      containerAriaLabel="Oznámenia"
       toastOptions={{
         classNames: {
           toast:

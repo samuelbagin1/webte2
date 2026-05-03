@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { toast } from 'sonner'
 
 const STORAGE_KEY = 'task4:compare-selection'
 
@@ -39,12 +40,19 @@ export function useCompareSelection() {
 
   const toggle = React.useCallback((id: number) => {
     const current = readSelection()
+    const isRemoving = current.includes(id)
     const next = current.includes(id)
       ? current.filter((selectedId) => selectedId !== id)
       : [...current, id].slice(0, 2)
 
     writeSelection(next)
     setSelectedIds(next)
+
+    toast.success(
+      isRemoving
+        ? 'Destinácia bola odobratá z porovnania.'
+        : 'Destinácia bola pridaná do porovnania.',
+    )
   }, [])
 
   const add = React.useCallback((id: number) => {
@@ -53,6 +61,12 @@ export function useCompareSelection() {
 
     writeSelection(next)
     setSelectedIds(next)
+
+    toast.success(
+      current.includes(id)
+        ? 'Destinácia už je v porovnaní.'
+        : 'Destinácia bola pridaná do porovnania.',
+    )
   }, [])
 
   return {

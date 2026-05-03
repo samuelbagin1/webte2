@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, Check, Plane, Scale, SearchX } from 'lucide-react'
+import { ArrowLeft, Check, Plane, Scale } from 'lucide-react'
+import { useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
-import { getCompare } from '@/api/client'
+import { getApiErrorMessage, getCompare } from '@/api/client'
+import { EmptyState } from '@/components/design/EmptyState'
 import { CountryFlag } from '@/components/design/CountryFlag'
 import { WeatherIcon } from '@/components/design/WeatherIcon'
 import { Badge } from '@/components/ui/badge'
@@ -166,6 +169,12 @@ export function ComparePage() {
     enabled: parsedParams !== null,
   })
 
+  useEffect(() => {
+    if (compareQuery.isError) {
+      toast.error(getApiErrorMessage(compareQuery.error))
+    }
+  }, [compareQuery.error, compareQuery.isError])
+
   if (!parsedParams) {
     return (
       <EmptyCompareState
@@ -232,14 +241,15 @@ function EmptyCompareState({
   description: string
 }) {
   return (
-    <div className="mx-auto max-w-2xl py-16 text-center">
-      <SearchX className="mx-auto h-12 w-12 text-muted-foreground" />
-      <h1 className="mt-4 text-3xl">{title}</h1>
-      <p className="mt-3 text-muted-foreground">{description}</p>
-      <Button asChild variant="accent" className="mt-6">
-        <Link to="/">Späť na hľadanie</Link>
-      </Button>
-    </div>
+    <EmptyState
+      title={title}
+      description={description}
+      action={
+        <Button asChild variant="accent">
+          <Link to="/">Späť na hľadanie</Link>
+        </Button>
+      }
+    />
   )
 }
 
@@ -250,6 +260,7 @@ function HeroCard({ destination }: { destination: Destination }) {
         src={imageForDestination(destination.id, destination.image_url)}
         alt={`Destinácia ${destination.name}`}
         className="aspect-[16/9] w-full object-cover"
+        loading="lazy"
       />
       <CardContent className="flex items-center justify-between gap-4 p-5">
         <div className="min-w-0">

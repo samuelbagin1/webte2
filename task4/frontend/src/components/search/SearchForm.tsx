@@ -14,6 +14,7 @@ import { useForm, useWatch } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import type { DateRange } from 'react-day-picker'
 import { z } from 'zod'
+import { toast } from 'sonner'
 
 import { NumberInput } from '@/components/search/NumberInput'
 import { TripTypeCard } from '@/components/search/TripTypeCard'
@@ -180,6 +181,7 @@ export function SearchForm() {
       distance: values.distance,
     })
 
+    toast.success('Vyhľadávanie je pripravené.')
     navigate(`/results?${params.toString()}`)
   }
 

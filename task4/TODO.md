@@ -363,44 +363,44 @@
 ## 💎 Phase 9 — Polish, dark mode, error handling
 
 ### Dizajn dotiahnutie
-- [ ] Theme toggle v header funguje plynule (500ms colors transition)
+- [x] Theme toggle v header funguje plynule (500ms colors transition)
 - [ ] Dark mode test celej aplikácie:
   - [ ] HomePage hero čitateľný
   - [ ] ResultCard s obrázkami vyzerá dobre
   - [ ] DetailPage charts a cards
   - [ ] Stats charts farby v dark mode
-- [ ] Empty states všade kde môžu byť — ilustrácie (SVG) + CTA
-- [ ] Skeleton loaders všade kde sa fetchuje (nie spinners)
-- [ ] Animácie:
-  - [ ] Subtle fade-in pri navigácii (cez React Router transitions alebo CSS)
-  - [ ] Hover states na cards (border-accent)
-  - [ ] Reduced motion respect
+- [x] Empty states všade kde môžu byť — ilustrácie (SVG) + CTA
+- [x] Skeleton loaders všade kde sa fetchuje (nie spinners)
+- [x] Animácie:
+  - [x] Subtle fade-in pri navigácii (cez React Router transitions alebo CSS)
+  - [x] Hover states na cards (border-accent)
+  - [x] Reduced motion respect
 
 ### UX
-- [ ] Toaster (sonner) pre potvrdenia/chyby
-- [ ] Validačné error messages v slovenčine
-- [ ] Form errors near field (NIE iba na top)
-- [ ] Accessible: aria-labels, focus rings, keyboard navigation
-  - [ ] Skip link "Preskočiť na obsah"
-  - [ ] All buttons majú accessible name
-  - [ ] aria-live na toaster
-  - [ ] aria-sort na sortable columns
-- [ ] Sentence case konzistentne (nie All Caps)
-- [ ] Slovenské texty s diakritikou všade (ť, š, č, ž, ý, á, í, é, ú, ô, ä, ľ)
-- [ ] Tabular nums pre čísla v štatistikách
+- [x] Toaster (sonner) pre potvrdenia/chyby
+- [x] Validačné error messages v slovenčine
+- [x] Form errors near field (NIE iba na top)
+- [x] Accessible: aria-labels, focus rings, keyboard navigation
+  - [x] Skip link "Preskočiť na obsah"
+  - [x] All buttons majú accessible name
+  - [x] aria-live na toaster
+  - [x] aria-sort na sortable columns
+- [x] Sentence case konzistentne (nie All Caps)
+- [x] Slovenské texty s diakritikou všade (ť, š, č, ž, ý, á, í, é, ú, ô, ä, ľ)
+- [x] Tabular nums pre čísla v štatistikách
 
 ### Error handling
-- [ ] React Error Boundary v Layout (vlastný fallback UI)
-- [ ] Try/catch v services backend
-- [ ] User-friendly error messages (nie raw API errors)
-- [ ] Retry mechanizmus v React Query (default: 3× s exp backoff)
+- [x] React Error Boundary v Layout (vlastný fallback UI)
+- [x] Try/catch v services backend
+- [x] User-friendly error messages (nie raw API errors)
+- [x] Retry mechanizmus v React Query (default: 3× s exp backoff)
 - [ ] LlmService fallback funguje (otestovať s neplatným API key)
 
 ### Performance
-- [ ] Lazy loading routes (`React.lazy`)
-- [ ] Image lazy loading (`loading="lazy"` všetky <img>)
-- [ ] Vite production build optimizations (manualChunks)
-- [ ] Font loading: preload Inter + Fraunces
+- [x] Lazy loading routes (`React.lazy`)
+- [x] Image lazy loading (`loading="lazy"` všetky <img>)
+- [x] Vite production build optimizations (manualChunks)
+- [x] Font loading: preload Inter + Fraunces
 - [ ] Lighthouse audit: Performance ≥85, Accessibility 100
 
 ### Testing

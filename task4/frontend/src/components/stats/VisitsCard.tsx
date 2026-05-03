@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { toast } from 'sonner'
 
-import { getVisitStats } from '@/api/client'
+import { getApiErrorMessage, getVisitStats } from '@/api/client'
+import { EmptyState } from '@/components/design/EmptyState'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -11,6 +14,12 @@ export function VisitsCard() {
     refetchInterval: 30_000,
   })
 
+  useEffect(() => {
+    if (visitsQuery.isError) {
+      toast.error(getApiErrorMessage(visitsQuery.error))
+    }
+  }, [visitsQuery.error, visitsQuery.isError])
+
   const stats = visitsQuery.data
 
   return (
@@ -18,17 +27,27 @@ export function VisitsCard() {
       <CardHeader>
         <CardTitle>Návštevnosť</CardTitle>
       </CardHeader>
-      <CardContent className="grid gap-4 sm:grid-cols-2">
-        <StatNumber
-          label="Total"
-          value={stats?.total}
-          isLoading={visitsQuery.isLoading}
-        />
-        <StatNumber
-          label="Unique"
-          value={stats?.unique}
-          isLoading={visitsQuery.isLoading}
-        />
+      <CardContent>
+        {visitsQuery.isError ? (
+          <EmptyState
+            title="Návštevnosť sa nepodarilo načítať"
+            description={getApiErrorMessage(visitsQuery.error)}
+            className="border-0 bg-transparent p-4"
+          />
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2">
+            <StatNumber
+              label="Celkom"
+              value={stats?.total}
+              isLoading={visitsQuery.isLoading}
+            />
+            <StatNumber
+              label="Unikátne"
+              value={stats?.unique}
+              isLoading={visitsQuery.isLoading}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   )

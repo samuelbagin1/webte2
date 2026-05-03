@@ -5,11 +5,13 @@ import {
   useReactTable,
   type ColumnDef,
 } from '@tanstack/react-table'
-import { ChevronDown, ChevronUp, SearchX } from 'lucide-react'
-import { useMemo } from 'react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
-import { getSearchStats } from '@/api/client'
+import { getApiErrorMessage, getSearchStats } from '@/api/client'
+import { EmptyState } from '@/components/design/EmptyState'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -54,6 +56,12 @@ export function SearchTable() {
     queryKey: ['stats', 'searches', sort, order],
     queryFn: () => getSearchStats(sort, order),
   })
+
+  useEffect(() => {
+    if (searchesQuery.isError) {
+      toast.error(getApiErrorMessage(searchesQuery.error))
+    }
+  }, [searchesQuery.error, searchesQuery.isError])
 
   const columns = useMemo<ColumnDef<SearchStatsRow>[]>(
     () => [
@@ -106,14 +114,18 @@ export function SearchTable() {
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-full" />
           </div>
+        ) : searchesQuery.isError ? (
+          <EmptyState
+            title="Štatistiku sa nepodarilo načítať"
+            description={getApiErrorMessage(searchesQuery.error)}
+            className="border-0 bg-transparent p-4"
+          />
         ) : table.getRowModel().rows.length === 0 ? (
-          <div className="rounded-xl border border-border bg-card-muted p-8 text-center">
-            <SearchX className="mx-auto h-10 w-10 text-muted-foreground" />
-            <p className="mt-3 font-medium">Zatiaľ nie sú dostupné vyhľadávania</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Štatistika sa naplní po prvých výsledkoch hľadania.
-            </p>
-          </div>
+          <EmptyState
+            title="Zatiaľ nie sú dostupné vyhľadávania"
+            description="Štatistika sa naplní po prvých výsledkoch hľadania."
+            className="border-0 bg-transparent p-4"
+          />
         ) : (
           <Table>
             <TableHeader>

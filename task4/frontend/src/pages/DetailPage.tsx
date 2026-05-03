@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, MapPin, Plane } from 'lucide-react'
+import { useEffect } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
-import { getDestination } from '@/api/client'
+import { getApiErrorMessage, getDestination } from '@/api/client'
+import { EmptyState } from '@/components/design/EmptyState'
 import { CountryFlag } from '@/components/design/CountryFlag'
 import { WeatherIcon } from '@/components/design/WeatherIcon'
 import { CurrencyCard } from '@/components/detail/CurrencyCard'
@@ -38,21 +41,27 @@ export function DetailPage() {
     enabled: Number.isInteger(destinationId) && destinationId > 0,
   })
 
+  useEffect(() => {
+    if (destinationQuery.isError) {
+      toast.error(getApiErrorMessage(destinationQuery.error))
+    }
+  }, [destinationQuery.error, destinationQuery.isError])
+
   if (destinationQuery.isLoading) {
     return <DetailSkeleton />
   }
 
   if (destinationQuery.isError || !destinationQuery.data) {
     return (
-      <div className="mx-auto max-w-2xl py-16 text-center">
-        <h1 className="text-3xl">Destinácia sa nepodarila načítať</h1>
-        <p className="mt-3 text-muted-foreground">
-          Skontroluj adresu alebo sa vráť na výsledky vyhľadávania.
-        </p>
-        <Button className="mt-6" variant="accent" asChild>
-          <Link to="/">Späť na hľadanie</Link>
-        </Button>
-      </div>
+      <EmptyState
+        title="Destinácia sa nepodarila načítať"
+        description="Skontroluj adresu alebo sa vráť na výsledky vyhľadávania."
+        action={
+          <Button variant="accent" asChild>
+            <Link to="/">Späť na hľadanie</Link>
+          </Button>
+        }
+      />
     )
   }
 
@@ -66,6 +75,7 @@ export function DetailPage() {
           src={imageForDestination(destination.id, destination.image_url)}
           alt={`Destinácia ${destination.name}`}
           className="h-full w-full object-cover"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/25 to-primary/35" />
         <Button

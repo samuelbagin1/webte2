@@ -14,6 +14,10 @@ class DestinationController extends Controller
     {
         $validated = $request->validate([
             'month' => ['required', 'integer', 'between:1,12'],
+        ], [
+            'month.required' => 'Zadaj mesiac cesty.',
+            'month.integer' => 'Mesiac musí byť celé číslo.',
+            'month.between' => 'Mesiac musí byť od 1 do 12.',
         ]);
 
         return response()->json($payloadService->toArray($destination, (int) $validated['month']));
@@ -23,6 +27,10 @@ class DestinationController extends Controller
     {
         $validated = $request->validate([
             'month' => ['required', 'integer', 'between:1,12'],
+        ], [
+            'month.required' => 'Zadaj mesiac cesty.',
+            'month.integer' => 'Mesiac musí byť celé číslo.',
+            'month.between' => 'Mesiac musí byť od 1 do 12.',
         ]);
 
         $month = (int) $validated['month'];

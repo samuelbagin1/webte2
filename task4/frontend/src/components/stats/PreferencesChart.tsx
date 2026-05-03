@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import {
   Bar,
   BarChart,
@@ -11,10 +12,17 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { toast } from 'sonner'
 
-import { getPreferenceStats } from '@/api/client'
+import { getApiErrorMessage, getPreferenceStats } from '@/api/client'
+import { EmptyState } from '@/components/design/EmptyState'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  chartTextColor,
+  chartTooltipLabelStyle,
+  chartTooltipStyle,
+} from '@/lib/chart'
 import { TEMPERATURE_OPTIONS, TRIP_TYPES } from '@/lib/search'
 
 const ACCENT_PALETTE = [
@@ -30,6 +38,12 @@ export function PreferencesChart() {
     queryKey: ['stats', 'preferences'],
     queryFn: getPreferenceStats,
   })
+
+  useEffect(() => {
+    if (preferencesQuery.isError) {
+      toast.error(getApiErrorMessage(preferencesQuery.error))
+    }
+  }, [preferencesQuery.error, preferencesQuery.isError])
 
   const typeData = TRIP_TYPES.map((type) => ({
     name: type.label,
@@ -49,6 +63,12 @@ export function PreferencesChart() {
       <CardContent>
         {preferencesQuery.isLoading ? (
           <Skeleton className="h-80 w-full" />
+        ) : preferencesQuery.isError ? (
+          <EmptyState
+            title="Preferencie sa nepodarilo načítať"
+            description={getApiErrorMessage(preferencesQuery.error)}
+            className="border-0 bg-transparent p-4"
+          />
         ) : (
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="h-80">
@@ -58,17 +78,21 @@ export function PreferencesChart() {
                     dataKey="name"
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: chartTextColor }}
                     interval={0}
                   />
                   <YAxis
                     allowDecimals={false}
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: chartTextColor }}
                   />
-                  <Tooltip formatter={(value) => [`${value}`, 'Počet']} />
-                  <Legend />
+                  <Tooltip
+                    contentStyle={chartTooltipStyle}
+                    labelStyle={chartTooltipLabelStyle}
+                    formatter={(value) => [`${value}`, 'Počet']}
+                  />
+                  <Legend wrapperStyle={{ color: chartTextColor }} />
                   <Bar
                     dataKey="count"
                     name="Typy dovolenky"
@@ -97,8 +121,12 @@ export function PreferencesChart() {
                       />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`${value}`, 'Počet']} />
-                  <Legend />
+                  <Tooltip
+                    contentStyle={chartTooltipStyle}
+                    labelStyle={chartTooltipLabelStyle}
+                    formatter={(value) => [`${value}`, 'Počet']}
+                  />
+                  <Legend wrapperStyle={{ color: chartTextColor }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
