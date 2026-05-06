@@ -77,12 +77,12 @@ export function ResultsPage() {
               disabled={selectedIds.length !== 2}
             >
               {selectedIds.length === 2 ? (
-                <Link to={compareHref}>
+                <Link to={compareHref} className='flex justify-center items-center'>
                   Porovnať
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               ) : (
-                <span>
+                <span className='flex justify-center items-center'>
                   Porovnať
                   <ArrowRight className="h-4 w-4" />
                 </span>

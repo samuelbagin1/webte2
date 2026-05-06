@@ -260,22 +260,24 @@ export function SearchForm() {
             </TabsContent>
           </Tabs>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="days">
-              Počet dní
-            </label>
-            <NumberInput
-              value={days}
-              onChange={(value) =>
-                setValue('days', value, { shouldDirty: true, shouldValidate: true })
-              }
-            />
-            {errors.days && (
-              <p className="text-sm font-medium text-destructive">
-                {errors.days.message}
-              </p>
-            )}
-          </div>
+          {mode === 'month' && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium" htmlFor="days">
+                Počet dní
+              </label>
+              <NumberInput
+                value={days}
+                onChange={(value) =>
+                  setValue('days', value, { shouldDirty: true, shouldValidate: true })
+                }
+              />
+              {errors.days && (
+                <p className="text-sm font-medium text-destructive">
+                  {errors.days.message}
+                </p>
+              )}
+            </div>
+          )}
 
           <fieldset className="space-y-3">
             <legend className="text-sm font-medium">Typy dovolenky</legend>

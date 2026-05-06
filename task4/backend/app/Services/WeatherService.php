@@ -60,25 +60,38 @@ class WeatherService
     {
         $key = sprintf('weather:current:%s:%s', round($lat, 3), round($lon, 3));
 
-        return Cache::remember($key, now()->addHour(), function () use ($lat, $lon) {
-            $current = $this->fetchCurrent($lat, $lon);
+        $cached = Cache::get($key);
 
-            if ($current !== null) {
-                return $current + ['source' => 'open_meteo'];
-            }
+        if (is_array($cached)) {
+            return $cached;
+        }
 
-            $hub = $this->nearestHub($lat, $lon);
-            $fallback = $this->fetchCurrent($hub['lat'], $hub['lon']);
+        $current = $this->fetchCurrent($lat, $lon);
 
-            if ($fallback !== null) {
-                return $fallback + [
-                    'source' => 'open_meteo_hub',
-                    'fallback_hub' => $hub['name'],
-                ];
-            }
+        if ($current !== null) {
+            $weather = $current + ['source' => 'open_meteo'];
+            Cache::put($key, $weather, now()->addHour());
 
-            return $this->offlineFallback($hub['name']);
-        });
+            return $weather;
+        }
+
+        $hub = $this->nearestHub($lat, $lon);
+        $fallback = $this->fetchCurrent($hub['lat'], $hub['lon']);
+
+        if ($fallback !== null) {
+            $weather = $fallback + [
+                'source' => 'open_meteo_hub',
+                'fallback_hub' => $hub['name'],
+            ];
+            Cache::put($key, $weather, now()->addMinutes(5));
+
+            return $weather;
+        }
+
+        $weather = $this->offlineFallback($hub['name']);
+        Cache::put($key, $weather, now()->addMinutes(5));
+
+        return $weather;
     }
 
     /**

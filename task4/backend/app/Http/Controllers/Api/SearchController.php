@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SearchRequest;
 use App\Models\Destination;
 use App\Models\Search;
-use App\Services\DestinationPayloadService;
 use App\Services\ScoringService;
 use Illuminate\Support\Facades\DB;
 
@@ -15,17 +14,29 @@ class SearchController extends Controller
     public function __invoke(
         SearchRequest $request,
         ScoringService $scoringService,
-        DestinationPayloadService $payloadService,
     ) {
         $data = $request->validated();
         $month = (int) $data['month'];
+        $maxFlightHours = $data['max_flight_hours'] ?? null;
 
         $destinations = Destination::query()
-            ->with(['country', 'types', 'monthlyClimates'])
+            ->with([
+                'country',
+                'types',
+                'monthlyClimates' => fn ($query) => $query->where('month', $month),
+            ])
+            ->whereHas(
+                'types',
+                fn ($query) => $query->whereIn('code', $data['trip_types']),
+            )
+            ->when(
+                $maxFlightHours !== null,
+                fn ($query) => $query->where('flight_hours_from_vienna', '<=', $maxFlightHours),
+            )
             ->get();
 
         $results = $destinations
-            ->map(function (Destination $destination) use ($data, $month, $scoringService, $payloadService): ?array {
+            ->map(function (Destination $destination) use ($data, $month, $scoringService): ?array {
                 $score = $scoringService->score($destination, $data, $month);
 
                 if ($score <= 0) {
@@ -33,7 +44,7 @@ class SearchController extends Controller
                 }
 
                 return [
-                    ...$payloadService->toArray($destination, $month),
+                    ...$this->toSearchResult($destination),
                     'match_score' => $score,
                     'reasons' => $scoringService->getMatchReasons($destination, $data, $month),
                 ];
@@ -64,5 +75,25 @@ class SearchController extends Controller
         });
 
         return response()->json($results);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function toSearchResult(Destination $destination): array
+    {
+        $country = $destination->country;
+
+        return [
+            'id' => $destination->id,
+            'name' => $destination->name,
+            'image_url' => $destination->image_url,
+            'country' => [
+                'id' => $country->id,
+                'iso_code' => $country->iso_code,
+                'name_sk' => $country->name_sk,
+                'flag_url' => sprintf('https://www.geonames.org/flags/x/%s.gif', strtolower($country->iso_code)),
+            ],
+        ];
     }
 }

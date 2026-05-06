@@ -26,6 +26,8 @@ export type Country = {
   external_info?: unknown
 }
 
+export type SearchResultCountry = Pick<Country, 'id' | 'iso_code' | 'name_sk' | 'flag_url'>
+
 export type DestinationType = {
   code: TripTypeCode
   name_sk: string
@@ -65,7 +67,11 @@ export type Destination = {
   current_weather: CurrentWeather
 }
 
-export type SearchResult = Destination & {
+export type SearchResult = {
+  id: number
+  name: string
+  image_url: string | null
+  country: SearchResultCountry
   match_score: number
   reasons: string[]
 }
