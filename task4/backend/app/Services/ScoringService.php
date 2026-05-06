@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Destination;
-use App\Models\MonthlyClimate;
 
 class ScoringService
 {
@@ -30,9 +29,9 @@ class ScoringService
             return 0.0;
         }
 
-        $typeScore = (count($matchingTypes) / count($userPrefs['trip_types'])) * self::TYPE_WEIGHT;
+        $typeScore        = (count($matchingTypes) / count($userPrefs['trip_types'])) * self::TYPE_WEIGHT;
         $temperatureScore = $this->temperatureScore($d, $userPrefs['temperature_pref'] ?? 'any', $month);
-        $distanceScore = self::DISTANCE_WEIGHT;
+        $distanceScore    = self::DISTANCE_WEIGHT;
 
         return round(min(100.0, max(0.0, $typeScore + $temperatureScore + $distanceScore)), 2);
     }
@@ -49,10 +48,11 @@ class ScoringService
             $reasons[] = $type['name_sk'];
         }
 
-        $climate = $this->monthlyClimate($d, $month);
+        $climate = $d->monthlyClimates->firstWhere('month', $month);
+
         if ($climate !== null) {
             $preferenceLabel = match ($userPrefs['temperature_pref'] ?? 'any') {
-                'hot' => 'horúco',
+                'hot'  => 'horúco',
                 'warm' => 'teplo',
                 'mild' => 'príjemne',
                 default => 'ľubovoľná teplota',
@@ -94,19 +94,21 @@ class ScoringService
             return self::TEMPERATURE_WEIGHT;
         }
 
-        $climate = $this->monthlyClimate($destination, $month);
+        $climate = $destination->monthlyClimates->firstWhere('month', $month);
+
         if ($climate === null) {
             return 0.0;
         }
 
+        $avgTemp = (float) $climate->temp_avg;
+
         [$low, $high] = match ($preference) {
-            'hot' => [28.0, 40.0],
+            'hot'  => [28.0, 40.0],
             'warm' => [20.0, 29.0],
             'mild' => [10.0, 19.0],
             default => [10.0, 40.0],
         };
 
-        $avgTemp = $climate->temp_avg;
         if ($avgTemp >= $low && $avgTemp <= $high) {
             return self::TEMPERATURE_WEIGHT;
         }
@@ -114,10 +116,5 @@ class ScoringService
         $distanceOutside = min(abs($avgTemp - $low), abs($avgTemp - $high));
 
         return max(0.0, self::TEMPERATURE_WEIGHT - ($distanceOutside * 3));
-    }
-
-    private function monthlyClimate(Destination $destination, int $month): ?MonthlyClimate
-    {
-        return $destination->monthlyClimates->firstWhere('month', $month);
     }
 }

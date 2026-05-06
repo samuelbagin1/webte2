@@ -23,7 +23,7 @@ class SearchController extends Controller
             ->with([
                 'country',
                 'types',
-                'monthlyClimates' => fn ($query) => $query->where('month', $month),
+                'monthlyClimates',
             ])
             ->whereHas(
                 'types',
