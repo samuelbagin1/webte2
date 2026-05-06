@@ -6,8 +6,8 @@ use App\Http\Middleware\TrackVisit;
 use App\Models\Country;
 use App\Models\Destination;
 use App\Models\DestinationType;
-use App\Models\MonthlyClimate;
 use App\Models\Search;
+use App\Models\MonthlyClimate;
 use App\Models\SearchResult;
 use App\Models\Visit;
 use App\Services\CurrencyService;
@@ -32,36 +32,41 @@ class Phase4ApiTest extends TestCase
     public function test_search_scores_filters_sorts_limits_and_persists_results(): void
     {
         $beach = DestinationType::query()->create(['code' => 'sea_beach', 'name_sk' => 'More a pláž']);
-        $city = DestinationType::query()->create(['code' => 'city_break', 'name_sk' => 'Mestský výlet']);
+        $city  = DestinationType::query()->create(['code' => 'city_break', 'name_sk' => 'Mestský výlet']);
         $country = $this->country();
 
         for ($i = 1; $i <= 25; $i++) {
             $destination = $this->destination($country, "Beach {$i}", 2.0);
             $destination->types()->attach($beach);
-            $this->climate($destination, 7, 25.0 + ($i % 2));
         }
 
         $best = $this->destination($country, 'Best Match', 1.5);
         $best->types()->attach([$beach->id, $city->id]);
-        $this->climate($best, 7, 24.0);
+
+        // Monthly climate in 'warm' range (20-29°C) → temperature score = 35, total = 40+35+25 = 100
+        MonthlyClimate::query()->create([
+            'destination_id'    => $best->id,
+            'month'             => 7,
+            'temp_avg'          => 24.0,
+            'temp_min'          => 20.0,
+            'temp_max'          => 28.0,
+            'precipitation_pct' => 15.0,
+            'wind_avg'          => 12.0,
+        ]);
 
         $tooFar = $this->destination($country, 'Too Far', 6.0);
         $tooFar->types()->attach($beach);
-        $this->climate($tooFar, 7, 24.0);
 
         $wrongType = $this->destination($country, 'Wrong Type', 1.0);
         $wrongType->types()->attach($city);
-        $this->climate($wrongType, 7, 24.0);
-
-        Http::fake();
 
         $response = $this->postJson('/api/search', [
-            'trip_types' => ['sea_beach', 'city_break'],
+            'trip_types'       => ['sea_beach', 'city_break'],
             'temperature_pref' => 'warm',
             'max_flight_hours' => 3,
-            'start_date' => '2026-07-01',
-            'end_date' => '2026-07-10',
-            'month' => 7,
+            'start_date'       => '2026-07-01',
+            'end_date'         => '2026-07-10',
+            'month'            => 7,
         ]);
 
         $response->assertOk()
@@ -76,6 +81,8 @@ class Phase4ApiTest extends TestCase
         $this->assertArrayNotHasKey('current_weather', $firstResult);
         $this->assertArrayNotHasKey('currency_rate', $firstResult);
         $this->assertArrayNotHasKey('external_info', $firstResult['country']);
+
+        // Scoring reads from DB — no open-meteo calls during search
         Http::assertSentCount(0);
 
         $this->assertDatabaseCount('searches', 1);
@@ -96,7 +103,7 @@ class Phase4ApiTest extends TestCase
             ->assertJsonValidationErrors(['trip_types', 'temperature_pref', 'end_date', 'month']);
     }
 
-    public function test_destination_detail_returns_country_climate_and_phase_five_data(): void
+    public function test_destination_detail_returns_country_and_current_weather_with_null_monthly_climate(): void
     {
         Http::fake([
             'api.open-meteo.com/*' => Http::response([
@@ -123,19 +130,19 @@ class Phase4ApiTest extends TestCase
         $country = $this->country();
         $destination = $this->destination($country, 'Barcelona', 2.4);
         $destination->types()->attach($type);
-        $this->climate($destination, 7, 28.0);
 
-        $this->getJson("/api/destinations/{$destination->id}?month=7")
+        $response = $this->getJson("/api/destinations/{$destination->id}?month=7")
             ->assertOk()
             ->assertJsonPath('name', 'Barcelona')
             ->assertJsonPath('country.name_sk', 'Španielsko')
             ->assertJsonPath('country.flag_url', 'https://www.geonames.org/flags/x/es.gif')
-            ->assertJsonPath('monthly_climate.temp_avg', 28)
             ->assertJsonPath('currency_rate', null)
             ->assertJsonPath('current_weather.temperature', 22.4)
             ->assertJsonPath('current_weather.icon', 'cloud-sun')
             ->assertJsonPath('current_weather.description_sk', 'Čiastočne oblačno')
             ->assertJsonPath('country.external_info.region', 'Europe');
+
+        $response->assertJsonPath('monthly_climate', null);
     }
 
     public function test_compare_requires_two_ids_and_returns_two_destinations(): void
@@ -164,8 +171,6 @@ class Phase4ApiTest extends TestCase
         $second = $this->destination($country, 'Second', 2.0);
         $first->types()->attach($type);
         $second->types()->attach($type);
-        $this->climate($first, 5, 20.0);
-        $this->climate($second, 5, 22.0);
 
         $this->getJson("/api/compare?ids={$first->id}&month=5")
             ->assertUnprocessable()
@@ -216,100 +221,25 @@ class Phase4ApiTest extends TestCase
         Http::assertSentCount(3);
     }
 
-    public function test_weather_fallback_cache_expires_before_exact_weather_cache(): void
+    public function test_current_weather_is_cached_for_repeated_coordinate_requests(): void
     {
-        Carbon::setTestNow('2026-05-03 12:00:00');
-
         Http::fake([
-            'api.open-meteo.com/*' => Http::sequence()
-                ->pushStatus(500)
-                ->push([
-                    'current' => [
-                        'temperature_2m' => 31,
-                        'relative_humidity_2m' => 40,
-                        'weather_code' => 0,
-                        'wind_speed_10m' => 7,
-                    ],
-                ])
-                ->push([
-                    'current' => [
-                        'temperature_2m' => 24,
-                        'relative_humidity_2m' => 55,
-                        'weather_code' => 2,
-                        'wind_speed_10m' => 5,
-                    ],
-                ]),
+            'api.open-meteo.com/*' => Http::response([
+                'current' => [
+                    'temperature_2m' => 24,
+                    'relative_humidity_2m' => 50,
+                    'weather_code' => 2,
+                    'wind_speed_10m' => 6,
+                ],
+            ]),
         ]);
 
         $weatherService = app(WeatherService::class);
 
-        $fallback = $weatherService->getCurrent(24.0, 54.0);
-        $this->assertSame('open_meteo_hub', $fallback['source']);
-        Http::assertSentCount(2);
+        $this->assertSame(24, $weatherService->getCurrent(41.3874, 2.1686)['temperature']);
+        $this->assertSame(24, $weatherService->getCurrent(41.3874, 2.1686)['temperature']);
 
-        Carbon::setTestNow('2026-05-03 12:04:00');
-        $this->assertSame('open_meteo_hub', $weatherService->getCurrent(24.0, 54.0)['source']);
-        Http::assertSentCount(2);
-
-        Carbon::setTestNow('2026-05-03 12:06:00');
-        $exact = $weatherService->getCurrent(24.0, 54.0);
-        $this->assertSame('open_meteo', $exact['source']);
-        $this->assertSame('cloud-sun', $exact['icon']);
-        Http::assertSentCount(3);
-
-        Carbon::setTestNow('2026-05-03 12:30:00');
-        $this->assertSame('open_meteo', $weatherService->getCurrent(24.0, 54.0)['source']);
-        Http::assertSentCount(3);
-
-        Carbon::setTestNow();
-    }
-
-    public function test_climate_fetch_skips_complete_destinations_and_fetches_missing_rows(): void
-    {
-        $country = $this->country();
-        $complete = $this->destination($country, 'A Complete', 1.0);
-        $missing = $this->destination($country, 'B Missing', 1.0);
-
-        for ($month = 1; $month <= 12; $month++) {
-            $this->climate($complete, $month, 20.0 + $month);
-        }
-
-        Http::fake([
-            'archive-api.open-meteo.com/*' => Http::response($this->archivePayload()),
-        ]);
-
-        $this->artisan('climate:fetch')
-            ->expectsOutputToContain('Skipping A Complete; climate data is complete.')
-            ->expectsOutputToContain('Stored 12 monthly climate rows for B Missing.')
-            ->expectsOutputToContain('Fetched: 1, skipped: 1, failed: 0.')
-            ->assertSuccessful();
-
-        $this->assertSame(12, $complete->monthlyClimates()->count());
-        $this->assertSame(12, $missing->monthlyClimates()->count());
         Http::assertSentCount(1);
-    }
-
-    public function test_climate_fetch_continues_after_failed_destination(): void
-    {
-        $country = $this->country();
-        $failed = $this->destination($country, 'A Failed', 1.0);
-        $successful = $this->destination($country, 'B Successful', 1.0);
-
-        Http::fake([
-            'archive-api.open-meteo.com/*' => Http::sequence()
-                ->pushStatus(500)
-                ->push($this->archivePayload()),
-        ]);
-
-        $this->artisan('climate:fetch')
-            ->expectsOutputToContain('Failed A Failed: Open-Meteo request failed with status 500.')
-            ->expectsOutputToContain('Stored 12 monthly climate rows for B Successful.')
-            ->expectsOutputToContain('Fetched: 1, skipped: 0, failed: 1.')
-            ->assertSuccessful();
-
-        $this->assertSame(0, $failed->monthlyClimates()->count());
-        $this->assertSame(12, $successful->monthlyClimates()->count());
-        Http::assertSentCount(2);
     }
 
     public function test_why_now_endpoint_uses_llm_service_with_template_fallback(): void
@@ -320,13 +250,23 @@ class Phase4ApiTest extends TestCase
         $country = $this->country();
         $destination = $this->destination($country, 'Rím', 1.7);
         $destination->types()->attach($type);
-        $this->climate($destination, 5, 23.0);
+
+        Http::fake([
+            'api.open-meteo.com/*' => Http::response([
+                'current' => [
+                    'temperature_2m' => 23.0,
+                    'relative_humidity_2m' => 48,
+                    'weather_code' => 1,
+                    'wind_speed_10m' => 4,
+                ],
+            ]),
+        ]);
 
         $this->getJson("/api/destinations/{$destination->id}/why-now?month=5")
             ->assertOk()
             ->assertJsonPath('destination_id', $destination->id)
             ->assertJsonPath('month', 5)
-            ->assertJsonPath('why_now', 'Rím je v mesiaci 5 dobrá voľba vďaka priemernej teplote okolo 23.0 °C. Počasie je vhodné na pohodlné plánovanie programu a výletov bez výrazných extrémov.');
+            ->assertJsonPath('why_now', 'Rím je v mesiaci 5 dobrá voľba podľa aktuálnych podmienok a typu destinácie. Aktuálna teplota je približne 23.0 °C. Počasie si pred cestou ešte over podľa najnovšej predpovede.');
     }
 
     public function test_visit_tracking_hashes_ip_and_stats_count_unique_last_hour(): void
@@ -422,41 +362,4 @@ class Phase4ApiTest extends TestCase
         ]);
     }
 
-    private function climate(Destination $destination, int $month, float $temperature): MonthlyClimate
-    {
-        return MonthlyClimate::query()->create([
-            'destination_id' => $destination->id,
-            'month' => $month,
-            'temp_avg' => $temperature,
-            'temp_min' => $temperature - 3,
-            'temp_max' => $temperature + 3,
-        ]);
-    }
-
-    /**
-     * @return array<string, array<string, array<int, float|string>>>
-     */
-    private function archivePayload(): array
-    {
-        $time = [];
-        $means = [];
-        $mins = [];
-        $maxes = [];
-
-        for ($month = 1; $month <= 12; $month++) {
-            $time[] = sprintf('2025-%02d-15', $month);
-            $means[] = 10.0 + $month;
-            $mins[] = 7.0 + $month;
-            $maxes[] = 13.0 + $month;
-        }
-
-        return [
-            'daily' => [
-                'time' => $time,
-                'temperature_2m_mean' => $means,
-                'temperature_2m_min' => $mins,
-                'temperature_2m_max' => $maxes,
-            ],
-        ];
-    }
 }
