@@ -234,9 +234,6 @@ export function DetailPage() {
                 {destination.flight_hours_from_vienna.toFixed(1)} hod letu z
                 Viedne
               </div>
-              <p className="text-sm text-muted-foreground">
-                Aktuálne počasie sa načítava priamo z API.
-              </p>
             </CardContent>
           </Card>
 

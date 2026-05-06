@@ -226,7 +226,9 @@ export function SearchForm() {
             <TabsContent value="range" className="pt-4">
               <div className="space-y-2">
                 <span className="text-sm font-medium">Rozsah dátumov</span>
-                <Popover>
+                <Popover onOpenChange={(open) => {
+                    if (open) setValue('dateRange', undefined, { shouldDirty: true })
+                  }}>
                   <PopoverTrigger asChild>
                     <Button
                       type="button"

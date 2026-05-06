@@ -34,12 +34,11 @@ class DestinationController extends Controller
         ]);
 
         $month = (int) $validated['month'];
-        $climate = $destination->monthlyClimates()->where('month', $month)->firstOrFail();
 
         return response()->json([
             'destination_id' => $destination->id,
             'month' => $month,
-            'why_now' => $llmService->generateWhyNow($destination, $month, $climate),
+            'why_now' => $llmService->generateWhyNow($destination, $month),
         ]);
     }
 }

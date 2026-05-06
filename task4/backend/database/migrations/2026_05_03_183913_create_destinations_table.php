@@ -16,7 +16,7 @@ return new class extends Migration
             $table->decimal('longitude', 9, 6);
             $table->decimal('flight_hours_from_vienna', 4, 1);
             $table->text('description_sk');
-            $table->string('image_url')->nullable();
+            $table->text('image_url')->nullable();
             $table->timestamps();
         });
     }

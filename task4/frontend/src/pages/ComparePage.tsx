@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { imageForDestination, monthLabel } from '@/lib/search'
+import { imageForDestination } from '@/lib/search'
 import { cn } from '@/lib/utils'
 import type { Destination } from '@/types/api'
 
@@ -108,34 +108,6 @@ function buildRows(destinations: [Destination, Destination]): CompareValue[] {
       matches: sameTypeSet(left, right),
     },
     {
-      key: 'avg-temp',
-      label: 'Priemerná teplota',
-      values: [
-        formatTemperature(left.monthly_climate?.temp_avg),
-        formatTemperature(right.monthly_climate?.temp_avg),
-      ],
-      matches:
-        Math.round(left.monthly_climate?.temp_avg ?? Number.NaN) ===
-        Math.round(right.monthly_climate?.temp_avg ?? Number.NaN),
-    },
-    {
-      key: 'min-max-temp',
-      label: 'Min / max teplota',
-      values: [
-        `${formatTemperature(left.monthly_climate?.temp_min)} / ${formatTemperature(
-          left.monthly_climate?.temp_max,
-        )}`,
-        `${formatTemperature(right.monthly_climate?.temp_min)} / ${formatTemperature(
-          right.monthly_climate?.temp_max,
-        )}`,
-      ],
-      matches:
-        Math.round(left.monthly_climate?.temp_min ?? Number.NaN) ===
-          Math.round(right.monthly_climate?.temp_min ?? Number.NaN) &&
-        Math.round(left.monthly_climate?.temp_max ?? Number.NaN) ===
-          Math.round(right.monthly_climate?.temp_max ?? Number.NaN),
-    },
-    {
       key: 'current-weather',
       label: 'Aktuálne počasie',
       values: [
@@ -215,9 +187,6 @@ export function ComparePage() {
           <h1 className="font-display text-4xl font-medium md:text-5xl">
             Porovnanie destinácií
           </h1>
-          <p className="mt-2 text-muted-foreground">
-            Zobrazené počasie je pre {monthLabel(parsedParams.month).toLowerCase()}.
-          </p>
         </div>
       </section>
 

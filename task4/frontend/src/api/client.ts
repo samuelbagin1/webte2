@@ -15,7 +15,7 @@ import type {
 } from '@/types/api'
 
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: '/task4/api',
   headers: {
     Accept: 'application/json',
   },

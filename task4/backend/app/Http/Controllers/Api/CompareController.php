@@ -16,7 +16,7 @@ class CompareController extends Controller
         $ids = array_map('intval', $data['ids']);
 
         $destinations = Destination::query()
-            ->with(['country', 'types', 'monthlyClimates'])
+            ->with(['country', 'types'])
             ->whereIn('id', $ids)
             ->get()
             ->sortBy(fn (Destination $destination) => array_search($destination->id, $ids, true))
