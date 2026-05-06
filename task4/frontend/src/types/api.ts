@@ -33,13 +33,6 @@ export type DestinationType = {
   name_sk: string
 }
 
-export type MonthlyClimate = {
-  month: number
-  temp_avg: number
-  temp_min: number
-  temp_max: number
-}
-
 export type CurrentWeather = {
   temperature: number | null
   humidity: number | null
@@ -50,6 +43,15 @@ export type CurrentWeather = {
   observed_at: string | null
   source: string
   fallback_hub?: string
+}
+
+export type MonthlyClimate = {
+  month: number
+  temp_avg: number
+  temp_min: number
+  temp_max: number
+  precipitation_pct: number
+  wind_avg: number
 }
 
 export type Destination = {

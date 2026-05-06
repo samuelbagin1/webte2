@@ -5,11 +5,15 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import { getApiErrorMessage, getDestination } from '@/api/client'
+
+const MONTH_NAMES_SK = [
+  '', 'januári', 'februári', 'marci', 'apríli', 'máji', 'júni',
+  'júli', 'auguste', 'septembri', 'októbri', 'novembri', 'decembri',
+]
 import { EmptyState } from '@/components/design/EmptyState'
 import { CountryFlag } from '@/components/design/CountryFlag'
 import { WeatherIcon } from '@/components/design/WeatherIcon'
 import { CurrencyCard } from '@/components/detail/CurrencyCard'
-import { WeatherCard } from '@/components/detail/WeatherCard'
 import { WhyNowCard } from '@/components/detail/WhyNowCard'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -21,7 +25,7 @@ import {
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCompareSelection } from '@/hooks/useCompareSelection'
-import { imageForDestination, monthLabel } from '@/lib/search'
+import { imageForDestination } from '@/lib/search'
 
 export function DetailPage() {
   const { id } = useParams()
@@ -111,7 +115,53 @@ export function DetailPage() {
           </section>
 
           <WhyNowCard destinationId={destination.id} month={month} />
-          <WeatherCard climate={destination.monthly_climate} month={month} />
+
+          {destination.monthly_climate && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Počasie v {MONTH_NAMES_SK[month]}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div className="rounded-xl bg-muted p-4">
+                    <p className="text-xs text-muted-foreground">Min</p>
+                    <p className="font-display text-3xl tabular-nums">
+                      {Math.round(destination.monthly_climate.temp_min)}
+                      <span className="text-sm text-muted-foreground"> °C</span>
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-muted p-4">
+                    <p className="text-xs text-muted-foreground">Priemer</p>
+                    <p className="font-display text-3xl tabular-nums">
+                      {Math.round(destination.monthly_climate.temp_avg)}
+                      <span className="text-sm text-muted-foreground"> °C</span>
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-muted p-4">
+                    <p className="text-xs text-muted-foreground">Max</p>
+                    <p className="font-display text-3xl tabular-nums">
+                      {Math.round(destination.monthly_climate.temp_max)}
+                      <span className="text-sm text-muted-foreground"> °C</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl bg-muted px-4 py-3">
+                    <p className="text-xs text-muted-foreground">Zrážky</p>
+                    <p className="font-medium">
+                      {Math.round(destination.monthly_climate.precipitation_pct)} % dní
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-muted px-4 py-3">
+                    <p className="text-xs text-muted-foreground">Vietor</p>
+                    <p className="font-medium">
+                      {Math.round(destination.monthly_climate.wind_avg)} km/h
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           <Card>
             <CardHeader>
@@ -185,7 +235,7 @@ export function DetailPage() {
                 Viedne
               </div>
               <p className="text-sm text-muted-foreground">
-                Zobrazené počasie je pre {monthLabel(month).toLowerCase()}.
+                Aktuálne počasie sa načítava priamo z API.
               </p>
             </CardContent>
           </Card>
