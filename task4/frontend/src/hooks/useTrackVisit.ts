@@ -22,7 +22,7 @@ export function useTrackVisit() {
     }
 
     visitTrackRequested = true
-    fetch('/api/visits/track', {
+    fetch('/task4/api/visits/track', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
