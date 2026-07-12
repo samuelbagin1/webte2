@@ -2,6 +2,8 @@
 
 import axios from "axios";
 
+const routerBasename = import.meta.env.VITE_ROUTER_BASENAME || "";
+
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || "/api",
     headers: {
@@ -27,7 +29,7 @@ api.interceptors.response.use(
         if (error.response?.status === 401 && !error.config?.url?.includes("/auth/")) {
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
-            window.location.href = "/login";
+            window.location.href = `${routerBasename}/login`;
         }
 
         return Promise.reject(error);

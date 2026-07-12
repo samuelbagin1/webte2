@@ -10,7 +10,7 @@ import App from './App.tsx'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <BrowserRouter basename="/task1and2">
+      <BrowserRouter basename={import.meta.env.VITE_ROUTER_BASENAME || "/"}>
         <AuthProvider>
           <App />
           <Toaster position="top-center" closeButton/>

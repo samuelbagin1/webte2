@@ -10,17 +10,14 @@
 
 
 // Databazove konkfiguracne premenne:
-$hostname = "localhost";  // vps: localhost; local: db
+$hostname = "db";  // vps: localhost; local: db
 $database = "app_db";  // nazov databazy - v nasom pripade to bolo ogames_app
 $username = "xbagins";  // nazov pouzivatela - ktoreho ste vytvarali cez MariaDB konzolu. Ak ste isli podla navodu, mal by to byt vas login.
 $password = "pass";  // vps: iykyk, local: pass
 // 
 
-// $callbackRedirectUri = "http://localhost:8080/api/auth/google/callback";
-// $redirectToDashboard = "http://localhost:5173/dashboard";
-
-$callbackRedirectUri = "https://node22.webte.fei.stuba.sk/task1and2/api/auth/google/callback";
-$redirectToDashboard = "https://node22.webte.fei.stuba.sk/task1and2/dashboard";
+$callbackRedirectUri = "http://localhost:8080/api/auth/google/callback";
+$redirectToDashboard = "http://localhost:5173/frontend/dashboard";
 
 
 // Funkcia sluzi ako abstrakcia pripojenia k DB – po include ju mozeme zavolat.
